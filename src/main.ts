@@ -29,7 +29,7 @@ import {
   QuarksEffectPlayer,
   loadQuarksManifest,
   type QuarksManifestEntry,
-} from './effects/QuarksEffectPlayer';
+} from '../packages/vfx-web-runtime/src/index';
 
 /** Neutral preview studio: shallow blue zenith fading into a bright horizon. */
 function makePreviewSky() {

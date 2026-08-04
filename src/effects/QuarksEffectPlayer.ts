@@ -28,6 +28,7 @@ import {
 import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
 import adapterRegistry from '../../config/semantic-adapters.json';
+import { assertVfxArtifact } from '../../packages/vfx-artifact-schema/src/index';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
 import {
   expandCfxrRingGeometry,
@@ -171,6 +172,28 @@ class SeededRandom {
 }
 
 function requireSemanticContract(raw: any): VfxSemanticContract {
+  // Protocol boundary: every player load now enters through the neutral artifact
+  // reader. The legacy unity-vfx-ir shape remains accepted only as an explicit
+  // migration path; no renderer code should need to know which envelope it got.
+  const artifactRead = assertVfxArtifact(raw);
+  if (artifactRead.kind === 'artifact') {
+    if (artifactRead.contract.disposition === 'rejected') {
+      throw new Error(`Rejected VFX artifact '${artifactRead.contract.effect.id}' cannot be played.`);
+    }
+    const c = artifactRead.contract;
+    raw.vfxIR = {
+      schema: 'unity-vfx-ir@1',
+      runtime: c.contract.runtime,
+      policy: c.contract.policy,
+      effectId: c.effect.id,
+      seed: c.contract.seed,
+      fixedDelta: c.contract.fixedDelta,
+      referenceCamera: c.contract.referenceCamera,
+      captureTimes: c.contract.captureTimes,
+      lifecycle: c.contract.lifecycle,
+      diagnostics: c.diagnostics,
+    };
+  }
   const ir = raw?.vfxIR as VfxSemanticContract | undefined;
   if (ir?.schema !== 'unity-vfx-ir@1' || ir.runtime !== 'three-quarks-semantic@1' || ir.policy !== 'strict') {
     throw new Error('Effect is not a strict unity-vfx-ir@1 export. Re-export it with the semantic exporter.');

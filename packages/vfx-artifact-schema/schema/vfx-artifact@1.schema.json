@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vfx-factory.local/schema/vfx-artifact@1.schema.json",
+  "title": "VFX Artifact v1",
+  "type": "object",
+  "required": ["artifact"],
+  "properties": {
+    "artifact": {
+      "type": "object",
+      "required": ["schema", "compiler", "effect", "representation", "disposition", "contract", "diagnostics"],
+      "properties": {
+        "schema": { "const": "vfx-artifact@1" },
+        "compiler": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "unityVersion": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "effect": {
+          "type": "object",
+          "required": ["id"],
+          "properties": { "id": { "type": "string" }, "duration": { "type": "number" }, "looping": { "type": "boolean" } },
+          "additionalProperties": false
+        },
+        "representation": { "enum": ["live-particles@1", "camera-baked@1"] },
+        "disposition": { "enum": ["production", "candidate", "rejected"] },
+        "contract": {
+          "type": "object",
+          "required": ["runtime", "policy", "seed", "fixedDelta", "captureTimes", "lifecycle", "referenceCamera"],
+          "properties": {
+            "runtime": { "type": "string" }, "policy": { "type": "string" }, "seed": { "type": "number" }, "fixedDelta": { "type": "number" },
+            "captureTimes": { "type": "array", "items": { "type": "number" } }, "lifecycle": { "type": "object" }, "referenceCamera": { "type": "object" }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

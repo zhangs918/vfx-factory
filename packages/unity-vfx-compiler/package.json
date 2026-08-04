@@ -1,0 +1,7 @@
+{
+  "name": "@vfx-factory/unity-vfx-compiler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Unity Editor semantic compiler boundary for vfx-artifact@1"
+}
