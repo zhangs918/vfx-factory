@@ -416,21 +416,20 @@ namespace BabylonQuarks.UnityExporter
             string template = "texture-tint";
             string coverage = "alpha";
             string shaderName = mat != null && mat.shader != null ? mat.shader.name ?? "" : "";
-            bool legacyParticle = IsReviewedLegacyParticleShader(shaderName);
-            bool alpha8Additive = shaderName == "Cartoon FX/Legacy/Particles Additive Alpha8";
-            bool multiplyColored = shaderName == "Cartoon FX/Legacy/Particle Multiply Colored";
-            bool legacyMultiply = shaderName == "Legacy Shaders/Particles/Multiply";
-            bool legacyPremultiply = shaderName == "Legacy Shaders/Particles/Alpha Blended Premultiply";
-            bool legacyDoubleTint = shaderName == "Legacy Shaders/Particles/Additive"
-                || shaderName == "Legacy Shaders/Particles/Additive (Soft)"
-                || shaderName == "Legacy Shaders/Particles/Alpha Blended";
-            bool vefectsZap = shaderName == "/_Vefects_/SH_Vefects_Zap_URP";
-            bool vefectsExtraParticles = shaderName == "/_Vefects_/SH_Vefects_Extra_Particles_URP";
-            bool vefectsErosionParticles = shaderName == "SH_Vefects_VFX_URP_Particles_Erosion_01";
-            bool vefectsHeatHaze = shaderName == "SH_Vefects_VFX_URP_Heat_Haze_01";
-            bool ericAdditiveFlow = shaderName == "Eric/URP_AdditiveFlow_HDR";
-            bool ericAlphaFlow = shaderName == "Eric/URP_AlphaBlendFlow_HDR";
-            bool egaFireSphere = shaderName == "EGA/Particles/FireSphere";
+            MaterialShaderFamily family = MaterialShaderFamilyRegistry.Resolve(shaderName);
+            bool legacyParticle = family.LegacyParticle;
+            bool alpha8Additive = family.Alpha8Additive;
+            bool multiplyColored = family.MultiplyColored;
+            bool legacyMultiply = family.LegacyMultiply;
+            bool legacyPremultiply = family.LegacyPremultiply;
+            bool legacyDoubleTint = family.LegacyDoubleTint;
+            bool vefectsZap = family.VefectsZap;
+            bool vefectsExtraParticles = family.VefectsExtraParticles;
+            bool vefectsErosionParticles = family.VefectsErosionParticles;
+            bool vefectsHeatHaze = family.VefectsHeatHaze;
+            bool ericAdditiveFlow = family.EricAdditiveFlow;
+            bool ericAlphaFlow = family.EricAlphaFlow;
+            bool egaFireSphere = family.EgaFireSphere;
             if (legacyDoubleTint) profile.Set("legacyDoubleTint", true)
                 .Set("legacyAlphaTintFactor", 2f);
             // Renderer materials can be instantiated by legacy prefab/controller setup.  An
