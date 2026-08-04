@@ -756,23 +756,7 @@ namespace BabylonQuarks.UnityExporter
         /// </summary>
         private static bool IsReviewedLegacyParticleShader(string shaderName)
         {
-            switch (shaderName ?? "")
-            {
-                case "Legacy Shaders/Particles/Additive":
-                case "Legacy Shaders/Particles/Additive (Soft)":
-                case "Legacy Shaders/Particles/Alpha Blended":
-                case "Particles/Additive":
-                case "Particles/Alpha Blended":
-                case "Mobile/Particles/Additive":
-                case "Mobile/Particles/Alpha Blended":
-                case "Cartoon FX/Legacy/Particles Additive Alpha8":
-                case "Cartoon FX/Legacy/Particle Multiply Colored":
-                case "Legacy Shaders/Particles/Multiply":
-                case "Legacy Shaders/Particles/Alpha Blended Premultiply":
-                    return true;
-                default:
-                    return false;
-            }
+            return MaterialShaderFamilyRegistry.IsLegacyParticle(shaderName);
         }
 
         /// <summary>
@@ -782,23 +766,7 @@ namespace BabylonQuarks.UnityExporter
         /// </summary>
         private static bool IsReviewedBuiltinParticleShader(string shaderName)
         {
-            string s = shaderName ?? "";
-            return s == "Particles/Standard Unlit"
-                || s == "Particles/Standard Surface"
-                || s == "Mobile/Particles/Alpha Blended"
-                || s == "Mobile/Particles/Additive"
-                || s == "Universal Render Pipeline/Particles/Unlit"
-                || s == "Universal Render Pipeline/Particles/Lit"
-                || s.StartsWith("ERB/Particles/", System.StringComparison.Ordinal)
-                || s.StartsWith("EGA/Particles/", System.StringComparison.Ordinal)
-                || s.StartsWith("Eric/URP_", System.StringComparison.Ordinal)
-                || s.StartsWith("SH_Vefects_", System.StringComparison.Ordinal)
-                || s.StartsWith("/_Vefects_/", System.StringComparison.Ordinal)
-                || s.StartsWith("Effect/Effect ", System.StringComparison.Ordinal)
-                || s == "Effect/distortion_mask"
-                || s == "Standard"
-                || s.StartsWith("VFX/Particles/", System.StringComparison.Ordinal)
-                || s.StartsWith("Hovl/Particles/", System.StringComparison.Ordinal);
+            return MaterialShaderFamilyRegistry.IsReviewedBuiltin(shaderName);
         }
 
         /// <summary>Property slot comes from the reviewed shader family, never material naming.</summary>
