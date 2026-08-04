@@ -185,11 +185,13 @@ namespace BabylonQuarks.UnityExporter
             // Shader Graph uses `_Clip` for Alpha Clip Threshold; Lit leftover `_Cutoff` is often stale.
             // When a dissolve map is bound, clip is animated in-shader — do NOT bake a static alphaTest.
             bool hasDissolveMap = maps.Has("dissolve");
+            MaterialShaderFamily rendererFamily = MaterialShaderFamilyRegistry.Resolve(
+                mat != null && mat.shader != null ? mat.shader.name : "");
             ShaderGraphInfo materialGraph = ShaderGraphAnalyzer.Analyze(mat != null ? mat.shader : null);
             bool alphaClip = materialGraph != null
                 ? materialGraph.AlphaClipEnabled
                 : (TryGetMaterialFloat(mat, "_AlphaClip", out float clipVal) && clipVal > 0.5f)
-                    || ReadUnityInt(mat, "_Mode", -1) == 1;
+                    || (!rendererFamily.LegacyParticle && ReadUnityInt(mat, "_Mode", -1) == 1);
             float alphaCutoff = 0f;
             if (!hasDissolveMap)
             {
@@ -198,6 +200,9 @@ namespace BabylonQuarks.UnityExporter
                 else if (TryGetMaterialFloat(mat, "_Cutoff", out cut))
                     alphaCutoff = cut;
             }
+            bool rendererDepthWrite = rendererFamily.LegacyParticle
+                ? false
+                : ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0);
 
             string uuid = NewId("quarks_material");
             var m = new JObject()
@@ -209,7 +214,7 @@ namespace BabylonQuarks.UnityExporter
                 .Set("alphaMode", LastBlendMode)
                 .Set("blending", LastBlendMode)
                 .Set("depthTest", true)
-                .Set("depthWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
+                .Set("depthWrite", rendererDepthWrite)
                 .Set("alphaTest", alphaClip && !hasDissolveMap ? Mathf.Max(0.001f, alphaCutoff) : 0)
                 .Set("alphaClip", alphaClip);
             if (textureUuid != null)
@@ -249,15 +254,23 @@ namespace BabylonQuarks.UnityExporter
             // Runtime lowering must not infer blend/depth semantics from a shader name alone.
             var programProfile = semanticProgram.Get("profile") as JObject;
             int explicitUnityMode = ReadUnityInt(mat, "_Mode", -1);
-            string materialBlend = explicitUnityMode == 0 ? "opaque"
-                : explicitUnityMode == 1 ? "alpha-test"
-                : LastBlendMode == 1 ? "additive" : LastBlendMode == 4 ? "multiply" : "alpha";
+            MaterialShaderFamily effectiveFamily = MaterialShaderFamilyRegistry.Resolve(
+                mat.shader != null ? mat.shader.name : "");
+            string materialBlend = effectiveFamily.LegacyPremultiply ? "premultiplied-alpha"
+                : LastBlendMode == 1 ? "additive"
+                : LastBlendMode == 4 ? "multiply"
+                : !effectiveFamily.LegacyParticle && explicitUnityMode == 0 ? "opaque"
+                : !effectiveFamily.LegacyParticle && explicitUnityMode == 1 ? "alpha-test"
+                : "alpha";
+            bool effectiveZWrite = effectiveFamily.LegacyParticle
+                ? false
+                : ReadUnityBool(mat, "_ZWrite", materialBlend == "opaque" || materialBlend == "alpha-test");
             programProfile?.Set("shaderFamily", mat.shader != null ? mat.shader.name : "")
                 .Set("blendMode", materialBlend)
                 .Set("unityMode", ReadUnityInt(mat, "_Mode", -1))
                 .Set("srcBlend", ReadUnityInt(mat, "_SrcBlend", -1))
                 .Set("dstBlend", ReadUnityInt(mat, "_DstBlend", -1))
-                .Set("zWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
+                .Set("zWrite", effectiveZWrite)
                 .Set("cutoff", ReadUnityFloat(mat, "_Cutoff", 0f));
             semanticProgram.Set("shaderFamily", mat.shader != null ? mat.shader.name : "")
                 .Set("blendMode", materialBlend)
@@ -265,6 +278,7 @@ namespace BabylonQuarks.UnityExporter
                 .Set("srcBlend", ReadUnityInt(mat, "_SrcBlend", -1))
                 .Set("dstBlend", ReadUnityInt(mat, "_DstBlend", -1))
                 .Set("zWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
+                .Set("effectiveZWrite", effectiveZWrite)
                 .Set("cutoff", ReadUnityFloat(mat, "_Cutoff", 0f));
             m.Set("vfxProgram", semanticProgram);
             Materials.Add(m);
@@ -732,10 +746,12 @@ namespace BabylonQuarks.UnityExporter
                         ? "raw-linear-attribute" : "project-authored")
                     .Set("requiresOracle", true));
             int unityMode = ReadUnityInt(mat, "_Mode", -1);
-            string blendProgram = unityMode == 0 ? "opaque"
-                : unityMode == 1 ? "alpha-test"
-                : legacyPremultiply ? "premultiplied-alpha"
-                : LastBlendMode == 1 ? "additive" : LastBlendMode == 4 ? "multiply" : "alpha";
+            string blendProgram = legacyPremultiply ? "premultiplied-alpha"
+                : LastBlendMode == 1 ? "additive"
+                : LastBlendMode == 4 ? "multiply"
+                : !legacyParticle && unityMode == 0 ? "opaque"
+                : !legacyParticle && unityMode == 1 ? "alpha-test"
+                : "alpha";
             operations.Add(new JObject().Set("op", "blend")
                 .Set("mode", blendProgram));
 
@@ -1904,15 +1920,6 @@ namespace BabylonQuarks.UnityExporter
         {
             // quarks/Babylon blend ints: 1 = additive, 2 = alpha blend, 3 = subtract, 4 = multiply.
             if (mat == null) return 2;
-            // Standard/particle materials serialize their effective mode and GPU factors.
-            // Those values are more authoritative than a family-name heuristic.
-            if (TryGetMaterialFloat(mat, "_Mode", out float mode))
-            {
-                int m = (int)mode;
-                if (m == 0) return 0; // opaque
-                if (m == 1) return 2; // alpha-test/cutout (explicit mode is carried in IR)
-                if (m == 2 || m == 3) return 2; // fade/transparent
-            }
             string sn = mat.shader != null ? mat.shader.name.ToLowerInvariant() : "";
 
             // Name checks — order matters: "Alpha Blended Premultiply" contains "multiply"
@@ -1921,6 +1928,16 @@ namespace BabylonQuarks.UnityExporter
             if (sn.Contains("premultiply") || sn.Contains("alpha blend") || sn.Contains("alphablend"))
                 return 2;
             if (sn.Contains("multiply") || sn.Contains("modulate")) return 4;
+
+            // `_Mode` is authoritative only when the shader family does not declare a fixed
+            // particle blend pass. Legacy particle .mat files often retain unrelated Standard
+            // properties (_Mode=0, One/Zero, ZWrite=1) that their shader never reads.
+            if (TryGetMaterialFloat(mat, "_Mode", out float mode))
+            {
+                int m = (int)mode;
+                if (m == 0) return 0;
+                if (m == 1 || m == 2 || m == 3) return 2;
+            }
 
             // Fall back to GPU blend factors when the shader name is uninformative
             // (Shader Graph / Particles/Standard Unlit — use SavedProperties when needed).
