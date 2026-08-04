@@ -1398,15 +1398,54 @@ function patchChildDurationSubEmitters(
         particle?: Particle;
         matrix: { elements?: number[] };
         __unityInstanceElapsed?: number;
+        __unityInstanceId?: number;
+        __unityLifetimeScale?: number;
       }>;
       setMatrixFromParticle?: (matrix: unknown, particle: Particle) => void;
       frameUpdate: (delta: number) => void;
+      update: (particle: Particle, delta: number) => void;
       reset: () => void;
       __unityChildDuration?: boolean;
     };
     const targetUuid = sub.subParticleSystem?.uuid;
     if (!targetUuid || !childDurationSubEmitterIds.has(targetUuid) || sub.__unityChildDuration) continue;
     const originalReset = sub.reset.bind(sub);
+    const originalUpdate = sub.update.bind(sub);
+    let nextInstanceId = 1;
+    sub.update = (particle: Particle, delta: number) => {
+      const beforeStates = sub.subEmissions?.length ?? 0;
+      originalUpdate(particle, delta);
+      const states = sub.subEmissions ?? [];
+      const target = sub.subParticleSystem?.system as (IParticleSystem & {
+        particleNum?: number;
+        particles?: Particle[];
+      }) | undefined;
+      // Unity Birth sub-emitters begin emitting on the same fixed step as the
+      // parent birth. Quarks queues the event for its next frameUpdate, which
+      // creates a one-frame deficit in every calibrated child instance.
+      for (let i = beforeStates; i < states.length; i++) {
+        const state = states[i];
+        if (state.__unityInstanceId == null) state.__unityInstanceId = nextInstanceId++;
+        if (state.__unityLifetimeScale == null) state.__unityLifetimeScale = particle.life;
+        if (!target) continue;
+        const before = target.particleNum ?? 0;
+        target.emit(delta, state as any, state.matrix as any);
+        state.__unityInstanceElapsed = Math.max(0, delta);
+        const after = target.particleNum ?? before;
+        if (target.particles) {
+          for (let particleIndex = before; particleIndex < after; particleIndex++) {
+            (target.particles[particleIndex] as Particle & { __unitySubEmitterInstanceId?: number })
+              .__unitySubEmitterInstanceId = state.__unityInstanceId;
+          }
+          if (inheritance?.lifetime) {
+            const scale = Math.max(0, state.__unityLifetimeScale ?? 1);
+            for (let particleIndex = before; particleIndex < after; particleIndex++) {
+              target.particles[particleIndex].life *= scale;
+            }
+          }
+        }
+      }
+    };
     sub.frameUpdate = (delta: number) => {
       const states = sub.subEmissions ?? [];
       const target = sub.subParticleSystem?.system as (IParticleSystem & {
@@ -1418,12 +1457,31 @@ function patchChildDurationSubEmitters(
         const state = states[i];
         const next = (state.__unityInstanceElapsed ?? 0) + Math.max(0, delta);
         if (duration > 0 && next + 1e-7 >= duration) {
+          // Unity's parent-event child instance is destroyed at its authored
+          // duration, including already-emitted child particles. Quarks only
+          // stops the emission state, so mark births with the instance id and
+          // remove the complete owned set at this boundary.
+          const instanceId = state.__unityInstanceId;
+          if (instanceId != null && target?.particles && typeof target.particleNum === 'number') {
+            let count = target.particleNum;
+            for (let particleIndex = count - 1; particleIndex >= 0; particleIndex--) {
+              const child = target.particles[particleIndex] as Particle & { __unitySubEmitterInstanceId?: number };
+              if (child.__unitySubEmitterInstanceId !== instanceId) continue;
+              const last = count - 1;
+              target.particles[particleIndex] = target.particles[last];
+              target.particles[last] = child;
+              count = last;
+            }
+            target.particleNum = count;
+          }
           states.splice(i, 1);
           continue;
         }
+        const parent = state.particle as UnitySemanticParticle | undefined;
+        if (state.__unityInstanceId == null) state.__unityInstanceId = nextInstanceId++;
+        if (state.__unityLifetimeScale == null && parent) state.__unityLifetimeScale = parent.life;
         state.__unityInstanceElapsed = next;
         if (!target) continue;
-        const parent = state.particle as UnitySemanticParticle | undefined;
         if (parent && parent.age < parent.life) {
           sub.setMatrixFromParticle?.(state.matrix, parent);
           if (inheritance?.size && state.matrix.elements) {
@@ -1448,21 +1506,36 @@ function patchChildDurationSubEmitters(
             child.color.copy(child.startColor);
           }
         }
-        if (inheritance?.lifetime && parent && target.particles) {
+        if (inheritance?.lifetime && target.particles) {
           const after = target.particleNum ?? before;
           // Unity's Inherit Lifetime scales the child module's authored lifetime by
           // the normalized lifetime of the owning parent at emission. Quarks exposes
           // the newly emitted range synchronously, so apply the same scale once at birth.
-          const lifetimeScale = Math.max(0, parent.life);
+          const lifetimeScale = Math.max(0, state.__unityLifetimeScale ?? 1);
           for (let particleIndex = before; particleIndex < after; particleIndex++) {
             const child = target.particles[particleIndex];
             child.life *= lifetimeScale;
           }
         }
+        if (target.particles) {
+          const after = target.particleNum ?? before;
+          for (let particleIndex = before; particleIndex < after; particleIndex++) {
+            (target.particles[particleIndex] as Particle & { __unitySubEmitterInstanceId?: number })
+              .__unitySubEmitterInstanceId = state.__unityInstanceId;
+          }
+        }
+      }
+      // A child-duration instance owns the entire child system. Once the last
+      // live parent-event state has expired, no child particle may leak into a
+      // later root frame (including particles that were born before ownership
+      // tagging was attached).
+      if (states.length === 0 && target?.particles && typeof target.particleNum === 'number') {
+        target.particleNum = 0;
       }
     };
     sub.reset = () => {
       originalReset();
+      nextInstanceId = 1;
     };
     sub.__unityChildDuration = true;
   }

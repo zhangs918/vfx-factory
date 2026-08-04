@@ -127,7 +127,7 @@ export interface VfxSemanticContract {
 }
 
 export interface ParticleStateSnapshot {
-  schema: 'web-particle-state@1';
+  schema: 'web-particle-state@2';
   effectId: string;
   seed: number;
   simulationTime: number;
@@ -797,10 +797,44 @@ export class QuarksEffectPlayer {
   private updateBatchesExactlyOnce(dt: number, emitterDeltas = new Map<object, number>()) {
     const systems = [...this.batchRenderer.systemToBatchIndex.keys()] as unknown as Array<{
       update: (delta: number) => void;
+      particleNum?: number;
+      particles?: Array<{ age?: number; life?: number; previous?: unknown[] }>;
     }>;
-    for (const system of systems) system.update(emitterDeltas.get(system) ?? dt);
+    for (const system of systems) {
+      system.update(emitterDeltas.get(system) ?? dt);
+      // Quarks normally removes particles through `particle.died`, but Unity's
+      // global-clock adapter can leave an age of (life - floating point epsilon)
+      // at an exact capture boundary.  Unity has already culled that particle;
+      // keeping it makes the state oracle and the rendered frame diverge.  Apply
+      // the same boundary once, after all authored behaviours and sub-emitter
+      // events have run. Trail particles are intentionally left to Quarks so
+      // their recorded history can drain naturally.
+      this.cullUnityExpiredParticles(system);
+    }
     for (const batch of this.batchRenderer.batches) batch.update();
     updateCfxrCustomAttributes(this.batchRenderer);
+  }
+
+  private cullUnityExpiredParticles(system: {
+    particleNum?: number;
+    particles?: Array<{ age?: number; life?: number; previous?: unknown[] }>;
+  }) {
+    if (!system.particles || typeof system.particleNum !== 'number') return;
+    // Keep this below the snapshot quantization (1e-6). A wider tolerance can
+    // incorrectly remove a particle that Unity still reports on the boundary.
+    const epsilon = 1e-9;
+    let count = system.particleNum;
+    for (let i = count - 1; i >= 0; i--) {
+      const particle = system.particles[i];
+      if (particle?.previous && particle.previous.length > 0) continue;
+      if (!Number.isFinite(particle?.age) || !Number.isFinite(particle?.life)) continue;
+      if ((particle.age as number) + epsilon < (particle.life as number)) continue;
+      const last: number = count - 1;
+      system.particles[i] = system.particles[last];
+      system.particles[last] = particle;
+      count = last;
+      system.particleNum = count;
+    }
   }
 
   get semanticContract() {
@@ -866,7 +900,7 @@ export class QuarksEffectPlayer {
     });
     emitters.sort((a, b) => a.id.localeCompare(b.id));
     return {
-      schema: 'web-particle-state@1',
+      schema: 'web-particle-state@2',
       effectId: this.contract.effectId,
       seed: this.contract.seed,
       simulationTime: Math.round(this.effectElapsed * 1e6) / 1e6,

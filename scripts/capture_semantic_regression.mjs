@@ -22,6 +22,7 @@ const requested = process.argv.find((a) => a.startsWith('--effect='))?.slice('--
 const captureAll = process.argv.includes('--all');
 const candidateManifest = process.argv.includes('--candidate');
 const updateBaselines = process.argv.includes('--update');
+const allowStaleBaseline = process.argv.includes('--allow-stale-baseline');
 const layers = ['raw', 'tonemap', 'final'];
 
 function sha256(file) {
@@ -92,15 +93,30 @@ function compareOrUpdateBaseline(effectId, layer, time, capture) {
     fs.mkdirSync(dir, { recursive: true });
     fs.copyFileSync(capture.image, image);
     fs.copyFileSync(capture.stateFile, state);
-    return { status: 'updated', imageEqual: true, stateEqual: true };
+    return { status: 'updated', imageEqual: true, stateEqual: true, comparable: true };
   }
   if (!fs.existsSync(image) || !fs.existsSync(state)) {
-    return { status: 'missing', imageEqual: false, stateEqual: false };
+    return { status: 'missing', imageEqual: false, stateEqual: false, comparable: false };
+  }
+  let baselineState;
+  try { baselineState = JSON.parse(fs.readFileSync(state, 'utf8')); }
+  catch { return { status: 'invalid-state', imageEqual: false, stateEqual: false, comparable: false }; }
+  const currentState = capture.state;
+  if (baselineState.schema !== currentState.schema) {
+    return {
+      status: 'stale-schema',
+      baselineSchema: baselineState.schema,
+      currentSchema: currentState.schema,
+      imageEqual: false,
+      stateEqual: false,
+      comparable: false,
+    };
   }
   return {
     status: 'compared',
     imageEqual: sha256(image) === capture.hash,
     stateEqual: fs.readFileSync(state, 'utf8') === fs.readFileSync(capture.stateFile, 'utf8'),
+    comparable: true,
   };
 }
 
@@ -122,6 +138,8 @@ async function main() {
     baselineMode: updateBaselines ? 'update' : 'compare',
     effects: [],
     deterministic: true,
+    unityCountsMatch: true,
+    baselineComparable: true,
     baselinesMatch: true,
   };
 
@@ -155,6 +173,7 @@ async function main() {
             baseline,
           });
           if (!stateEqual || !imageEqual) report.deterministic = false;
+          if (!baseline.comparable) report.baselineComparable = false;
           if (!baseline.imageEqual || !baseline.stateEqual) report.baselinesMatch = false;
         }
       }
@@ -191,6 +210,11 @@ async function main() {
         captures,
         unityComparison,
       });
+      if (unityComparison && unityComparison !== 'not-applicable' && Array.isArray(unityComparison)) {
+        for (const frame of unityComparison) {
+          if (frame.emitters.some((emitter) => emitter.delta !== 0)) report.unityCountsMatch = false;
+        }
+      }
     }
   } finally {
     await browser.close();
@@ -199,7 +223,10 @@ async function main() {
 
   fs.writeFileSync(path.join(outRoot, 'report.json'), JSON.stringify(report, null, 2));
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
-  if (!report.deterministic || !report.baselinesMatch) process.exitCode = 1;
+  const baselineFailure = !report.baselineComparable
+    ? !allowStaleBaseline
+    : !report.baselinesMatch;
+  if (!report.deterministic || !report.unityCountsMatch || baselineFailure) process.exitCode = 1;
 }
 
 main().catch((error) => {
