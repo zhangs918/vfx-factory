@@ -31,7 +31,12 @@ def main() -> int:
     dest.mkdir(parents=True, exist_ok=True)
     for f in SRC.iterdir():
         if f.is_file():
-            shutil.copy2(f, dest / f.name)
+            target = dest / f.name
+            # Do not preserve an older timestamp from the disposable project's seeded
+            # Library. Unity's incremental compiler keys script imports by timestamp;
+            # preserving it can silently run yesterday's exporter assembly.
+            shutil.copyfile(f, target)
+            target.touch()
             print("copied", f.name)
 
     print(f"\nOK → {dest}")

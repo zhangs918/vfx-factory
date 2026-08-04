@@ -188,7 +188,8 @@ namespace BabylonQuarks.UnityExporter
             ShaderGraphInfo materialGraph = ShaderGraphAnalyzer.Analyze(mat != null ? mat.shader : null);
             bool alphaClip = materialGraph != null
                 ? materialGraph.AlphaClipEnabled
-                : TryGetMaterialFloat(mat, "_AlphaClip", out float clipVal) && clipVal > 0.5f;
+                : (TryGetMaterialFloat(mat, "_AlphaClip", out float clipVal) && clipVal > 0.5f)
+                    || ReadUnityInt(mat, "_Mode", -1) == 1;
             float alphaCutoff = 0f;
             if (!hasDissolveMap)
             {
@@ -204,11 +205,11 @@ namespace BabylonQuarks.UnityExporter
                 .Set("type", "QuarksMaterial")
                 .Set("name", mat != null ? mat.name : "material")
                 .Set("shader", mat != null && mat.shader != null ? mat.shader.name : "")
-                .Set("transparent", true)
+                .Set("transparent", LastBlendMode != 0)
                 .Set("alphaMode", LastBlendMode)
                 .Set("blending", LastBlendMode)
                 .Set("depthTest", true)
-                .Set("depthWrite", false)
+                .Set("depthWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
                 .Set("alphaTest", alphaClip && !hasDissolveMap ? Mathf.Max(0.001f, alphaCutoff) : 0)
                 .Set("alphaClip", alphaClip);
             if (textureUuid != null)
@@ -244,8 +245,28 @@ namespace BabylonQuarks.UnityExporter
                     .Set("semanticOmission", "missing-sprite-texture@1");
                 semanticProgram.Set("lowering", "unsupported-sprite-no-texture@1");
             }
+            // Preserve the actual Unity material state alongside the shader-family identity.
+            // Runtime lowering must not infer blend/depth semantics from a shader name alone.
+            var programProfile = semanticProgram.Get("profile") as JObject;
+            int explicitUnityMode = ReadUnityInt(mat, "_Mode", -1);
+            string materialBlend = explicitUnityMode == 0 ? "opaque"
+                : explicitUnityMode == 1 ? "alpha-test"
+                : LastBlendMode == 1 ? "additive" : LastBlendMode == 4 ? "multiply" : "alpha";
+            programProfile?.Set("shaderFamily", mat.shader != null ? mat.shader.name : "")
+                .Set("blendMode", materialBlend)
+                .Set("unityMode", ReadUnityInt(mat, "_Mode", -1))
+                .Set("srcBlend", ReadUnityInt(mat, "_SrcBlend", -1))
+                .Set("dstBlend", ReadUnityInt(mat, "_DstBlend", -1))
+                .Set("zWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
+                .Set("cutoff", ReadUnityFloat(mat, "_Cutoff", 0f));
+            semanticProgram.Set("shaderFamily", mat.shader != null ? mat.shader.name : "")
+                .Set("blendMode", materialBlend)
+                .Set("unityMode", ReadUnityInt(mat, "_Mode", -1))
+                .Set("srcBlend", ReadUnityInt(mat, "_SrcBlend", -1))
+                .Set("dstBlend", ReadUnityInt(mat, "_DstBlend", -1))
+                .Set("zWrite", ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0))
+                .Set("cutoff", ReadUnityFloat(mat, "_Cutoff", 0f));
             m.Set("vfxProgram", semanticProgram);
-
             Materials.Add(m);
             return uuid;
         }
@@ -710,7 +731,10 @@ namespace BabylonQuarks.UnityExporter
                     .Set("vertexColorSpace", materialGuid == "c1b09b1ca8ba05d4682ccf6db6b1102d"
                         ? "raw-linear-attribute" : "project-authored")
                     .Set("requiresOracle", true));
-            string blendProgram = legacyPremultiply ? "premultiplied-alpha"
+            int unityMode = ReadUnityInt(mat, "_Mode", -1);
+            string blendProgram = unityMode == 0 ? "opaque"
+                : unityMode == 1 ? "alpha-test"
+                : legacyPremultiply ? "premultiplied-alpha"
                 : LastBlendMode == 1 ? "additive" : LastBlendMode == 4 ? "multiply" : "alpha";
             operations.Add(new JObject().Set("op", "blend")
                 .Set("mode", blendProgram));
@@ -1880,6 +1904,15 @@ namespace BabylonQuarks.UnityExporter
         {
             // quarks/Babylon blend ints: 1 = additive, 2 = alpha blend, 3 = subtract, 4 = multiply.
             if (mat == null) return 2;
+            // Standard/particle materials serialize their effective mode and GPU factors.
+            // Those values are more authoritative than a family-name heuristic.
+            if (TryGetMaterialFloat(mat, "_Mode", out float mode))
+            {
+                int m = (int)mode;
+                if (m == 0) return 0; // opaque
+                if (m == 1) return 2; // alpha-test/cutout (explicit mode is carried in IR)
+                if (m == 2 || m == 3) return 2; // fade/transparent
+            }
             string sn = mat.shader != null ? mat.shader.name.ToLowerInvariant() : "";
 
             // Name checks — order matters: "Alpha Blended Premultiply" contains "multiply"
@@ -1900,6 +1933,21 @@ namespace BabylonQuarks.UnityExporter
                 if (src == 2) return 4; // Src = DstColor → multiply/modulate
             }
             return 2;
+        }
+
+        private static int ReadUnityInt(Material mat, string property, int fallback)
+        {
+            return TryGetMaterialFloat(mat, property, out float value) ? (int)value : fallback;
+        }
+
+        private static float ReadUnityFloat(Material mat, string property, float fallback)
+        {
+            return TryGetMaterialFloat(mat, property, out float value) ? value : fallback;
+        }
+
+        private static bool ReadUnityBool(Material mat, string property, bool fallback)
+        {
+            return TryGetMaterialFloat(mat, property, out float value) ? value > 0.5f : fallback;
         }
     }
 }

@@ -18,6 +18,7 @@ import {
   GLSL3,
   InstancedBufferAttribute,
   MeshBasicMaterial,
+  NoBlending,
   NoColorSpace,
   NormalBlending,
   CustomBlending,
@@ -70,6 +71,13 @@ import {
 /** Serialized on each Quarks material (exporter / inject script). */
 export interface CfxrMaterialProps {
   shader?: string;
+  shaderFamily?: string;
+  unityMode?: number;
+  srcBlend?: number;
+  dstBlend?: number;
+  zWrite?: boolean;
+  cutoff?: number;
+  blendMode?: 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
   lightingModel?: 'unity-urp-lit-reference@1';
   ambientSky?: [number, number, number];
   ambientEquator?: [number, number, number];
@@ -197,6 +205,10 @@ export interface CfxrMaterialProps {
 
 /** Runtime profile attached to materials before batching. */
 export interface CfxrRuntimeProfile {
+  shaderFamily?: string;
+  blendMode: 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
+  depthWrite: boolean;
+  cutoff: number;
   lightingModel?: 'unity-urp-lit-reference@1';
   ambientSky: [number, number, number];
   ambientEquator: [number, number, number];
@@ -313,6 +325,14 @@ function propsToProfile(props: CfxrMaterialProps): CfxrRuntimeProfile {
   const invertDissolve =
     props.invertDissolve !== undefined ? !!props.invertDissolve : dissolve;
   return {
+    shaderFamily: props.shaderFamily,
+    blendMode: props.blendMode
+      ?? (props.unityMode === 0 ? 'opaque'
+        : props.unityMode === 1 ? 'alpha-test'
+        : props.legacyPremultiply ? 'premultiplied-alpha'
+        : props.additive ? 'additive' : 'alpha'),
+    depthWrite: props.zWrite ?? (props.unityMode === 0),
+    cutoff: props.cutoff ?? 0,
     lightingModel: props.lightingModel,
     ambientSky: props.ambientSky ?? [1, 1, 1],
     ambientEquator: props.ambientEquator ?? [1, 1, 1],
@@ -430,7 +450,9 @@ function propsToProfile(props: CfxrMaterialProps): CfxrRuntimeProfile {
 }
 
 function semanticBlending(profile: CfxrRuntimeProfile) {
-  return profile.additive ? AdditiveBlending : NormalBlending;
+  if (profile.blendMode === 'opaque' || profile.blendMode === 'alpha-test') return NoBlending;
+  if (profile.blendMode === 'additive' || profile.additive) return AdditiveBlending;
+  return NormalBlending;
 }
 
 function applySemanticBlendState(mat: Material, profile: CfxrRuntimeProfile) {
@@ -466,8 +488,11 @@ function applySemanticBlendState(mat: Material, profile: CfxrRuntimeProfile) {
     mat.premultipliedAlpha = false;
   } else {
     mat.blending = semanticBlending(profile);
-    mat.premultipliedAlpha = false;
+    mat.premultipliedAlpha = profile.blendMode === 'premultiplied-alpha';
   }
+  mat.depthWrite = profile.depthWrite;
+  mat.transparent = profile.blendMode !== 'opaque' && profile.blendMode !== 'alpha-test';
+  mat.alphaTest = profile.blendMode === 'alpha-test' ? Math.max(0.001, profile.cutoff) : 0;
 }
 
 function dissolveFileName(name: string) {
@@ -2356,22 +2381,40 @@ export function setCfxrPropsFromJson(json: any) {
         // patchCfxrBeforeBatch() replaces the correctly parsed material state with
         // NormalBlending, turning black additive texels into opaque rectangles.
         switch (program.blend) {
+          case 'opaque':
+            resolved.blendMode = 'opaque';
+            resolved.additive = false;
+            resolved.legacyMultiplyColored = false;
+            resolved.legacyPremultiply = false;
+            resolved.zWrite = true;
+            break;
+          case 'alpha-test':
+            resolved.blendMode = 'alpha-test';
+            resolved.additive = false;
+            resolved.legacyMultiplyColored = false;
+            resolved.legacyPremultiply = false;
+            resolved.zWrite = resolved.zWrite ?? true;
+            break;
           case 'additive':
+            resolved.blendMode = 'additive';
             resolved.additive = true;
             resolved.legacyMultiplyColored = false;
             resolved.legacyPremultiply = false;
             break;
           case 'alpha':
+            resolved.blendMode = 'alpha';
             resolved.additive = false;
             resolved.legacyMultiplyColored = false;
             resolved.legacyPremultiply = false;
             break;
           case 'multiply':
+            resolved.blendMode = 'multiply';
             resolved.additive = false;
             resolved.legacyMultiplyColored = true;
             resolved.legacyPremultiply = false;
             break;
           case 'premultiplied-alpha':
+            resolved.blendMode = 'premultiplied-alpha';
             resolved.additive = false;
             resolved.legacyMultiplyColored = false;
             resolved.legacyPremultiply = true;
@@ -2963,12 +3006,12 @@ function injectCfxrShader(
   mat.uniforms.tileCounts = { value: new Vector2(...profile.tileCounts) };
 
   applySemanticBlendState(mat, profile);
-  mat.transparent = true;
-  mat.depthWrite = false;
+  mat.transparent = profile.blendMode !== 'opaque' && profile.blendMode !== 'alpha-test';
+  mat.depthWrite = profile.depthWrite;
   mat.toneMapped = false;
   mat.side = profile.doubleSided ? DoubleSide : FrontSide;
   // Batch copies MeshBasicMaterial.alphaTest → USE_ALPHATEST; our fragment has no alphatest chunk.
-  mat.alphaTest = 0;
+  mat.alphaTest = profile.blendMode === 'alpha-test' ? Math.max(0.001, profile.cutoff) : 0;
   delete defines.USE_ALPHATEST;
 
   if (profile.unityCenteredStretch) {

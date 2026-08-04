@@ -205,6 +205,16 @@ UNITY_BURST_DISABLE_COMPILATION=1 "$UNITY_BIN" \
   --burst-disable-compilation \
   -batchmode -quit \
   -projectPath "$UNITY_PROJECT" \
+  -logFile "$UNITY_PROJECT/Logs/batch-compile-quarks.log"
+
+# Unity can finish an AssetDatabase refresh after the first batch process has
+# already resolved -executeMethod.  A dedicated compile/import pass prevents
+# silently invoking the previous exporter assembly (the most dangerous kind of
+# export failure because it still produces valid-looking JSON).
+UNITY_BURST_DISABLE_COMPILATION=1 "$UNITY_BIN" \
+  --burst-disable-compilation \
+  -batchmode -quit \
+  -projectPath "$UNITY_PROJECT" \
   -executeMethod "$METHOD" \
   -logFile "$LOG"
 
