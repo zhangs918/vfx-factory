@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VFX Factory — Quarks / WebGL</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="c"></canvas>
+      <aside id="hud">
+        <div class="brand">VFX Factory</div>
+        <p class="hint">WebGL · three.quarks · Unity 导出</p>
+        <label>
+          Effect
+          <select id="effectSelect"></select>
+        </label>
+        <div class="btn-row">
+          <button id="playBtn" type="button">Play</button>
+          <button id="pauseBtn" type="button" aria-pressed="false">Pause</button>
+          <button id="resetCameraBtn" type="button">Reset View</button>
+        </div>
+        <p class="tip">Space 播放 · P 暂停 · R 重置视角</p>
+        <div id="status">Booting WebGL…</div>
+        <pre id="exportHint" class="tip" style="white-space: pre-wrap; font-size: 11px; line-height: 1.45"></pre>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

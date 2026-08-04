@@ -1,0 +1,51 @@
+{
+  "name": "vfx_factory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "quarks": "vite --open /",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "setup:quarks-exporter": "python3 scripts/setup_quarks_exporter.py",
+    "inject:cfxr": "node scripts/inject_cfxr_materials.mjs",
+    "compare:cfxr": "node scripts/compare_cfxr_fidelity.mjs",
+    "regression:semantic": "node scripts/capture_semantic_regression.mjs",
+    "regression:semantic:update": "node scripts/capture_semantic_regression.mjs --update",
+    "regression:unity": "bash scripts/capture_unity_regression.sh",
+    "regression:oracle": "node scripts/compare_live_to_oracle.mjs",
+    "regression:oracle:impact": "node scripts/compare_live_to_oracle.mjs --effect=impact",
+    "validate:live-ir": "node scripts/validate_live_ir.mjs",
+    "validate:candidate-ir": "node scripts/validate_candidate_ir.mjs",
+    "smoke:candidate-runtime": "node scripts/smoke_candidate_runtime.mjs",
+    "regression:candidate-oracles": "node scripts/regress_candidate_oracles.mjs",
+    "promote:live-ir": "node scripts/promote_live_ir.mjs",
+    "qualify:live-ir": "node scripts/qualify_live_ir.mjs",
+    "export:quarks": "bash scripts/batch_export_quarks.sh",
+    "export:quarks:all-assets": "bash scripts/batch_export_quarks.sh all-assets",
+    "export:quarks:slash": "bash scripts/batch_export_quarks.sh slash",
+    "export:quarks:impact-live": "bash scripts/batch_export_quarks.sh impact-live",
+    "export:quarks:multiple-impact-live": "bash scripts/batch_export_quarks.sh multiple-impact-live",
+    "export:quarks:multiple-slashes-live": "bash scripts/batch_export_quarks.sh multiple-slashes-live",
+    "export:quarks:slash-fire-live": "bash scripts/batch_export_quarks.sh slash-fire-live",
+    "export:quarks:slash-water-live": "bash scripts/batch_export_quarks.sh slash-water-live",
+    "export:quarks:projectile-fire-live": "bash scripts/batch_export_quarks.sh projectile-fire-live",
+    "export:quarks:projectile-earth-live": "bash scripts/batch_export_quarks.sh projectile-earth-live",
+    "export:quarks:cfxr": "bash scripts/batch_export_quarks.sh cfxr",
+    "export:baked:impact": "bash scripts/export_baked_impact.sh",
+    "export:baked:multiple-impact": "bash scripts/export_baked_impact.sh multiple-impact",
+    "export:semantic-fixture": "bash scripts/export_semantic_fixture.sh"
+  },
+  "dependencies": {
+    "three": "^0.185.1",
+    "three.quarks": "^0.17.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.0",
+    "playwright": "^1.62.1",
+    "sharp": "^0.35.3",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.0"
+  }
+}

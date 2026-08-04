@@ -1,0 +1,38 @@
+# Node / Vite
+node_modules/
+dist/
+.DS_Store
+*.local
+.vite/
+
+# Local captures and generated comparison artifacts
+tmp-*.png
+tmp-cfxr-compare/
+tmp-semantic-regression/
+tmp-oracle-comparison/
+
+# Unity batch workspace and imported/downloaded third-party packages
+.unity-batch/
+downloads/
+unity-ref/Library/
+unity-ref/Temp/
+unity-ref/Logs/
+unity-ref/UserSettings/
+unity-ref/obj/
+unity-ref/build.log
+
+# Unity Asset Store content is intentionally not redistributed. The project
+# skeleton (Packages + ProjectSettings) and exporter source under tools/ remain.
+unity-ref/Assets/
+
+# Generated Web VFX payloads can be several GB and may contain derivatives of
+# licensed source assets. Regenerate them locally with the export scripts.
+public/assets/quarks/
+public/unity-ref
+
+# Image/state oracles are regenerated locally and may derive from licensed VFX.
+tests/vfx-regression/baselines/
+
+# Runtime logs / crash dumps
+*.log
+*.crash
