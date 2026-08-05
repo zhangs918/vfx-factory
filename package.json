@@ -30,6 +30,7 @@
     "compile:runtime-v2": "tsx scripts/compile_runtime_v2.ts",
     "compile:runtime-v2:batch": "node scripts/compile_runtime_v2_batch.mjs",
     "regression:runtime-v2": "node scripts/regress_runtime_v2_artifacts.mjs",
+    "check:player-bundle": "node scripts/check_player_bundle.mjs",
     "regression:candidate-oracles": "node scripts/regress_candidate_oracles.mjs",
     "promote:live-ir": "node scripts/promote_live_ir.mjs",
     "qualify:live-ir": "node scripts/qualify_live_ir.mjs",

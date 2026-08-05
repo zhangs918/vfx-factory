@@ -7,7 +7,7 @@
       "id": "impact",
       "label": "Slash · Impact",
       "source": "Impact.json",
-      "artifact": "impact.runtime.json",
+      "artifact": "impact/config.json",
       "status": "compiled",
       "diagnostics": []
     },

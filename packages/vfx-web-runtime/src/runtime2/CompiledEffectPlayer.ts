@@ -35,6 +35,40 @@ export class CompiledEffectPlayer<TContext = unknown> {
     await this.load(await response.json());
   }
 
+  /** Load a split offline bundle: config JSON references shader and geometry files. */
+  async loadBundle(url: string, fetcher: typeof fetch = fetch): Promise<void> {
+    const response = await fetcher(url);
+    if (!response.ok) throw new Error(`Failed to load compiled bundle (${response.status} ${response.statusText}).`);
+    const artifact = await response.json() as WebVfxRuntimeV2;
+    const base = url.slice(0, url.lastIndexOf('/') + 1);
+    const transportContext = this.context as any;
+    if (transportContext && typeof transportContext === 'object' && 'resourceBaseUrl' in transportContext) {
+      transportContext.resourceBaseUrl = base.replace(/\/$/, '');
+    }
+    const resolve = (uri: string) => new URL(uri, new URL(base, window.location.href)).toString();
+    const bundle = (artifact.metadata as any)?.bundle as { shaders?: Record<string, { vertex: string; fragment: string }> } | undefined;
+    if (bundle?.shaders) {
+      await Promise.all(artifact.materials.map(async (material) => {
+        const files = bundle.shaders?.[material.id];
+        if (!files) return;
+        const [vertex, fragment] = await Promise.all([
+          fetcher(resolve(files.vertex)).then((r) => r.text()),
+          fetcher(resolve(files.fragment)).then((r) => r.text()),
+        ]);
+        material.vertexShader = vertex;
+        material.fragmentShader = fragment;
+      }));
+    }
+    await Promise.all(artifact.resources.map(async (resource) => {
+      const externalUri = (resource.metadata as any)?.externalUri;
+      if (!externalUri) return;
+      const external = await fetcher(resolve(externalUri));
+      if (!external.ok) throw new Error(`Failed to load runtime resource '${externalUri}'.`);
+      resource.metadata = await external.json();
+    }));
+    await this.load(artifact);
+  }
+
   update(dt: number): void {
     if (this.state !== 'playing' || !this.handle) return;
     this.handle.update(Math.max(0, dt));

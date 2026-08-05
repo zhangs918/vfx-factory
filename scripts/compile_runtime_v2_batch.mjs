@@ -13,9 +13,9 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 await mkdir(outputDir, { recursive: true });
 
 function safeName(id) { return String(id).replace(/[^a-zA-Z0-9._-]+/g, '_'); }
-function runCompiler(source, target) {
+function runCompiler(source, target, split = false) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, ['--import', 'tsx', 'scripts/compile_runtime_v2.ts', source, target], {
+    const child = spawn(process.execPath, ['--import', 'tsx', 'scripts/compile_runtime_v2.ts', source, target, ...(split ? ['--split'] : [])], {
       cwd: root,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
@@ -29,9 +29,9 @@ function runCompiler(source, target) {
 const effects = [];
 for (const entry of manifest.effects ?? []) {
   const source = path.resolve(root, 'public/assets/quarks', entry.file);
-  const file = `${safeName(entry.id)}.runtime.json`;
+  const file = `${safeName(entry.id)}/config.json`;
   const target = path.join(outputDir, file);
-  const result = await runCompiler(source, target);
+  const result = await runCompiler(source, target, true);
   const ok = result.code === 0;
   effects.push({
     id: entry.id,
