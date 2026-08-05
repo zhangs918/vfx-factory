@@ -6,7 +6,7 @@ import {
   type Scene,
   type Camera,
 } from 'three';
-import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
+import { BatchedRenderer, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
 import { Vector3 as QuarksVector3 } from 'quarks.core';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
@@ -19,15 +19,12 @@ import {
   extractStartDelays,
   setDissolveCurvesFromJson,
   setCfxrPropsFromJson,
-  patchCfxrBeforeBatch,
-  patchCfxrAfterBatch,
   createStartDelayGate,
   armStartDelays,
   tickStartDelays,
   setCfxrEffectTime,
   type StartDelayGate,
 } from './cfxrQuarksFidelity';
-import { normalizeUnityQuarksJson } from './quarks-lowering';
 import { CfxrEffectLight } from './effect-light';
 import { SceneColorCapture } from './scene-color';
 import {
@@ -40,6 +37,7 @@ import {
 } from './player-controls';
 import { snapshotParticleState, type ParticleStateSnapshot } from './particle-snapshot';
 import { updateBatchesExactlyOnce } from './batch-stepper';
+import { loadQuarksObject } from './quarks-loader';
 
 registerUnityEmitterShapes();
 
@@ -50,17 +48,6 @@ export interface PhysicsResolver {
 export interface QuarksEffectPlayerOptions {
   /** Host-owned physics adapter. Omit when the artifact does not require scene queries. */
   physicsResolver?: PhysicsResolver;
-}
-
-export interface QuarksManifestEntry {
-  id: string;
-  label: string;
-  file: string;
-  note?: string;
-}
-
-export interface QuarksManifest {
-  effects: QuarksManifestEntry[];
 }
 
 export type VfxArtifactSource = string | URL | Record<string, unknown>;
@@ -181,21 +168,7 @@ export class QuarksEffectPlayer {
       });
     } else if (this.hasEffectLight) this.effectLight.configure(raw.cfxrEffect);
     else this.effectLight.stop();
-    const json = normalizeUnityQuarksJson(raw);
-    const loader = new QuarksLoader();
-    const obj = await new Promise<Object3D>((resolve, reject) => {
-      try {
-        this.withSeededRandom(() => loader.parse(json, (ready) => resolve(ready)));
-      } catch (e) {
-        reject(e);
-      }
-    });
-
-    this.withSeededRandom(() => {
-      patchCfxrBeforeBatch(obj);
-      QuarksUtil.addToBatchRenderer(obj, this.batchRenderer);
-    });
-    await patchCfxrAfterBatch(this.batchRenderer);
+    const obj = await loadQuarksObject(raw, this.batchRenderer, this.withSeededRandom.bind(this));
 
     this.root.add(obj);
     this.effectRoot = obj;
@@ -370,10 +343,4 @@ export class QuarksEffectPlayer {
     this.root.remove(this.batchRenderer);
     this.state = 'disposed';
   }
-}
-
-export async function loadQuarksManifest(candidate = false): Promise<QuarksManifest> {
-  const res = await fetch(`/assets/quarks/${candidate ? 'manifest.candidates.json' : 'manifest.json'}`);
-  if (!res.ok) return { effects: [] };
-  return res.json();
 }
