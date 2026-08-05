@@ -13,6 +13,7 @@ export class CompiledEffectPlayer<TContext = unknown> {
 
   get playbackState(): CompiledPlayerState { return this.state; }
   get currentArtifact(): WebVfxRuntimeV2 | null { return this.artifact; }
+  get root() { return this.handle?.root ?? null; }
 
   async load(artifact: unknown): Promise<void> {
     if (this.state === 'disposed') throw new Error('Cannot load after dispose().');

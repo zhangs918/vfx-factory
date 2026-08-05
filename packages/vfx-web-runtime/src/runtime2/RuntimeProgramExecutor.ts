@@ -51,10 +51,10 @@ export function updateRuntimeSystem(state: RuntimeParticleSystemState, programs:
   const previous = state.elapsed;
   state.elapsed += step;
   for (const burst of state.system.emission.bursts ?? []) {
-    if (burst.time > previous && burst.time <= state.elapsed) {
+    if ((burst.time > previous || (previous === 0 && burst.time === 0)) && burst.time <= state.elapsed) {
       const count = Math.min(state.system.capacity, Math.max(0, Math.floor(burst.count)));
       for (let i = 0; i < count && state.particles.length < state.system.capacity; i++) {
-        state.particles.push({ age: 0, life: Math.max(1e-4, state.system.duration), position: [0, 0, 0], velocity: [0, 0, 0], size: [1, 1, 1], color: [1, 1, 1, 1], frame: 0, alive: true });
+        state.particles.push({ age: 0, life: Math.max(1e-4, state.system.particleLife), position: [0, 0, 0], velocity: [0, 0, 0], size: [1, 1, 1], color: [1, 1, 1, 1], frame: 0, alive: true });
       }
     }
   }

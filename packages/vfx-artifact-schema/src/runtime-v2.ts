@@ -44,6 +44,7 @@ export interface RuntimeSystem {
   geometry?: string;
   capacity: number;
   duration: number;
+  particleLife: number;
   looping: boolean;
   startDelay: number;
   emission: RuntimeEmission;

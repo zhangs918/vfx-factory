@@ -108,16 +108,17 @@ const COVERAGE_TINT_VERTEX = `
 attribute vec3 position;
 attribute vec2 uv;
 attribute vec4 color;
+attribute vec3 instancePosition;
+attribute vec3 instanceSize;
+attribute vec4 instanceColor;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
-uniform vec3 uParticlePosition;
-uniform float uParticleSize;
 varying vec2 vUv;
 varying vec4 vColor;
 void main() {
   vUv = uv;
-  vColor = color;
-  vec3 p = position * uParticleSize + uParticlePosition;
+  vColor = color * instanceColor;
+  vec3 p = position * instanceSize + instancePosition;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 }`;
 
@@ -238,6 +239,7 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       material: String(ps.material),
       capacity: Math.max(1, Number(ps.maxParticles ?? 256)),
       duration: Math.max(0, Number(ps.duration ?? 0)),
+      particleLife: Math.max(0.0001, numberValue(ps.startLife, Number(ps.duration ?? 1))),
       looping: !!ps.looping,
       startDelay,
       emission: {
