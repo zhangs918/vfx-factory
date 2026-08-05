@@ -24,6 +24,7 @@
     "validate:material-ir": "node scripts/validate_material_ir.mjs",
     "smoke:candidate-runtime": "node scripts/smoke_candidate_runtime.mjs",
     "validate:loop": "node scripts/auto_validate_loop.mjs",
+    "compile:source-check": "node scripts/compile_source_check.mjs",
     "regression:candidate-oracles": "node scripts/regress_candidate_oracles.mjs",
     "promote:live-ir": "node scripts/promote_live_ir.mjs",
     "qualify:live-ir": "node scripts/qualify_live_ir.mjs",
