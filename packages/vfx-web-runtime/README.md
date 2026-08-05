@@ -8,3 +8,6 @@ the facade from `src/index.ts`; it must not depend on the runtime's internal
 modules. Host applications provide optional physics through
 `QuarksEffectPlayerOptions` rather than changing a global resolver at import
 time.
+
+The runtime's semantic adapter registry is packaged under `src/semantic-adapters.ts`;
+consumers do not need the Preview App's `config/` directory.

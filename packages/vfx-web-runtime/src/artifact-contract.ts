@@ -1,4 +1,4 @@
-import adapterRegistry from '../../../config/semantic-adapters.json';
+import adapterRegistry from './semantic-adapters';
 import { assertVfxArtifact } from '@vfx-factory/artifact-schema';
 
 export interface VfxSemanticContract {
