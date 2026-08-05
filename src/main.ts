@@ -351,7 +351,7 @@ async function main() {
           if (!artifactUrl) throw new Error('runtime=v2-artifact requires ?artifact=/path/runtime.json.');
           const artifactResponse = await fetch(artifactUrl);
           if (!artifactResponse.ok) throw new Error(`Failed to load compiled artifact (${artifactResponse.status}).`);
-          await compiledPlayer?.load(await artifactResponse.json());
+          await compiledPlayer?.loadBundle(artifactUrl);
         } else if (runtimeV2Mode) {
           const response = await fetch(url);
           if (!response.ok) throw new Error(`Failed to load source (${response.status}).`);
