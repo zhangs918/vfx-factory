@@ -104,6 +104,38 @@ export interface SourceCompileResult {
 const numberValue = (value: any, fallback = 0) =>
   typeof value === 'number' ? value : Number(value?.value ?? fallback);
 
+const COVERAGE_TINT_VERTEX = `
+attribute vec3 position;
+attribute vec2 uv;
+attribute vec4 color;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform vec3 uParticlePosition;
+uniform float uParticleSize;
+varying vec2 vUv;
+varying vec4 vColor;
+void main() {
+  vUv = uv;
+  vColor = color;
+  vec3 p = position * uParticleSize + uParticlePosition;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+}`;
+
+const COVERAGE_TINT_FRAGMENT = `
+precision highp float;
+uniform sampler2D uMainMap;
+uniform vec4 uTint;
+varying vec2 vUv;
+varying vec4 vColor;
+void main() {
+  vec4 texel = texture2D(uMainMap, vUv);
+  float coverage = texel.r;
+  vec3 rgb = uTint.rgb * vColor.rgb;
+  float alpha = coverage * uTint.a * vColor.a;
+  if (alpha <= 0.001) discard;
+  gl_FragColor = vec4(rgb, alpha);
+}`;
+
 function walkNodes(node: any, visit: (node: any) => void): void {
   if (!node || typeof node !== 'object') return;
   visit(node);
@@ -142,11 +174,20 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       diagnostics.push({ severity: 'error', code: 'MATERIAL_LOWERING_UNSUPPORTED', path: `$.materials.${material.uuid}.vfxProgram.lowering`, message: `Unsupported material lowering '${program.lowering}'.` });
       continue;
     }
+    const supportedOperations = new Set([
+      'sample-main', 'coverage', 'vertex-color', 'tint', 'dissolve',
+      'soft-particle-depth', 'dynamic-alpha-clip', 'hdr-multiply', 'blend',
+    ]);
+    for (const operation of program.operations ?? []) {
+      if (!supportedOperations.has(operation.op)) {
+        diagnostics.push({ severity: 'error', code: 'MATERIAL_OPERATION_UNSUPPORTED', path: `$.materials.${material.uuid}.vfxProgram.operations`, message: `Operation '${operation.op}' is not implemented by the runtime@2 shader compiler.` });
+      }
+    }
     const shaderId = `shader-${material.uuid}`;
     runtimeMaterials.push({
       id: material.uuid,
-      vertexShader: `${shaderId}.vert.glsl`,
-      fragmentShader: `${shaderId}.frag.glsl`,
+      vertexShader: COVERAGE_TINT_VERTEX,
+      fragmentShader: COVERAGE_TINT_FRAGMENT,
       textures: Object.fromEntries(Object.entries(material.maps ?? {}).map(([slot, id]) => [slot, String(id)])),
       uniforms: { color: material.color ?? [1, 1, 1, 1], operations: program.operations ?? [] },
       renderState: {
