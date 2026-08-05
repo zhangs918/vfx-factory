@@ -160,7 +160,16 @@ async function main() {
     scene.add(grid);
   }
 
-  const player = new QuarksEffectPlayer();
+  const player = new QuarksEffectPlayer({
+    physicsResolver: {
+      resolve(position, normal) {
+        if (position.y > 0) return false;
+        position.y = 0;
+        normal.set(0, 1, 0);
+        return true;
+      },
+    },
+  });
   if (urlParams.get('debug') === '1') {
     (window as unknown as { __vfxDebugPlayer?: QuarksEffectPlayer }).__vfxDebugPlayer = player;
   }

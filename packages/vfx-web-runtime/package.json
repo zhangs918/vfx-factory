@@ -5,5 +5,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vfx-factory/artifact-schema": "0.1.0",
+    "three": "^0.185.1",
+    "three.quarks": "^0.17.1",
+    "quarks.core": "^0.17.1"
   }
 }

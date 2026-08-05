@@ -27,9 +27,15 @@ import {
 } from 'three';
 import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
-import adapterRegistry from '../../config/semantic-adapters.json';
+import { Vector3 as QuarksVector3 } from 'quarks.core';
+import adapterRegistry from '../../../config/semantic-adapters.json';
 import { assertVfxArtifact } from '@vfx-factory/artifact-schema';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
+import { DeterministicClock, SeededRandom } from './deterministic';
+import {
+  requireSemanticContract as validateArtifactContract,
+  type VfxSemanticContract as RuntimeSemanticContract,
+} from './artifact-contract';
 import {
   expandCfxrRingGeometry,
   extractStartDelays,
@@ -51,16 +57,14 @@ import {
 
 registerUnityEmitterShapes();
 
-// Default host implementation for particle-scene-query@1 used by the reference stage. A game
-// integration can replace this global Quarks resolver with its own collider/physics adapter.
-setPhysicsResolver({
-  resolve(position, normal) {
-    if (position.y > 0) return false;
-    position.y = 0;
-    normal.set(0, 1, 0);
-    return true;
-  },
-});
+export interface PhysicsResolver {
+  resolve(position: QuarksVector3, normal: QuarksVector3): boolean;
+}
+
+export interface QuarksEffectPlayerOptions {
+  /** Host-owned physics adapter. Omit when the artifact does not require scene queries. */
+  physicsResolver?: PhysicsResolver;
+}
 
 export interface QuarksManifestEntry {
   id: string;
@@ -152,23 +156,6 @@ export interface ParticleStateSnapshot {
       custom1?: [number, number, number, number];
     }>;
   }>;
-}
-
-/** Small deterministic PRNG used to make every Quarks Math.random call reproducible. */
-class SeededRandom {
-  private state = 1;
-
-  reset(seed: number) {
-    this.state = (Number.isFinite(seed) ? seed : 1) >>> 0;
-    if (this.state === 0) this.state = 1;
-  }
-
-  next = () => {
-    let t = (this.state += 0x6d2b79f5);
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 function requireSemanticContract(raw: any): VfxSemanticContract {
@@ -541,10 +528,9 @@ export class QuarksEffectPlayer {
   private label = '';
   private delayGate: StartDelayGate = createStartDelayGate(new Map());
   private sceneColorRT: WebGLRenderTarget | null = null;
-  private contract: VfxSemanticContract | null = null;
+  private contract: RuntimeSemanticContract | null = null;
   private readonly random = new SeededRandom();
-  private effectElapsed = 0;
-  private simulationUpdates: number[] = [];
+  private readonly clock = new DeterministicClock();
   private autoRotations: Array<{
     target: Object3D;
     baseQuaternion: Quaternion;
@@ -552,10 +538,11 @@ export class QuarksEffectPlayer {
     space: 'self' | 'world';
   }> = [];
 
-  constructor() {
+  constructor(options: QuarksEffectPlayerOptions = {}) {
     this.root.name = 'QuarksEffectPlayer';
     this.root.add(this.batchRenderer);
     this.effectLight.attach(this.root);
+    if (options.physicsResolver) setPhysicsResolver(options.physicsResolver);
   }
 
   get isPlaying() {
@@ -570,7 +557,7 @@ export class QuarksEffectPlayer {
   get debugLifecycleState() {
     return {
       playing: this.playing,
-      elapsed: this.effectElapsed,
+      elapsed: this.clock.time,
       lifecycle: this.contract?.lifecycle ?? null,
     };
   }
@@ -588,8 +575,8 @@ export class QuarksEffectPlayer {
       );
     }
     const raw = await res.json();
-    this.contract = requireSemanticContract(raw);
-    this.effectElapsed = 0;
+    this.contract = validateArtifactContract(raw);
+    this.clock.reset();
     setCfxrEffectTime(0);
     this.random.reset(this.contract.seed);
     if (this.contract.representation === 'camera-baked@1') {
@@ -750,16 +737,15 @@ export class QuarksEffectPlayer {
     // clear on the following tick; clamping at terminalTime itself would erase valid t=2 data.
     const stopAt = lifecycle ? lifecycle.terminalTime + (this.contract?.fixedDelta ?? 1 / 60) : Infinity;
     const remaining = lifecycle
-      ? Math.max(0, stopAt - this.effectElapsed)
+      ? Math.max(0, stopAt - this.clock.time)
       : dt;
     const appliedDt = Math.min(Math.max(0, dt), remaining);
     if (remaining <= 1e-7) {
       this.finishOneShot();
       return;
     }
-    this.simulationUpdates.push(appliedDt);
-    this.effectElapsed += appliedDt;
-    setCfxrEffectTime(this.effectElapsed);
+    this.clock.advance(appliedDt);
+    setCfxrEffectTime(this.clock.time);
     this.withSeededRandom(() => {
       for (const controller of this.autoRotations) {
         const [x, y, z] = controller.radiansPerSecond;
@@ -775,7 +761,7 @@ export class QuarksEffectPlayer {
       this.updateBatchesExactlyOnce(appliedDt, emitterDeltas);
       this.effectLight.update(appliedDt);
     });
-    if (lifecycle && this.effectElapsed + 1e-7 >= stopAt) this.finishOneShot();
+    if (lifecycle && this.clock.time + 1e-7 >= stopAt) this.finishOneShot();
   }
 
   private finishOneShot() {
@@ -903,8 +889,8 @@ export class QuarksEffectPlayer {
       schema: 'web-particle-state@2',
       effectId: this.contract.effectId,
       seed: this.contract.seed,
-      simulationTime: Math.round(this.effectElapsed * 1e6) / 1e6,
-      simulationUpdates: [...this.simulationUpdates],
+      simulationTime: Math.round(this.clock.time * 1e6) / 1e6,
+      simulationUpdates: [...this.clock.updates],
       emitters,
     };
   }
@@ -974,8 +960,7 @@ export class QuarksEffectPlayer {
   restart() {
     if (!this.effectRoot) return;
     this.random.reset(this.contract?.seed ?? 1);
-    this.effectElapsed = 0;
-    this.simulationUpdates = [];
+    this.clock.reset();
     for (const controller of this.autoRotations)
       controller.target.quaternion.copy(controller.baseQuaternion);
     setCfxrEffectTime(0);
@@ -1016,7 +1001,7 @@ export class QuarksEffectPlayer {
     this.sceneColorRT?.dispose();
     this.sceneColorRT = null;
     setCfxrSceneColorTexture(null, null);
-    this.effectElapsed = 0;
+    this.clock.reset();
     this.autoRotations = [];
     setCfxrEffectTime(0);
     this.effectLight.stop();

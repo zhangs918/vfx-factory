@@ -1,9 +1,4 @@
-/**
- * Public playback boundary. The implementation is still physically located
- * under src/effects during the incremental migration; consumers must import
- * only this facade. The next extraction phase moves the implementation behind
- * this API without changing the Preview App.
- */
+/** Public playback boundary. Preview and host applications import only this facade. */
 export {
   QuarksEffectPlayer,
   loadQuarksManifest,
@@ -11,9 +6,11 @@ export {
   type QuarksManifest,
   type VfxSemanticContract,
   type ParticleStateSnapshot,
-} from '../../../src/effects/QuarksEffectPlayer';
+  type PhysicsResolver,
+  type QuarksEffectPlayerOptions,
+} from './QuarksEffectPlayer';
 
 export {
   type CfxrMaterialProps,
   type CfxrRuntimeProfile,
-} from '../../../src/effects/cfxrQuarksFidelity';
+} from './cfxrQuarksFidelity';

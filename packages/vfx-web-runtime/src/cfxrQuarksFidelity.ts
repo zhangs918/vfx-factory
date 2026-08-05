@@ -40,7 +40,7 @@ import {
   type Texture,
 } from 'three';
 
-import adapterRegistry from '../../config/semantic-adapters.json';
+import adapterRegistry from '../../../config/semantic-adapters.json';
 import { isParticleMaterialProgram, type BlendMode } from '@vfx-factory/artifact-schema';
 
 type TextureSamplerSpec = {

@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export const runtimeFingerprintFiles = [
-  'src/effects/cfxrQuarksFidelity.ts',
-  'src/effects/QuarksEffectPlayer.ts',
+  'packages/vfx-web-runtime/src/cfxrQuarksFidelity.ts',
+  'packages/vfx-web-runtime/src/QuarksEffectPlayer.ts',
   'src/main.ts',
   'package.json',
   'package-lock.json',
