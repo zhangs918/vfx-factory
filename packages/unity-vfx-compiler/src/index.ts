@@ -124,13 +124,19 @@ void main() {
 const COVERAGE_TINT_FRAGMENT = `
 precision highp float;
 uniform sampler2D uMainMap;
+uniform sampler2D uMask;
+uniform sampler2D uSceneColor;
+uniform float uUseMask;
+uniform float uUseSceneColor;
 uniform vec4 uTint;
 varying vec2 vUv;
 varying vec4 vColor;
 void main() {
   vec4 texel = texture2D(uMainMap, vUv);
   float coverage = texel.r;
+  if (uUseMask > 0.5) coverage *= texture2D(uMask, vUv).r;
   vec3 rgb = uTint.rgb * vColor.rgb;
+  if (uUseSceneColor > 0.5) rgb += texture2D(uSceneColor, vUv).rgb;
   float alpha = coverage * uTint.a * vColor.a;
   if (alpha <= 0.001) discard;
   gl_FragColor = vec4(rgb, alpha);
@@ -177,10 +183,14 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
     const supportedOperations = new Set([
       'sample-main', 'coverage', 'vertex-color', 'tint', 'dissolve',
       'soft-particle-depth', 'dynamic-alpha-clip', 'hdr-multiply', 'blend',
+      'manual-graph-lowering', 'mask',
     ]);
     for (const operation of program.operations ?? []) {
       if (!supportedOperations.has(operation.op)) {
         diagnostics.push({ severity: 'error', code: 'MATERIAL_OPERATION_UNSUPPORTED', path: `$.materials.${material.uuid}.vfxProgram.operations`, message: `Operation '${operation.op}' is not implemented by the runtime@2 shader compiler.` });
+      }
+      if (operation.op === 'manual-graph-lowering' && operation.id !== 'slash-screen@2') {
+        diagnostics.push({ severity: 'error', code: 'MANUAL_LOWERING_UNSUPPORTED', path: `$.materials.${material.uuid}.vfxProgram.operations`, message: `Manual lowering '${operation.id}' is not implemented by the runtime@2 shader compiler.` });
       }
     }
     const shaderId = `shader-${material.uuid}`;
@@ -189,7 +199,12 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       vertexShader: COVERAGE_TINT_VERTEX,
       fragmentShader: COVERAGE_TINT_FRAGMENT,
       textures: Object.fromEntries(Object.entries(material.maps ?? {}).map(([slot, id]) => [slot, String(id)])),
-      uniforms: { color: material.color ?? [1, 1, 1, 1], operations: program.operations ?? [] },
+      uniforms: {
+        color: material.color ?? [1, 1, 1, 1],
+        operations: program.operations ?? [],
+        uUseMask: (program.operations ?? []).some((operation: any) => operation.op === 'mask') ? 1 : 0,
+        uUseSceneColor: (program.operations ?? []).some((operation: any) => operation.op === 'manual-graph-lowering' && operation.id === 'slash-screen@2') ? 1 : 0,
+      },
       renderState: {
         blend: program.blend === 'additive' ? 'additive' : program.blend === 'premultiplied-alpha' ? 'premultiplied' : program.blend === 'multiply' ? 'multiply' : program.blend === 'opaque' ? 'opaque' : 'alpha',
         depthTest: material.depthTest !== false,
