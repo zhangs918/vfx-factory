@@ -306,9 +306,8 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
 }
 
 /**
- * Classify a Unity/Quarks source document before lowering. This deliberately
- * does not emit a fake runtime artifact: unsupported source semantics become
- * diagnostics and must be implemented by a compiler pass before promotion.
+ * Validate and lower a Unity/Quarks source document. Unsupported semantics
+ * become diagnostics and block artifact emission; no online fallback is used.
  */
 export function compileSourceJson(source: unknown): SourceCompileResult {
   const diagnostics: CompilerDiagnostic[] = [];
@@ -329,11 +328,10 @@ export function compileSourceJson(source: unknown): SourceCompileResult {
   if (!Array.isArray(value.textures)) {
     diagnostics.push({ severity: 'error', code: 'MISSING_TEXTURES', path: '$.textures', message: 'Unity source is missing serialized textures.' });
   }
-  diagnostics.push({
-    severity: 'info',
-    code: 'LOWERING_REQUIRED',
-    path: '$',
-    message: 'Source is valid legacy IR but has not yet been lowered to web-vfx-runtime@2.',
-  });
-  return { diagnostics };
+  if (diagnostics.some((entry) => entry.severity === 'error')) return { diagnostics };
+  const lowered = compileLegacyQuarksSource(value);
+  return {
+    artifact: lowered.artifact,
+    diagnostics: [...diagnostics, ...lowered.diagnostics],
+  };
 }
