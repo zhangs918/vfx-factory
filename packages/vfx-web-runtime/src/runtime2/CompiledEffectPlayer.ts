@@ -26,6 +26,15 @@ export class CompiledEffectPlayer<TContext = unknown> {
     this.state = 'playing';
   }
 
+  /** Load a compiler-produced JSON bundle. The player only performs transport
+   * and schema validation; all Unity/Shader Graph lowering remains offline. */
+  async loadFromUrl(url: string, fetcher: typeof fetch = fetch): Promise<void> {
+    if (!url) throw new Error('Compiled artifact URL must be non-empty.');
+    const response = await fetcher(url);
+    if (!response.ok) throw new Error(`Failed to load compiled artifact (${response.status} ${response.statusText}).`);
+    await this.load(await response.json());
+  }
+
   update(dt: number): void {
     if (this.state !== 'playing' || !this.handle) return;
     this.handle.update(Math.max(0, dt));
