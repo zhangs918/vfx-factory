@@ -7,3 +7,8 @@ the package in stages.
 
 Its only playback-facing dependency is `@vfx-factory/artifact-schema`; it must
 never depend on Three.js, the browser, or Preview App code.
+
+`compileRuntimeArtifact()` is intentionally strict: callers must provide the
+already lowered payload and a JSON-serializable `cfxrState` table. An empty
+table is valid for an effect with no CFXR semantics, but omitting the table is
+not. This prevents the player from silently falling back to online compilation.
