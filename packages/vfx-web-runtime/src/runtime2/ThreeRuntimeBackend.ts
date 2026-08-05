@@ -5,7 +5,7 @@ import { createRuntimeSystemState, updateRuntimeSystem, type RuntimeParticleSyst
 import type { RuntimeBackend, RuntimeHandle } from './RuntimeBackend';
 
 export interface ThreeRuntimeContext { parent?: Object3D; resourceBaseUrl?: string; }
-type RenderRecord = { state: RuntimeParticleSystemState; mesh: InstancedMesh<PlaneGeometry, ShaderMaterial>; position: InstancedBufferAttribute; size: InstancedBufferAttribute; color: InstancedBufferAttribute };
+type RenderRecord = { state: RuntimeParticleSystemState; mesh: InstancedMesh<PlaneGeometry, ShaderMaterial>; position: InstancedBufferAttribute; size: InstancedBufferAttribute; color: InstancedBufferAttribute; custom1: InstancedBufferAttribute };
 function resolveUri(uri: string, base = ''): string { if (/^(https?:|data:|blob:|\/)/.test(uri)) return uri; return `${base.replace(/\/$/, '')}/${uri.replace(/^\//, '')}`; }
 
 /** Basic runtime@2 backend: compiled billboard systems + instanced buffers. */
@@ -34,11 +34,12 @@ export class ThreeRuntimeBackend implements RuntimeBackend<ThreeRuntimeContext> 
       const size = new InstancedBufferAttribute(new Float32Array(system.capacity * 3), 3).setUsage(DynamicDrawUsage);
       const color = new InstancedBufferAttribute(new Float32Array(system.capacity * 4), 4).setUsage(DynamicDrawUsage);
       const frame = new InstancedBufferAttribute(new Float32Array(system.capacity), 1).setUsage(DynamicDrawUsage);
-      mesh.geometry.setAttribute('instancePosition', position); mesh.geometry.setAttribute('instanceSize', size); mesh.geometry.setAttribute('instanceColor', color); mesh.geometry.setAttribute('instanceFrame', frame); mesh.count = 0;
-      root.add(mesh); records.push({ state: createRuntimeSystemState(system), mesh, position, size, color });
+      const custom1 = new InstancedBufferAttribute(new Float32Array(system.capacity * 4), 4).setUsage(DynamicDrawUsage);
+      mesh.geometry.setAttribute('instancePosition', position); mesh.geometry.setAttribute('instanceSize', size); mesh.geometry.setAttribute('instanceColor', color); mesh.geometry.setAttribute('instanceFrame', frame); mesh.geometry.setAttribute('instanceCustom1', custom1); mesh.count = 0;
+      root.add(mesh); records.push({ state: createRuntimeSystemState(system), mesh, position, size, color, custom1 });
     }
     context.parent?.add(root);
-    const updateBuffers = () => { for (const record of records) { let count = 0; for (const particle of record.state.particles) { if (!particle.alive) continue; record.position.setXYZ(count, ...particle.position); record.size.setXYZ(count, ...particle.size); record.color.setXYZW(count, ...particle.color); (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).setX(count, particle.frame); count++; } record.mesh.count = count; record.position.needsUpdate = true; record.size.needsUpdate = true; record.color.needsUpdate = true; (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).needsUpdate = true; } };
+    const updateBuffers = () => { for (const record of records) { let count = 0; for (const particle of record.state.particles) { if (!particle.alive) continue; record.position.setXYZ(count, ...particle.position); record.size.setXYZ(count, ...particle.size); record.color.setXYZW(count, ...particle.color); record.custom1.setXYZW(count, ...particle.custom1); (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).setX(count, particle.frame); count++; } record.mesh.count = count; record.position.needsUpdate = true; record.size.needsUpdate = true; record.color.needsUpdate = true; record.custom1.needsUpdate = true; (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).needsUpdate = true; } };
     return { root, update: (dt) => { records.forEach((record) => updateRuntimeSystem(record.state, programs, dt)); updateBuffers(); }, restart: () => { records.forEach((record) => { record.state.elapsed = 0; record.state.particles.length = 0; }); updateBuffers(); }, pause: () => {}, resume: () => {}, dispose: () => { context.parent?.remove(root); root.traverse((node: any) => { node.geometry?.dispose?.(); node.material?.dispose?.(); }); textureCache.forEach((texture) => texture.dispose?.()); } };
   }
 }

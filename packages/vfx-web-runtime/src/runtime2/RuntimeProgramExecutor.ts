@@ -8,6 +8,7 @@ export interface RuntimeParticle {
   size: [number, number, number];
   color: [number, number, number, number];
   frame: number;
+  custom1: [number, number, number, number];
   alive: boolean;
 }
 
@@ -63,6 +64,7 @@ export function updateRuntimeSystem(state: RuntimeParticleSystemState, programs:
           size: [...(initial?.size ?? [1, 1, 1])],
           color: [...(initial?.color ?? [1, 1, 1, 1])],
           frame: initial?.frame ?? 0,
+          custom1: [...(initial?.custom1 ?? [0, 0, 0, 0])],
           alive: true,
         });
       }

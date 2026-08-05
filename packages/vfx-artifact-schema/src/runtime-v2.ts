@@ -55,6 +55,8 @@ export interface RuntimeSystem {
     color: [number, number, number, number];
     life: number;
     frame?: number;
+    /** Explicit per-particle custom data used by compiled material programs. */
+    custom1?: [number, number, number, number];
   }>;
   flipbook?: { columns: number; rows: number };
   renderMode: 'billboard' | 'stretched-billboard' | 'mesh' | 'trail';

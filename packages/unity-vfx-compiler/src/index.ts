@@ -89,6 +89,13 @@ export function writeRuntimeV2(artifact: WebVfxRuntimeV2): WebVfxRuntimeV2 {
   return JSON.parse(JSON.stringify(artifact)) as WebVfxRuntimeV2;
 }
 
+/** Serialize a validated runtime artifact for the offline bundle writer.
+ * Keeping this in the compiler package prevents the online player from ever
+ * needing to know how an artifact was produced. */
+export function serializeRuntimeV2(artifact: WebVfxRuntimeV2): string {
+  return JSON.stringify(writeRuntimeV2(artifact), null, 2) + '\n';
+}
+
 export interface CompilerDiagnostic {
   severity: 'info' | 'warning' | 'error';
   code: string;
@@ -112,18 +119,21 @@ attribute vec3 instancePosition;
 attribute vec3 instanceSize;
 attribute vec4 instanceColor;
 attribute float instanceFrame;
+attribute vec4 instanceCustom1;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform float uTileColumns;
 uniform float uTileRows;
 varying vec2 vUv;
 varying vec4 vColor;
+varying vec4 vCustom1;
 void main() {
   float tile = max(1.0, uTileColumns * uTileRows);
   float col = mod(instanceFrame, max(1.0, uTileColumns));
   float row = floor(instanceFrame / max(1.0, uTileColumns));
   vUv = (uv + vec2(col, row)) / vec2(max(1.0, uTileColumns), max(1.0, uTileRows));
   vColor = color * instanceColor;
+  vCustom1 = instanceCustom1;
   vec3 p = position * instanceSize + instancePosition;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 }`;
@@ -135,12 +145,15 @@ uniform sampler2D uMask;
 uniform sampler2D uSceneColor;
 uniform float uUseMask;
 uniform float uUseSceneColor;
+uniform float uUseDissolve;
 uniform vec4 uTint;
 varying vec2 vUv;
 varying vec4 vColor;
+varying vec4 vCustom1;
 void main() {
   vec4 texel = texture2D(uMainMap, vUv);
   float coverage = texel.r;
+  if (uUseDissolve > 0.5) coverage *= smoothstep(vCustom1.x - 0.05, vCustom1.x + 0.05, texel.a);
   if (uUseMask > 0.5) coverage *= texture2D(uMask, vUv).r;
   vec3 rgb = uTint.rgb * vColor.rgb;
   if (uUseSceneColor > 0.5) rgb += texture2D(uSceneColor, vUv).rgb;
@@ -211,6 +224,7 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
         operations: program.operations ?? [],
         uUseMask: (program.operations ?? []).some((operation: any) => operation.op === 'mask') ? 1 : 0,
         uUseSceneColor: (program.operations ?? []).some((operation: any) => operation.op === 'manual-graph-lowering' && operation.id === 'slash-screen@2') ? 1 : 0,
+        uUseDissolve: (program.operations ?? []).some((operation: any) => operation.op === 'dissolve') ? 1 : 0,
       },
       renderState: {
         blend: program.blend === 'additive' ? 'additive' : program.blend === 'premultiplied-alpha' ? 'premultiplied' : program.blend === 'multiply' ? 'multiply' : program.blend === 'opaque' ? 'opaque' : 'alpha',
@@ -259,6 +273,7 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
         color: state.color ?? [1, 1, 1, 1],
         life: Number(state.life ?? numberValue(ps.startLife, 1)),
         frame: state.frame == null || state.frame < 0 ? undefined : Number(state.frame),
+        custom1: Array.isArray(state.custom1) ? state.custom1 : [0, 0, 0, 0],
       })),
       flipbook: { columns: Math.max(1, Number(ps.uTileCount ?? 1)), rows: Math.max(1, Number(ps.vTileCount ?? 1)) },
       renderMode: renderModeOf(Number(ps.renderMode ?? 0)),
