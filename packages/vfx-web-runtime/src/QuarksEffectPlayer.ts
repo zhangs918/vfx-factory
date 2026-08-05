@@ -1,16 +1,6 @@
 import {
   Group,
   Object3D,
-  AdditiveBlending,
-  AddEquation,
-  CustomBlending,
-  DstColorFactor,
-  OneFactor,
-  OneMinusSrcAlphaFactor,
-  NormalBlending,
-  ZeroFactor,
-  SrcColorFactor,
-  DoubleSide,
   DepthTexture,
   WebGLRenderTarget,
   LinearFilter,
@@ -20,7 +10,6 @@ import {
   Euler,
   Quaternion,
   UnsignedIntType,
-  type Texture,
   type WebGLRenderer,
   type Scene,
   type Camera,
@@ -35,7 +24,6 @@ import {
   type VfxSemanticContract as RuntimeSemanticContract,
 } from './artifact-contract';
 import {
-  expandCfxrRingGeometry,
   extractStartDelays,
   setDissolveCurvesFromJson,
   setCfxrPropsFromJson,
@@ -44,15 +32,14 @@ import {
   createStartDelayGate,
   armStartDelays,
   tickStartDelays,
-  CfxrEffectLight,
   cfxrNeedsSceneColor,
   setCfxrSceneColorTexture,
   setCfxrEffectTime,
   updateCfxrCustomAttributes,
   type StartDelayGate,
-  type CfxrMaterialProps,
 } from './cfxrQuarksFidelity';
 import { normalizeUnityQuarksJson } from './quarks-lowering';
+import { CfxrEffectLight } from './effect-light';
 
 registerUnityEmitterShapes();
 
