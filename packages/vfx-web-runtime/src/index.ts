@@ -13,6 +13,9 @@ export { type ParticleStateSnapshot } from './particle-snapshot';
 
 export { type VfxSemanticContract } from './artifact-contract';
 
+export { CompiledEffectPlayer, type CompiledPlayerState } from './runtime2/CompiledEffectPlayer';
+export type { RuntimeBackend, RuntimeHandle } from './runtime2/RuntimeBackend';
+
 export {
   type CfxrMaterialProps,
   type CfxrRuntimeProfile,

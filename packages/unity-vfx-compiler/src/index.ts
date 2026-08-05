@@ -2,6 +2,11 @@ import {
   WEB_RUNTIME_ARTIFACT_SCHEMA,
   type WebRuntimeArtifact,
 } from '@vfx-factory/artifact-schema';
+import {
+  WEB_VFX_RUNTIME_V2_SCHEMA,
+  assertWebVfxRuntimeV2,
+  type WebVfxRuntimeV2,
+} from '@vfx-factory/artifact-schema';
 
 /** Input produced by the Unity/Quarks lowering stage. This boundary is
  * deliberately data-only: no Three.js or browser objects may cross it. */
@@ -65,4 +70,21 @@ export function compileArtifactEnvelope(input: RuntimeArtifactInput): Record<str
     },
     webRuntime: runtime,
   };
+}
+
+/**
+ * Boundary for the new compiler. The input is already lowered into runtime
+ * programs; this function only validates and packages it. Unity/Shader Graph
+ * interpretation must happen before this boundary.
+ */
+export function writeRuntimeV2(artifact: WebVfxRuntimeV2): WebVfxRuntimeV2 {
+  assertWebVfxRuntimeV2(artifact);
+  if (artifact.schema !== WEB_VFX_RUNTIME_V2_SCHEMA) {
+    throw new Error(`Unsupported runtime schema '${String(artifact.schema)}'.`);
+  }
+  const ids = new Set(artifact.materials.map((material) => material.id));
+  for (const system of artifact.systems) {
+    if (!ids.has(system.material)) throw new Error(`System '${system.id}' references missing material '${system.material}'.`);
+  }
+  return JSON.parse(JSON.stringify(artifact)) as WebVfxRuntimeV2;
 }

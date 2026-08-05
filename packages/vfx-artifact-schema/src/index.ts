@@ -11,6 +11,15 @@ export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1' as const;
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1' as const;
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2' as const;
 export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1' as const;
+export { WEB_VFX_RUNTIME_V2_SCHEMA, isWebVfxRuntimeV2, assertWebVfxRuntimeV2 } from './runtime-v2';
+export type {
+  WebVfxRuntimeV2,
+  RuntimeBlend,
+  RuntimeResource,
+  RuntimeMaterial,
+  RuntimeProgram,
+  RuntimeSystem,
+} from './runtime-v2';
 
 export interface WebRuntimeArtifact {
   schema: typeof WEB_RUNTIME_ARTIFACT_SCHEMA;

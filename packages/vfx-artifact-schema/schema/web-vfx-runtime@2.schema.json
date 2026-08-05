@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vfx-factory.local/schema/web-vfx-runtime@2.schema.json",
+  "title": "Web VFX Runtime v2",
+  "type": "object",
+  "required": ["schema", "effectId", "compilerVersion", "seed", "fixedDelta", "duration", "looping", "resources", "materials", "programs", "systems"],
+  "properties": {
+    "schema": { "const": "web-vfx-runtime@2" },
+    "effectId": { "type": "string", "minLength": 1 },
+    "compilerVersion": { "type": "string", "minLength": 1 },
+    "seed": { "type": "number" },
+    "fixedDelta": { "type": "number", "exclusiveMinimum": 0 },
+    "duration": { "type": "number", "minimum": 0 },
+    "looping": { "type": "boolean" },
+    "resources": { "type": "array" },
+    "materials": { "type": "array" },
+    "programs": { "type": "array" },
+    "systems": { "type": "array" },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

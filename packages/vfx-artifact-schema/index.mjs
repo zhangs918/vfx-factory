@@ -3,6 +3,22 @@ export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1';
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1';
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2';
 export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1';
+export const WEB_VFX_RUNTIME_V2_SCHEMA = 'web-vfx-runtime@2';
+
+export function isWebVfxRuntimeV2(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+    && value.schema === WEB_VFX_RUNTIME_V2_SCHEMA
+    && typeof value.effectId === 'string'
+    && typeof value.compilerVersion === 'string'
+    && Number.isFinite(value.seed)
+    && Number.isFinite(value.fixedDelta) && value.fixedDelta > 0
+    && Number.isFinite(value.duration) && value.duration >= 0
+    && typeof value.looping === 'boolean'
+    && Array.isArray(value.resources)
+    && Array.isArray(value.materials)
+    && Array.isArray(value.programs)
+    && Array.isArray(value.systems);
+}
 
 export const BLEND_MODES = Object.freeze([
   'opaque', 'alpha-test', 'alpha', 'premultiplied-alpha', 'additive', 'multiply',
