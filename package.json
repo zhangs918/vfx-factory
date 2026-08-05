@@ -2,6 +2,7 @@
   "name": "vfx_factory",
   "version": "1.0.0",
   "private": true,
+  "workspaces": ["packages/*"],
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -28,7 +28,7 @@ import {
 import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
 import adapterRegistry from '../../config/semantic-adapters.json';
-import { assertVfxArtifact } from '../../packages/vfx-artifact-schema/src/index';
+import { assertVfxArtifact } from '@vfx-factory/artifact-schema';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
 import {
   expandCfxrRingGeometry,

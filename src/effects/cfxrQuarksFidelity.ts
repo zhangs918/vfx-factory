@@ -41,6 +41,7 @@ import {
 } from 'three';
 
 import adapterRegistry from '../../config/semantic-adapters.json';
+import { isParticleMaterialProgram, type BlendMode } from '@vfx-factory/artifact-schema';
 
 type TextureSamplerSpec = {
   wrap?: [number, number];
@@ -77,7 +78,7 @@ export interface CfxrMaterialProps {
   dstBlend?: number;
   zWrite?: boolean;
   cutoff?: number;
-  blendMode?: 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
+  blendMode?: BlendMode;
   lightingModel?: 'unity-urp-lit-reference@1';
   ambientSky?: [number, number, number];
   ambientEquator?: [number, number, number];
@@ -206,7 +207,7 @@ export interface CfxrMaterialProps {
 /** Runtime profile attached to materials before batching. */
 export interface CfxrRuntimeProfile {
   shaderFamily?: string;
-  blendMode: 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
+  blendMode: BlendMode;
   depthWrite: boolean;
   cutoff: number;
   lightingModel?: 'unity-urp-lit-reference@1';
@@ -2279,7 +2280,7 @@ export function setCfxrPropsFromJson(json: any) {
       }
       const mat = mats.get(o.ps.material);
       const program = mat?.vfxProgram;
-      if (program?.schema !== 'particle-material-program@2' || !Array.isArray(program.operations)) {
+      if (!isParticleMaterialProgram(program)) {
         throw new Error(`Material ${mat?.name ?? o.ps.material} lacks particle-material-program@2`);
       }
       const supportedOps = new Set([
@@ -2292,7 +2293,7 @@ export function setCfxrPropsFromJson(json: any) {
         'ambient-probe-lighting',
       ]);
       for (const instruction of program.operations) {
-        if (!instruction || !supportedOps.has(instruction.op)) {
+        if (!instruction || !supportedOps.has(instruction.op ?? '')) {
           throw new Error(
             `Material ${mat?.name ?? o.ps.material} contains unsupported IR op '${instruction?.op}'`,
           );
@@ -2303,7 +2304,7 @@ export function setCfxrPropsFromJson(json: any) {
       );
       if (dynamicClip && ![
         'custom1.x', 'custom1.y', 'custom1.z', 'custom1.w', 'uv1.x', 'uv1.y',
-      ].includes(dynamicClip.source)) {
+      ].includes(dynamicClip.source ?? '')) {
         throw new Error(
           `Material ${mat?.name ?? o.ps.material} has unsupported dynamic alpha clip source '${dynamicClip.source}'`,
         );
@@ -2311,7 +2312,7 @@ export function setCfxrPropsFromJson(json: any) {
       const ambientLighting = program.operations.find(
         (instruction: any) => instruction?.op === 'ambient-probe-lighting',
       );
-      if (ambientLighting && ambientLighting.model !== 'unity-urp-lit-reference@1') {
+        if (ambientLighting && ambientLighting.model !== 'unity-urp-lit-reference@1') {
         throw new Error(
           `Material ${mat?.name ?? o.ps.material} has unsupported lighting model '${ambientLighting.model}'`,
         );
@@ -2434,7 +2435,7 @@ export function setCfxrPropsFromJson(json: any) {
           : program.coverageSource === 'green' ? 'green' : 'luminance';
         if (dynamicClip) {
           resolved.dynamicAlphaClip = true;
-          resolved.dynamicAlphaClipSource = dynamicClip.source;
+          resolved.dynamicAlphaClipSource = dynamicClip.source as NonNullable<CfxrMaterialProps['dynamicAlphaClipSource']>;
           resolved.dynamicAlphaClipScale = Number(dynamicClip.scale ?? 1);
         }
         const mainTexture = texByUuid.get(mat.map ?? mat.texture);

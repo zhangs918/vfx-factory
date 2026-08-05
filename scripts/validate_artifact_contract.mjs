@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { isParticleMaterialProgram, isStrictArtifact } from '../packages/vfx-artifact-schema/index.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const assetRoot = path.join(root, 'public/assets/quarks');
@@ -11,7 +12,7 @@ for (const entry of manifest.effects ?? []) {
   if (!fs.existsSync(file)) { failures.push(`${entry.id}: missing ${entry.file}`); continue; }
   const json = JSON.parse(fs.readFileSync(file, 'utf8'));
   const ir = json.vfxIR;
-  if (!ir || ir.schema !== 'unity-vfx-ir@1' || ir.policy !== 'strict')
+  if (!isStrictArtifact(json))
     failures.push(`${entry.id}: missing strict unity-vfx-ir@1`);
   if (ir?.representation !== 'live-particles@1' && ir?.representation !== 'hybrid-live@1')
     failures.push(`${entry.id}: unsupported production representation ${ir?.representation ?? '(none)'}`);
@@ -25,7 +26,7 @@ for (const entry of manifest.effects ?? []) {
     failures.push(`${entry.id}: error diagnostics remain in production artifact`);
   for (const material of json.materials ?? []) {
     if ('cfxr' in material) failures.push(`${entry.id}/${material.name}: legacy cfxr block`);
-    if (material.vfxProgram?.schema !== 'particle-material-program@2')
+    if (!isParticleMaterialProgram(material.vfxProgram))
       failures.push(`${entry.id}/${material.name}: missing particle material IR`);
   }
 }

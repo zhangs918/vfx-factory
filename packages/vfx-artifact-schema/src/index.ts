@@ -9,6 +9,63 @@
 
 export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1' as const;
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1' as const;
+export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2' as const;
+
+export type BlendMode =
+  | 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
+
+export interface MaterialProgramOperation {
+  op?: string;
+  source?: string;
+  model?: string;
+  [key: string]: unknown;
+}
+
+export interface MaterialProgramProfile {
+  shaderFamily?: string;
+  blendMode?: BlendMode;
+  unityMode?: number;
+  srcBlend?: number;
+  dstBlend?: number;
+  zWrite?: boolean;
+  effectiveZWrite?: boolean;
+  cutoff?: number;
+  [key: string]: unknown;
+}
+
+export interface ParticleMaterialProgram {
+  schema: typeof MATERIAL_PROGRAM_SCHEMA;
+  blend: BlendMode;
+  operations: readonly MaterialProgramOperation[];
+  profile?: MaterialProgramProfile;
+  [key: string]: unknown;
+}
+
+export const BLEND_MODES: readonly BlendMode[] = [
+  'opaque', 'alpha-test', 'alpha', 'premultiplied-alpha', 'additive', 'multiply',
+];
+
+export function isBlendMode(value: unknown): value is BlendMode {
+  return typeof value === 'string' && (BLEND_MODES as readonly string[]).includes(value);
+}
+
+export function isParticleMaterialProgram(value: unknown): value is ParticleMaterialProgram {
+  if (!isObject(value)) return false;
+  return value.schema === MATERIAL_PROGRAM_SCHEMA
+    && isBlendMode(value.blend)
+    && Array.isArray(value.operations);
+}
+
+/** Production artifacts must expose the deterministic legacy contract until the
+ * compiler emits the vfx-artifact@1 envelope for every asset. */
+export function isStrictArtifact(value: unknown): boolean {
+  if (!isObject(value)) return false;
+  const ir = value.vfxIR;
+  return isObject(ir)
+    && ir.schema === LEGACY_UNITY_IR_SCHEMA
+    && ir.runtime === 'three-quarks-semantic@1'
+    && ir.policy === 'strict';
+}
 
 export type ArtifactRepresentation = 'live-particles@1' | 'camera-baked@1';
 export type ArtifactDisposition = 'production' | 'candidate' | 'rejected';
