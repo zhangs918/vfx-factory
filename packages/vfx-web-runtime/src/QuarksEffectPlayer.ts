@@ -180,7 +180,7 @@ export class QuarksEffectPlayer {
       runtimeJson,
       this.batchRenderer,
       this.withSeededRandom.bind(this),
-      !!runtimeBundle,
+      runtimeBundle ? 'compiled-runtime' : 'legacy-unity-json',
     );
 
     this.root.add(obj);

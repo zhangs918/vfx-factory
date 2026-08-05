@@ -6,14 +6,16 @@ import {
 } from './cfxrQuarksFidelity';
 import { normalizeUnityQuarksJson } from './quarks-lowering';
 
+export type QuarksLoadMode = 'legacy-unity-json' | 'compiled-runtime';
+
 /** Parse one lowered artifact and register it with the host batch renderer. */
 export async function loadQuarksObject(
   raw: any,
   batchRenderer: BatchedRenderer,
   withSeededRandom: <T>(fn: () => T) => T,
-  precompiled = false,
+  mode: QuarksLoadMode = 'legacy-unity-json',
 ): Promise<Object3D> {
-  const json = precompiled ? raw : normalizeUnityQuarksJson(raw);
+  const json = mode === 'compiled-runtime' ? raw : normalizeUnityQuarksJson(raw);
   const loader = new QuarksLoader();
   const object = await new Promise<Object3D>((resolve, reject) => {
     try {
