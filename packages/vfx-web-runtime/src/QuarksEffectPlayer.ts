@@ -130,6 +130,9 @@ export class QuarksEffectPlayer {
     if (runtimeBundle && runtimeBundle.effectId !== this.contract.effectId) {
       throw new Error(`Runtime artifact effect '${runtimeBundle.effectId}' does not match contract '${this.contract.effectId}'.`);
     }
+    if (runtimeBundle && !runtimeBundle.cfxrState) {
+      throw new Error(`Runtime artifact '${runtimeBundle.effectId}' is incomplete: missing compiled cfxrState.`);
+    }
     const runtimeJson = runtimeBundle?.payload ?? raw;
     this.clock.reset();
     setCfxrEffectTime(0);

@@ -41,7 +41,9 @@ export function compileRuntimeArtifact(input: RuntimeArtifactInput): WebRuntimeA
     payload: input.payload,
     resources: input.resources,
     materialVariants: input.materialVariants,
-    cfxrState: input.cfxrState,
+    // An empty table is still explicit: it tells playback that semantic
+    // lowering was completed and must not be re-run online.
+    cfxrState: input.cfxrState ?? {},
   };
 }
 
@@ -61,4 +63,3 @@ export function compileArtifactEnvelope(input: RuntimeArtifactInput): Record<str
     webRuntime: runtime,
   };
 }
-

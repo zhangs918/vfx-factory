@@ -4,7 +4,6 @@ import {
   patchCfxrAfterBatch,
   patchCfxrBeforeBatch,
 } from './cfxrQuarksFidelity';
-import { normalizeUnityQuarksJson } from './quarks-lowering';
 
 export type QuarksLoadMode = 'legacy-unity-json' | 'compiled-runtime';
 
@@ -15,7 +14,11 @@ export async function loadQuarksObject(
   withSeededRandom: <T>(fn: () => T) => T,
   mode: QuarksLoadMode = 'legacy-unity-json',
 ): Promise<Object3D> {
-  const json = mode === 'compiled-runtime' ? raw : normalizeUnityQuarksJson(raw);
+  // Keep the legacy Unity lowering path out of the normal playback chunk. It
+  // is loaded only for old artifacts; compiled runtime bundles never import it.
+  const json = mode === 'compiled-runtime'
+    ? raw
+    : (await import('./quarks-lowering')).normalizeUnityQuarksJson(raw);
   const loader = new QuarksLoader();
   const object = await new Promise<Object3D>((resolve, reject) => {
     try {
