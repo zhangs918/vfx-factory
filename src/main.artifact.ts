@@ -43,6 +43,7 @@ const player = new CompiledEffectPlayer(new ThreeRuntimeBackend(), { parent: sce
 (window as any).__VFX_RUNTIME2__ = player;
 
 let entries: RuntimeEntry[] = []; let paused = false; let loaded = '';
+const artifactRoot = params.get('candidates') === '1' ? '/assets/runtime-v2-candidates' : '/assets/runtime-v2';
 const current = () => entries.find((entry) => entry.id === selectEl.value) ?? entries[0];
 const setPaused = (next: boolean) => {
   paused = next; pauseBtn.textContent = paused ? 'Resume' : 'Pause'; pauseBtn.setAttribute('aria-pressed', String(paused));
@@ -52,7 +53,7 @@ const play = async () => {
   const entry = current(); if (!entry) return;
   try {
     setStatus(`Loading · ${entry.label}`);
-    const url = `/assets/runtime-v2/${entry.artifact}`;
+    const url = `${artifactRoot}/${entry.artifact}`;
     if (loaded !== entry.id || !player.currentArtifact) { await player.loadBundle(url); loaded = entry.id; } else player.restart();
     const freeze = Number(params.get('freeze'));
     if (Number.isFinite(freeze)) {
@@ -63,9 +64,9 @@ const play = async () => {
   } catch (error) { const message = error instanceof Error ? error.message : String(error); setStatus(message); hintEl.textContent = message; console.error(error); }
 };
 
-const manifest = await fetch('/assets/runtime-v2/manifest.json').then((response) => response.json()) as { effects: RuntimeEntry[] };
+const manifest = await fetch(`${artifactRoot}/manifest.json`).then((response) => response.json()) as { effects: RuntimeEntry[] };
 entries = manifest.effects.filter((entry) => entry.status === 'compiled');
-for (const entry of entries) { const option = document.createElement('option'); option.value = entry.id; option.textContent = `${entry.label} · Artifact`; selectEl.appendChild(option); }
+for (const entry of entries) { const option = document.createElement('option'); option.value = entry.id; option.textContent = `${entry.label} · Artifact${params.get('candidates') === '1' ? ' · Candidate' : ''}`; selectEl.appendChild(option); }
 const effectParam = params.get('effect'); if (effectParam && entries.some((entry) => entry.id === effectParam)) selectEl.value = effectParam;
 selectEl.addEventListener('change', () => { loaded = ''; void play(); }); playBtn.addEventListener('click', () => void play());
 pauseBtn.addEventListener('click', () => { setPaused(!paused); }); resetBtn.addEventListener('click', () => { camera.position.set(2.15, 1.55, 4.55); controls.target.set(0, 0.95, 0); });

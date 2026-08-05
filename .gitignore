@@ -28,6 +28,7 @@ unity-ref/Assets/
 # Generated Web VFX payloads can be several GB and may contain derivatives of
 # licensed source assets. Regenerate them locally with the export scripts.
 public/assets/quarks/
+public/assets/runtime-v2-candidates/
 public/unity-ref
 
 # Image/state oracles are regenerated locally and may derive from licensed VFX.

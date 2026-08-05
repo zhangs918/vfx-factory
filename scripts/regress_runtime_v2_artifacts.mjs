@@ -2,7 +2,9 @@ import { chromium } from 'playwright';
 import { readFile } from 'node:fs/promises';
 
 const baseUrl = process.env.VFX_URL ?? 'http://127.0.0.1:5173';
-const manifest = JSON.parse(await readFile('public/assets/runtime-v2/manifest.json', 'utf8'));
+const manifestPath = process.env.VFX_RUNTIME_MANIFEST ?? 'public/assets/runtime-v2/manifest.json';
+const runtimeRoot = process.env.VFX_RUNTIME_ROOT ?? '/assets/runtime-v2';
+const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const compiled = manifest.effects.filter((effect) => effect.status === 'compiled');
 const browser = await chromium.launch({ headless: true });
 const failures = [];
@@ -14,7 +16,7 @@ try {
     page.on('console', (message) => message.type() === 'error' && errors.push(`console: ${message.text()}`));
     const url = new URL(baseUrl);
     url.searchParams.set('runtime', 'v2-artifact');
-    url.searchParams.set('artifact', `/assets/runtime-v2/${effect.artifact}`);
+    url.searchParams.set('artifact', `${runtimeRoot}/${effect.artifact}`);
     url.searchParams.set('freeze', process.env.VFX_FREEZE ?? '0.15');
     url.searchParams.set('post', '0');
     await page.goto(url.toString(), { waitUntil: 'domcontentloaded', timeout: 15_000 });
