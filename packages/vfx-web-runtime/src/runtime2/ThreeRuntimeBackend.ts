@@ -26,15 +26,19 @@ export class ThreeRuntimeBackend implements RuntimeBackend<ThreeRuntimeContext> 
       if (system.renderMode !== 'billboard' && system.renderMode !== 'stretched-billboard') throw new Error(`Runtime v2 system '${system.id}' render mode '${system.renderMode}' is not supported by the basic Three backend.`);
       const material = materials.get(system.material);
       if (!material) throw new Error(`Runtime v2 system '${system.id}' references missing material '${system.material}'.`);
-      const mesh = new InstancedMesh(new PlaneGeometry(1, 1), material.clone(), system.capacity);
+      const systemMaterial = material.clone();
+      systemMaterial.uniforms.uTileColumns = { value: system.flipbook?.columns ?? 1 };
+      systemMaterial.uniforms.uTileRows = { value: system.flipbook?.rows ?? 1 };
+      const mesh = new InstancedMesh(new PlaneGeometry(1, 1), systemMaterial, system.capacity);
       const position = new InstancedBufferAttribute(new Float32Array(system.capacity * 3), 3).setUsage(DynamicDrawUsage);
       const size = new InstancedBufferAttribute(new Float32Array(system.capacity * 3), 3).setUsage(DynamicDrawUsage);
       const color = new InstancedBufferAttribute(new Float32Array(system.capacity * 4), 4).setUsage(DynamicDrawUsage);
-      mesh.geometry.setAttribute('instancePosition', position); mesh.geometry.setAttribute('instanceSize', size); mesh.geometry.setAttribute('instanceColor', color); mesh.count = 0;
+      const frame = new InstancedBufferAttribute(new Float32Array(system.capacity), 1).setUsage(DynamicDrawUsage);
+      mesh.geometry.setAttribute('instancePosition', position); mesh.geometry.setAttribute('instanceSize', size); mesh.geometry.setAttribute('instanceColor', color); mesh.geometry.setAttribute('instanceFrame', frame); mesh.count = 0;
       root.add(mesh); records.push({ state: createRuntimeSystemState(system), mesh, position, size, color });
     }
     context.parent?.add(root);
-    const updateBuffers = () => { for (const record of records) { let count = 0; for (const particle of record.state.particles) { if (!particle.alive) continue; record.position.setXYZ(count, ...particle.position); record.size.setXYZ(count, ...particle.size); record.color.setXYZW(count, ...particle.color); count++; } record.mesh.count = count; record.position.needsUpdate = true; record.size.needsUpdate = true; record.color.needsUpdate = true; } };
+    const updateBuffers = () => { for (const record of records) { let count = 0; for (const particle of record.state.particles) { if (!particle.alive) continue; record.position.setXYZ(count, ...particle.position); record.size.setXYZ(count, ...particle.size); record.color.setXYZW(count, ...particle.color); (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).setX(count, particle.frame); count++; } record.mesh.count = count; record.position.needsUpdate = true; record.size.needsUpdate = true; record.color.needsUpdate = true; (record.mesh.geometry.getAttribute('instanceFrame') as InstancedBufferAttribute).needsUpdate = true; } };
     return { root, update: (dt) => { records.forEach((record) => updateRuntimeSystem(record.state, programs, dt)); updateBuffers(); }, restart: () => { records.forEach((record) => { record.state.elapsed = 0; record.state.particles.length = 0; }); updateBuffers(); }, pause: () => {}, resume: () => {}, dispose: () => { context.parent?.remove(root); root.traverse((node: any) => { node.geometry?.dispose?.(); node.material?.dispose?.(); }); textureCache.forEach((texture) => texture.dispose?.()); } };
   }
 }

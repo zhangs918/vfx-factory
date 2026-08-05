@@ -111,12 +111,18 @@ attribute vec4 color;
 attribute vec3 instancePosition;
 attribute vec3 instanceSize;
 attribute vec4 instanceColor;
+attribute float instanceFrame;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
+uniform float uTileColumns;
+uniform float uTileRows;
 varying vec2 vUv;
 varying vec4 vColor;
 void main() {
-  vUv = uv;
+  float tile = max(1.0, uTileColumns * uTileRows);
+  float col = mod(instanceFrame, max(1.0, uTileColumns));
+  float row = floor(instanceFrame / max(1.0, uTileColumns));
+  vUv = (uv + vec2(col, row)) / vec2(max(1.0, uTileColumns), max(1.0, uTileRows));
   vColor = color * instanceColor;
   vec3 p = position * instanceSize + instancePosition;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
@@ -246,6 +252,15 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
         bursts: (ps.emissionBursts ?? []).map((burst: any) => ({ time: Number(burst.time ?? 0), count: Math.max(0, Math.floor(numberValue(burst.count))) })),
         rateOverTime: numberValue(ps.emissionOverTime),
       },
+      initialParticles: (ps.unityInitialState ?? []).map((state: any) => ({
+        position: state.position ?? [0, 0, 0],
+        velocity: state.velocity ?? [0, 0, 0],
+        size: state.size ?? [1, 1, 1],
+        color: state.color ?? [1, 1, 1, 1],
+        life: Number(state.life ?? numberValue(ps.startLife, 1)),
+        frame: state.frame == null || state.frame < 0 ? undefined : Number(state.frame),
+      })),
+      flipbook: { columns: Math.max(1, Number(ps.uTileCount ?? 1)), rows: Math.max(1, Number(ps.vTileCount ?? 1)) },
       renderMode: renderModeOf(Number(ps.renderMode ?? 0)),
       programs: behaviorIds,
       transform: {

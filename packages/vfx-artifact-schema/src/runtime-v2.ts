@@ -48,6 +48,15 @@ export interface RuntimeSystem {
   looping: boolean;
   startDelay: number;
   emission: RuntimeEmission;
+  initialParticles?: Array<{
+    position: [number, number, number];
+    velocity: [number, number, number];
+    size: [number, number, number];
+    color: [number, number, number, number];
+    life: number;
+    frame?: number;
+  }>;
+  flipbook?: { columns: number; rows: number };
   renderMode: 'billboard' | 'stretched-billboard' | 'mesh' | 'trail';
   programs: string[];
   transform: { position: [number, number, number]; rotation: [number, number, number, number]; scale: [number, number, number] };
