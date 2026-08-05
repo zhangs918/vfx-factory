@@ -1,9 +1,6 @@
 import { Object3D } from 'three';
-import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
-import {
-  patchCfxrAfterBatch,
-  patchCfxrBeforeBatch,
-} from './cfxrQuarksFidelity';
+import { BatchedRenderer } from 'three.quarks';
+import { loadCompiledQuarksObject } from './compiled-quarks-loader';
 
 export type QuarksLoadMode = 'legacy-unity-json' | 'compiled-runtime';
 
@@ -14,23 +11,9 @@ export async function loadQuarksObject(
   withSeededRandom: <T>(fn: () => T) => T,
   mode: QuarksLoadMode = 'legacy-unity-json',
 ): Promise<Object3D> {
-  // Keep the legacy Unity lowering path out of the normal playback chunk. It
-  // is loaded only for old artifacts; compiled runtime bundles never import it.
-  const json = mode === 'compiled-runtime'
-    ? raw
-    : (await import('./quarks-lowering')).normalizeUnityQuarksJson(raw);
-  const loader = new QuarksLoader();
-  const object = await new Promise<Object3D>((resolve, reject) => {
-    try {
-      withSeededRandom(() => loader.parse(json, (ready) => resolve(ready)));
-    } catch (error) {
-      reject(error);
-    }
-  });
-  withSeededRandom(() => {
-    patchCfxrBeforeBatch(object);
-    QuarksUtil.addToBatchRenderer(object, batchRenderer);
-  });
-  await patchCfxrAfterBatch(batchRenderer);
-  return object;
+  if (mode === 'compiled-runtime') {
+    return loadCompiledQuarksObject(raw, batchRenderer, withSeededRandom);
+  }
+  const json = (await import('./quarks-lowering')).normalizeUnityQuarksJson(raw);
+  return loadCompiledQuarksObject(json, batchRenderer, withSeededRandom);
 }
