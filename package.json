@@ -2,7 +2,9 @@
   "name": "vfx_factory",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -25,6 +27,7 @@
     "smoke:candidate-runtime": "node scripts/smoke_candidate_runtime.mjs",
     "validate:loop": "node scripts/auto_validate_loop.mjs",
     "compile:source-check": "node scripts/compile_source_check.mjs",
+    "compile:runtime-v2": "tsx scripts/compile_runtime_v2.ts",
     "regression:candidate-oracles": "node scripts/regress_candidate_oracles.mjs",
     "promote:live-ir": "node scripts/promote_live_ir.mjs",
     "qualify:live-ir": "node scripts/qualify_live_ir.mjs",
@@ -51,6 +54,7 @@
     "@types/three": "^0.185.0",
     "playwright": "^1.62.1",
     "sharp": "^0.35.3",
+    "tsx": "^4.23.6",
     "typescript": "^5.9.3",
     "vite": "^8.2.0"
   }

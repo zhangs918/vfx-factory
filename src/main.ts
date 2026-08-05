@@ -175,9 +175,12 @@ async function main() {
   });
   // Migration channel: runtime=v2 exercises the compiler-produced player boundary
   // without changing the qualified legacy preview path.
-  const runtimeV2Mode = urlParams.get('runtime') === 'v2';
+  const runtimeV2ArtifactMode = urlParams.get('runtime') === 'v2-artifact';
+  const runtimeV2Mode = runtimeV2ArtifactMode || urlParams.get('runtime') === 'v2';
+  const artifactUrl = urlParams.get('artifact') ?? '';
+  const artifactBase = artifactUrl.includes('/') ? artifactUrl.slice(0, artifactUrl.lastIndexOf('/')) : '';
   const compiledPlayer = runtimeV2Mode
-    ? new CompiledEffectPlayer(new ThreeRuntimeBackend(), { parent: scene, resourceBaseUrl: '' })
+    ? new CompiledEffectPlayer(new ThreeRuntimeBackend(), { parent: scene, resourceBaseUrl: urlParams.get('runtimeBase') ?? artifactBase })
     : null;
   if (runtimeV2Mode) (window as Window & { __VFX_RUNTIME2__?: unknown }).__VFX_RUNTIME2__ = compiledPlayer;
   if (urlParams.get('debug') === '1') {
@@ -344,7 +347,12 @@ async function main() {
     try {
       setStatus(`Loading · ${entry.label}`);
       if (loadedId !== entry.id || !player.isPlaying) {
-        if (runtimeV2Mode) {
+        if (runtimeV2ArtifactMode) {
+          if (!artifactUrl) throw new Error('runtime=v2-artifact requires ?artifact=/path/runtime.json.');
+          const artifactResponse = await fetch(artifactUrl);
+          if (!artifactResponse.ok) throw new Error(`Failed to load compiled artifact (${artifactResponse.status}).`);
+          await compiledPlayer?.load(await artifactResponse.json());
+        } else if (runtimeV2Mode) {
           const response = await fetch(url);
           if (!response.ok) throw new Error(`Failed to load source (${response.status}).`);
           const source = await response.json();
