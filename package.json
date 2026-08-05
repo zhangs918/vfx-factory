@@ -28,6 +28,7 @@
     "validate:loop": "node scripts/auto_validate_loop.mjs",
     "compile:source-check": "node scripts/compile_source_check.mjs",
     "compile:runtime-v2": "tsx scripts/compile_runtime_v2.ts",
+    "compile:runtime-v2:batch": "node scripts/compile_runtime_v2_batch.mjs",
     "regression:candidate-oracles": "node scripts/regress_candidate_oracles.mjs",
     "promote:live-ir": "node scripts/promote_live_ir.mjs",
     "qualify:live-ir": "node scripts/qualify_live_ir.mjs",

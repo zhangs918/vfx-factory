@@ -1,0 +1,31 @@
+{
+  "schema": "vfx-runtime-v2-manifest@1",
+  "compiler": "unity-vfx-compiler@0.2",
+  "sourceManifest": "public/assets/quarks/manifest.json",
+  "effects": [
+    {
+      "id": "impact",
+      "label": "Slash · Impact",
+      "source": "Impact.json",
+      "artifact": "impact.runtime.json",
+      "status": "compiled",
+      "diagnostics": []
+    },
+    {
+      "id": "multiple_impact",
+      "label": "Slash · Multiple Impact",
+      "source": "Multiple Impact.json",
+      "status": "rejected",
+      "diagnostics": [
+        "[error] MATERIAL_LOWERING_UNSUPPORTED $.materials.quarks_material-27.vfxProgram.lowering: Unsupported material lowering 'slash-world@3'.",
+        "[error] MATERIAL_LOWERING_UNSUPPORTED $.materials.quarks_material-37.vfxProgram.lowering: Unsupported material lowering 'trail-front-face@2'.",
+        "[error] MATERIAL_LOWERING_UNSUPPORTED $.materials.quarks_material-46.vfxProgram.lowering: Unsupported material lowering 'parallax-occlusion@1'.",
+        "[error] BEHAVIOR_UNSUPPORTED $.object.node-3.ps.behaviors: Behavior 'EmitSubParticleSystem' is not yet compiled by runtime@2.",
+        "[error] BEHAVIOR_UNSUPPORTED $.object.node-4.ps.behaviors: Behavior 'InheritVelocity' is not yet compiled by runtime@2.",
+        "[error] BEHAVIOR_UNSUPPORTED $.object.node-4.ps.behaviors: Behavior 'RotationBySpeed' is not yet compiled by runtime@2.",
+        "[error] BEHAVIOR_UNSUPPORTED $.object.node-4.ps.behaviors: Behavior 'Noise' is not yet compiled by runtime@2.",
+        "[error] BEHAVIOR_UNSUPPORTED $.object.node-4.ps.behaviors: Behavior 'ApplyCollision' is not yet compiled by runtime@2."
+      ]
+    }
+  ]
+}
