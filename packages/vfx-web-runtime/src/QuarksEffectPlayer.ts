@@ -2,8 +2,6 @@ import {
   Group,
   Object3D,
   Vector3,
-  Euler,
-  Quaternion,
   type WebGLRenderer,
   type Scene,
   type Camera,
@@ -27,12 +25,21 @@ import {
   armStartDelays,
   tickStartDelays,
   setCfxrEffectTime,
-  updateCfxrCustomAttributes,
   type StartDelayGate,
 } from './cfxrQuarksFidelity';
 import { normalizeUnityQuarksJson } from './quarks-lowering';
 import { CfxrEffectLight } from './effect-light';
 import { SceneColorCapture } from './scene-color';
+import {
+  applySolo,
+  buildAutoRotations,
+  listEmitters,
+  resetAutoRotations,
+  updateAutoRotations,
+  type AutoRotation,
+} from './player-controls';
+import { snapshotParticleState, type ParticleStateSnapshot } from './particle-snapshot';
+import { updateBatchesExactlyOnce } from './batch-stepper';
 
 registerUnityEmitterShapes();
 
@@ -59,33 +66,6 @@ export interface QuarksManifest {
 export type VfxArtifactSource = string | URL | Record<string, unknown>;
 export type PlayerState = 'empty' | 'loading' | 'playing' | 'paused' | 'finished' | 'error' | 'disposed';
 
-export interface ParticleStateSnapshot {
-  schema: 'web-particle-state@2';
-  effectId: string;
-  seed: number;
-  simulationTime: number;
-  simulationUpdates: number[];
-  bakedFrame?: number;
-  emitters: Array<{
-    id: string;
-    name: string;
-    path: string;
-    count: number;
-    particles: Array<{
-      position: [number, number, number];
-      velocity: [number, number, number];
-      size: [number, number, number];
-      color: [number, number, number, number];
-      age: number;
-      life: number;
-      frame: number;
-      seed?: number;
-      rotation?: number | [number, number, number, number] | null;
-      rotationEuler?: number[];
-      custom1?: [number, number, number, number];
-    }>;
-  }>;
-}
 
 /**
  * Normalize babylon/unity-quarks-exporter JSON so three.quarks ObjectLoader can parse it.
@@ -104,12 +84,7 @@ export class QuarksEffectPlayer {
   private contract: RuntimeSemanticContract | null = null;
   private readonly random = new SeededRandom();
   private readonly clock = new DeterministicClock();
-  private autoRotations: Array<{
-    target: Object3D;
-    baseQuaternion: Quaternion;
-    radiansPerSecond: [number, number, number];
-    space: 'self' | 'world';
-  }> = [];
+  private autoRotations: AutoRotation[] = [];
 
   constructor(options: QuarksEffectPlayerOptions = {}) {
     this.root.name = 'QuarksEffectPlayer';
@@ -224,20 +199,7 @@ export class QuarksEffectPlayer {
 
     this.root.add(obj);
     this.effectRoot = obj;
-    this.autoRotations = [];
-    for (const controller of raw.controllers ?? []) {
-      if (controller?.kind !== 'constant-euler-rotation') continue;
-      const target = obj.getObjectByProperty('uuid', controller.targetNode);
-      if (!target) throw new Error(`Auto-rotate target '${controller.targetNode}' was not loaded`);
-      const d = controller.degreesPerSecond.map(Number) as [number, number, number];
-      this.autoRotations.push({
-        target,
-        baseQuaternion: target.quaternion.clone(),
-        // Unity LH Euler vector -> Web RH Euler vector.
-        radiansPerSecond: [-d[0] * Math.PI / 180, -d[1] * Math.PI / 180, d[2] * Math.PI / 180],
-        space: controller.space,
-      });
-    }
+    this.autoRotations = buildAutoRotations(obj, raw.controllers ?? []);
     // A freshly parsed Quarks system and a replayed system otherwise start from subtly
     // different emission state (the first deterministic freeze was one fixed frame ahead).
     // Normalize first play through the exact same seeded restart path used by regression/replay.
@@ -264,56 +226,11 @@ export class QuarksEffectPlayer {
   }
 
   listEmitters(): string[] {
-    const names: string[] = [];
-    this.effectRoot?.traverse((c) => {
-      if (c.type === 'ParticleEmitter') names.push(c.name);
-    });
-    return names;
+    return listEmitters(this.effectRoot);
   }
 
   private applySolo() {
-    if (!this.effectRoot) return;
-    const solo = this.soloName?.toLowerCase() ?? null;
-    const emitters: Array<Object3D & { system?: {
-      behaviors?: Array<{ type?: string; subParticleSystem?: Object3D }>;
-      stop?: () => void; pause?: () => void;
-    } }> = [];
-    this.effectRoot.traverse((c) => {
-      if (c.type === 'ParticleEmitter') emitters.push(c as typeof emitters[number]);
-    });
-    const layerIndex = solo?.startsWith('@layer:') ? Number(solo.slice('@layer:'.length)) : null;
-    const selected = new Set(emitters.filter((e, index) => !solo
-      || (layerIndex != null && Number.isInteger(layerIndex) && index === layerIndex)
-      || (layerIndex == null && e.name.toLowerCase() === solo)));
-    // A sub-emitter layer cannot exist without simulating its event-producing parent. Keep the
-    // dependency chain alive but hidden so a diagnostic buffer isolates rendering, not physics.
-    const drivers = new Set<typeof emitters[number]>();
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (const emitter of emitters) {
-        for (const behavior of emitter.system?.behaviors ?? []) {
-          if (behavior.type !== 'EmitSubParticleSystem' || !behavior.subParticleSystem) continue;
-          const target = behavior.subParticleSystem as typeof emitters[number];
-          const targetRequired = [...selected, ...drivers].some(
-            (required) => required === target || required.uuid === target.uuid,
-          );
-          if (targetRequired && !drivers.has(emitter)) {
-            drivers.add(emitter);
-            changed = true;
-          }
-        }
-      }
-    }
-    for (const emitter of emitters) {
-      const show = selected.has(emitter);
-      const simulate = show || drivers.has(emitter);
-      emitter.visible = show;
-      if (!simulate) {
-        emitter.system?.stop?.();
-        emitter.system?.pause?.();
-      }
-    }
+    applySolo(this.effectRoot, this.soloName);
   }
 
   update(dt: number) {
@@ -333,18 +250,11 @@ export class QuarksEffectPlayer {
     this.clock.advance(appliedDt);
     setCfxrEffectTime(this.clock.time);
     this.withSeededRandom(() => {
-      for (const controller of this.autoRotations) {
-        const [x, y, z] = controller.radiansPerSecond;
-        const deltaRotation = new Quaternion().setFromEuler(
-          new Euler(x * appliedDt, y * appliedDt, z * appliedDt, 'YXZ'),
-        );
-        if (controller.space === 'self') controller.target.quaternion.multiply(deltaRotation);
-        else controller.target.quaternion.premultiply(deltaRotation);
-      }
+      updateAutoRotations(this.autoRotations, appliedDt);
       const emitterDeltas = this.effectRoot
         ? tickStartDelays(this.effectRoot, this.delayGate, appliedDt)
         : new Map();
-      this.updateBatchesExactlyOnce(appliedDt, emitterDeltas);
+      updateBatchesExactlyOnce(this.batchRenderer, appliedDt, emitterDeltas);
       this.effectLight.update(appliedDt);
     });
     if (lifecycle && this.clock.time + 1e-7 >= stopAt) this.finishOneShot();
@@ -355,60 +265,12 @@ export class QuarksEffectPlayer {
     // Quarks' stop() clears particleNum, but the instanced batch still contains the previous
     // frame until it is rebuilt. Flush a zero-time batch update so a stopped one-shot cannot
     // leave a frozen column of billboard/trail instances on screen.
-    this.updateBatchesExactlyOnce(0);
+    updateBatchesExactlyOnce(this.batchRenderer, 0);
     this.effectLight.stop();
     this.playing = false;
     this.state = 'finished';
   }
 
-  /**
-   * three.quarks updates `systemToBatchIndex` with Map.forEach(). On a system's first frame,
-   * `neededToUpdateRender` can delete and re-add that same Map entry; JavaScript then visits it
-   * again and simulates the first frame twice. Snapshot the systems before simulation so batch
-   * maintenance cannot change the current fixed step's work set.
-   */
-  private updateBatchesExactlyOnce(dt: number, emitterDeltas = new Map<object, number>()) {
-    const systems = [...this.batchRenderer.systemToBatchIndex.keys()] as unknown as Array<{
-      update: (delta: number) => void;
-      particleNum?: number;
-      particles?: Array<{ age?: number; life?: number; previous?: unknown[] }>;
-    }>;
-    for (const system of systems) {
-      system.update(emitterDeltas.get(system) ?? dt);
-      // Quarks normally removes particles through `particle.died`, but Unity's
-      // global-clock adapter can leave an age of (life - floating point epsilon)
-      // at an exact capture boundary.  Unity has already culled that particle;
-      // keeping it makes the state oracle and the rendered frame diverge.  Apply
-      // the same boundary once, after all authored behaviours and sub-emitter
-      // events have run. Trail particles are intentionally left to Quarks so
-      // their recorded history can drain naturally.
-      this.cullUnityExpiredParticles(system);
-    }
-    for (const batch of this.batchRenderer.batches) batch.update();
-    updateCfxrCustomAttributes(this.batchRenderer);
-  }
-
-  private cullUnityExpiredParticles(system: {
-    particleNum?: number;
-    particles?: Array<{ age?: number; life?: number; previous?: unknown[] }>;
-  }) {
-    if (!system.particles || typeof system.particleNum !== 'number') return;
-    // Keep this below the snapshot quantization (1e-6). A wider tolerance can
-    // incorrectly remove a particle that Unity still reports on the boundary.
-    const epsilon = 1e-9;
-    let count = system.particleNum;
-    for (let i = count - 1; i >= 0; i--) {
-      const particle = system.particles[i];
-      if (particle?.previous && particle.previous.length > 0) continue;
-      if (!Number.isFinite(particle?.age) || !Number.isFinite(particle?.life)) continue;
-      if ((particle.age as number) + epsilon < (particle.life as number)) continue;
-      const last: number = count - 1;
-      system.particles[i] = system.particles[last];
-      system.particles[last] = particle;
-      count = last;
-      system.particleNum = count;
-    }
-  }
 
   get semanticContract() {
     return this.contract;
@@ -416,70 +278,7 @@ export class QuarksEffectPlayer {
 
   snapshotState(): ParticleStateSnapshot {
     if (!this.contract || !this.effectRoot) throw new Error('No semantic effect is loaded');
-    const emitters: ParticleStateSnapshot['emitters'] = [];
-    this.effectRoot.traverse((object) => {
-      if (object.type !== 'ParticleEmitter') return;
-      const emitter = object as Object3D & {
-        system?: {
-          particleNum: number;
-          particles: Array<{
-            position: { x: number; y: number; z: number };
-            velocity: { x: number; y: number; z: number };
-            size: { x: number; y: number; z: number };
-            color: { x: number; y: number; z: number; w: number };
-            age: number;
-            life: number;
-            uvTile: number;
-            rotation?: number | { x: number; y: number; z: number; w: number };
-            unitySeed?: number;
-          }>;
-        };
-      };
-      const system = emitter.system;
-      if (!system) return;
-      const round = (v: number) => Math.round(v * 1e6) / 1e6;
-      emitters.push({
-        id: emitter.uuid,
-        name: emitter.name,
-        path: (() => {
-          const names: string[] = [];
-          for (let p: Object3D | null = emitter; p && p !== this.effectRoot?.parent; p = p.parent) {
-            names.push(p.name);
-            if (p === this.effectRoot) break;
-          }
-          return names.reverse().join('/');
-        })(),
-        count: system.particleNum,
-        particles: system.particles.slice(0, system.particleNum).map((p) => ({
-          position: [round(p.position.x), round(p.position.y), round(p.position.z)],
-          velocity: [round(p.velocity.x), round(p.velocity.y), round(p.velocity.z)],
-          size: [round(p.size.x), round(p.size.y), round(p.size.z)],
-          color: [round(p.color.x), round(p.color.y), round(p.color.z), round(p.color.w)],
-          age: round(p.age),
-          life: round(p.life),
-          frame: round(p.uvTile),
-          seed: p.unitySeed,
-          rotation: typeof p.rotation === 'number'
-            ? round(p.rotation)
-            : p.rotation
-              ? [round(p.rotation.x), round(p.rotation.y), round(p.rotation.z), round(p.rotation.w)]
-              : null,
-          rotationEuler: (p as unknown as { unityRotationEuler?: [number, number, number] })
-            .unityRotationEuler?.map(round),
-          custom1: (p as unknown as { unityCustom1?: [number, number, number, number] })
-            .unityCustom1?.map(round) as [number, number, number, number] | undefined,
-        })),
-      });
-    });
-    emitters.sort((a, b) => a.id.localeCompare(b.id));
-    return {
-      schema: 'web-particle-state@2',
-      effectId: this.contract.effectId,
-      seed: this.contract.seed,
-      simulationTime: Math.round(this.clock.time * 1e6) / 1e6,
-      simulationUpdates: [...this.clock.updates],
-      emitters,
-    };
+    return snapshotParticleState(this.effectRoot, this.contract, this.clock);
   }
 
   /** Restart from seed and advance by an integer number of exported fixed steps. */
@@ -514,8 +313,7 @@ export class QuarksEffectPlayer {
     if (!this.effectRoot || this.state === 'disposed') return;
     this.random.reset(this.contract?.seed ?? 1);
     this.clock.reset();
-    for (const controller of this.autoRotations)
-      controller.target.quaternion.copy(controller.baseQuaternion);
+    resetAutoRotations(this.autoRotations);
     setCfxrEffectTime(0);
     this.withSeededRandom(() => QuarksUtil.restart(this.effectRoot!));
     armStartDelays(this.effectRoot, this.delayGate);

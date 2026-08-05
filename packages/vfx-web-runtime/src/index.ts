@@ -6,10 +6,11 @@ export {
   type QuarksManifest,
   type VfxArtifactSource,
   type PlayerState,
-  type ParticleStateSnapshot,
   type PhysicsResolver,
   type QuarksEffectPlayerOptions,
 } from './QuarksEffectPlayer';
+
+export { type ParticleStateSnapshot } from './particle-snapshot';
 
 export { type VfxSemanticContract } from './artifact-contract';
 
