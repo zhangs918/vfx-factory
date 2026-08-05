@@ -18,6 +18,7 @@ export type {
   RuntimeResource,
   RuntimeMaterial,
   RuntimeProgram,
+  RuntimeEmission,
   RuntimeSystem,
 } from './runtime-v2';
 

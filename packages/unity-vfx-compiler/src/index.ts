@@ -240,6 +240,10 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       duration: Math.max(0, Number(ps.duration ?? 0)),
       looping: !!ps.looping,
       startDelay,
+      emission: {
+        bursts: (ps.emissionBursts ?? []).map((burst: any) => ({ time: Number(burst.time ?? 0), count: Math.max(0, Math.floor(numberValue(burst.count))) })),
+        rateOverTime: numberValue(ps.emissionOverTime),
+      },
       renderMode: renderModeOf(Number(ps.renderMode ?? 0)),
       programs: behaviorIds,
       transform: {

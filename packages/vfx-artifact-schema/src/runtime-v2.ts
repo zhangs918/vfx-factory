@@ -32,6 +32,11 @@ export interface RuntimeProgram {
   params: Record<string, unknown>;
 }
 
+export interface RuntimeEmission {
+  bursts: Array<{ time: number; count: number }>;
+  rateOverTime?: number;
+}
+
 export interface RuntimeSystem {
   id: string;
   nodeId: string;
@@ -41,6 +46,7 @@ export interface RuntimeSystem {
   duration: number;
   looping: boolean;
   startDelay: number;
+  emission: RuntimeEmission;
   renderMode: 'billboard' | 'stretched-billboard' | 'mesh' | 'trail';
   programs: string[];
   transform: { position: [number, number, number]; rotation: [number, number, number, number]; scale: [number, number, number] };
