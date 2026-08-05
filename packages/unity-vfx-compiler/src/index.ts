@@ -101,6 +101,118 @@ export interface SourceCompileResult {
   diagnostics: CompilerDiagnostic[];
 }
 
+const numberValue = (value: any, fallback = 0) =>
+  typeof value === 'number' ? value : Number(value?.value ?? fallback);
+
+function walkNodes(node: any, visit: (node: any) => void): void {
+  if (!node || typeof node !== 'object') return;
+  visit(node);
+  if (Array.isArray(node.children)) node.children.forEach((child: any) => walkNodes(child, visit));
+}
+
+function renderModeOf(value: number): 'billboard' | 'stretched-billboard' | 'mesh' | 'trail' {
+  if (value === 2) return 'mesh';
+  if (value === 1) return 'stretched-billboard';
+  if (value === 3) return 'trail';
+  return 'billboard';
+}
+
+/** Lower the subset already represented by the exporter material IR. */
+export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-vfx-compiler@0.2'): SourceCompileResult {
+  const diagnostics: CompilerDiagnostic[] = [];
+  const materials = new Map<string, any>();
+  for (const material of source?.materials ?? []) materials.set(material.uuid, material);
+  const resources: WebVfxRuntimeV2['resources'] = [];
+  for (const texture of source?.textures ?? []) {
+    const image = (source.images ?? []).find((entry: any) => entry.uuid === texture.image);
+    if (!image?.url) {
+      diagnostics.push({ severity: 'error', code: 'TEXTURE_IMAGE_MISSING', path: `$.textures.${texture.uuid}`, message: `Texture '${texture.uuid}' has no image URL.` });
+      continue;
+    }
+    resources.push({ id: texture.uuid, kind: 'texture', uri: image.url, colorSpace: image.sRGB ? 'srgb' : 'linear' });
+  }
+  const runtimeMaterials: WebVfxRuntimeV2['materials'] = [];
+  for (const material of materials.values()) {
+    const program = material.vfxProgram;
+    if (!program || program.schema !== 'particle-material-program@2') {
+      diagnostics.push({ severity: 'error', code: 'MATERIAL_PROGRAM_MISSING', path: `$.materials.${material.uuid}`, message: `Material '${material.name ?? material.uuid}' has no explicit material program.` });
+      continue;
+    }
+    if (program.lowering !== 'verified-supported-subset' && program.lowering !== 'slash-screen@2') {
+      diagnostics.push({ severity: 'error', code: 'MATERIAL_LOWERING_UNSUPPORTED', path: `$.materials.${material.uuid}.vfxProgram.lowering`, message: `Unsupported material lowering '${program.lowering}'.` });
+      continue;
+    }
+    const shaderId = `shader-${material.uuid}`;
+    runtimeMaterials.push({
+      id: material.uuid,
+      vertexShader: `${shaderId}.vert.glsl`,
+      fragmentShader: `${shaderId}.frag.glsl`,
+      textures: Object.fromEntries(Object.entries(material.maps ?? {}).map(([slot, id]) => [slot, String(id)])),
+      uniforms: { color: material.color ?? [1, 1, 1, 1], operations: program.operations ?? [] },
+      renderState: {
+        blend: program.blend === 'additive' ? 'additive' : program.blend === 'premultiplied-alpha' ? 'premultiplied' : program.blend === 'multiply' ? 'multiply' : program.blend === 'opaque' ? 'opaque' : 'alpha',
+        depthTest: material.depthTest !== false,
+        depthWrite: material.depthWrite === true,
+        cull: 'none',
+        alphaTest: Number(material.alphaTest ?? 0),
+        toneMapped: false,
+      },
+    });
+  }
+  const programs: WebVfxRuntimeV2['programs'] = [];
+  const systems: WebVfxRuntimeV2['systems'] = [];
+  walkNodes(source?.object, (node) => {
+    if (node.type !== 'ParticleEmitter' || !node.ps || !node.uuid) return;
+    const ps = node.ps;
+    const behaviorIds: string[] = [];
+    for (const behavior of ps.behaviors ?? []) {
+      const supported = new Set(['ColorOverLife', 'SizeOverLife', 'FrameOverLife', 'LimitSpeedOverLife', 'RotationOverLife']);
+      if (!supported.has(behavior.type)) {
+        diagnostics.push({ severity: 'error', code: 'BEHAVIOR_UNSUPPORTED', path: `$.object.${node.uuid}.ps.behaviors`, message: `Behavior '${behavior.type}' is not yet compiled by runtime@2.` });
+        continue;
+      }
+      const id = `${node.uuid}:${behavior.type}`;
+      behaviorIds.push(id);
+      programs.push({ id, op: behavior.type, params: behavior });
+    }
+    const startDelay = numberValue(ps.startDelay);
+    systems.push({
+      id: node.uuid,
+      nodeId: node.uuid,
+      material: String(ps.material),
+      capacity: Math.max(1, Number(ps.maxParticles ?? 256)),
+      duration: Math.max(0, Number(ps.duration ?? 0)),
+      looping: !!ps.looping,
+      startDelay,
+      renderMode: renderModeOf(Number(ps.renderMode ?? 0)),
+      programs: behaviorIds,
+      transform: {
+        position: [0, 0, 0],
+        rotation: [0, 0, 0, 1],
+        scale: [1, 1, 1],
+      },
+    });
+  });
+  if (diagnostics.some((entry) => entry.severity === 'error')) return { diagnostics };
+  const contract = source.vfxIR ?? {};
+  return {
+    diagnostics,
+    artifact: writeRuntimeV2({
+      schema: 'web-vfx-runtime@2',
+      effectId: String(contract.effectId ?? source.object?.name ?? 'effect'),
+      compilerVersion,
+      seed: Number(contract.seed ?? 1),
+      fixedDelta: Number(contract.fixedDelta ?? 1 / 60),
+      duration: Number(contract.lifecycle?.terminalTime ?? 0),
+      looping: false,
+      resources,
+      materials: runtimeMaterials,
+      programs,
+      systems,
+    }),
+  };
+}
+
 /**
  * Classify a Unity/Quarks source document before lowering. This deliberately
  * does not emit a fake runtime artifact: unsupported source semantics become
