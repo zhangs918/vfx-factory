@@ -200,9 +200,8 @@ namespace BabylonQuarks.UnityExporter
                 else if (TryGetMaterialFloat(mat, "_Cutoff", out cut))
                     alphaCutoff = cut;
             }
-            bool rendererDepthWrite = rendererFamily.LegacyParticle
-                ? false
-                : ReadUnityBool(mat, "_ZWrite", LastBlendMode == 0);
+            bool rendererDepthWrite = MaterialProgramSemantics.ResolveDepthWrite(
+                rendererFamily, mat, LastBlendMode == 0 ? "opaque" : "alpha", LastBlendMode == 0);
 
             string uuid = NewId("quarks_material");
             var m = new JObject()
@@ -256,15 +255,10 @@ namespace BabylonQuarks.UnityExporter
             int explicitUnityMode = ReadUnityInt(mat, "_Mode", -1);
             MaterialShaderFamily effectiveFamily = MaterialShaderFamilyRegistry.Resolve(
                 mat.shader != null ? mat.shader.name : "");
-            string materialBlend = effectiveFamily.LegacyPremultiply ? "premultiplied-alpha"
-                : LastBlendMode == 1 ? "additive"
-                : LastBlendMode == 4 ? "multiply"
-                : !effectiveFamily.LegacyParticle && explicitUnityMode == 0 ? "opaque"
-                : !effectiveFamily.LegacyParticle && explicitUnityMode == 1 ? "alpha-test"
-                : "alpha";
-            bool effectiveZWrite = effectiveFamily.LegacyParticle
-                ? false
-                : ReadUnityBool(mat, "_ZWrite", materialBlend == "opaque" || materialBlend == "alpha-test");
+            string materialBlend = MaterialProgramSemantics.ResolveBlend(
+                effectiveFamily, LastBlendMode, explicitUnityMode);
+            bool effectiveZWrite = MaterialProgramSemantics.ResolveDepthWrite(
+                effectiveFamily, mat, materialBlend, LastBlendMode == 0);
             programProfile?.Set("shaderFamily", mat.shader != null ? mat.shader.name : "")
                 .Set("blendMode", materialBlend)
                 .Set("unityMode", ReadUnityInt(mat, "_Mode", -1))
@@ -746,12 +740,8 @@ namespace BabylonQuarks.UnityExporter
                         ? "raw-linear-attribute" : "project-authored")
                     .Set("requiresOracle", true));
             int unityMode = ReadUnityInt(mat, "_Mode", -1);
-            string blendProgram = legacyPremultiply ? "premultiplied-alpha"
-                : LastBlendMode == 1 ? "additive"
-                : LastBlendMode == 4 ? "multiply"
-                : !legacyParticle && unityMode == 0 ? "opaque"
-                : !legacyParticle && unityMode == 1 ? "alpha-test"
-                : "alpha";
+            string blendProgram = MaterialProgramSemantics.ResolveBlend(
+                family, LastBlendMode, unityMode);
             operations.Add(new JObject().Set("op", "blend")
                 .Set("mode", blendProgram));
 
@@ -1423,30 +1413,7 @@ namespace BabylonQuarks.UnityExporter
         /// Reads a float via Material API or serialized m_Floats (Shader Graph safe).
         /// </summary>
         private static bool TryGetMaterialFloat(Material mat, string name, out float value)
-        {
-            value = 0f;
-            if (mat == null || string.IsNullOrEmpty(name)) return false;
-            if (mat.HasProperty(name))
-            {
-                value = mat.GetFloat(name);
-                return true;
-            }
-            var so = new SerializedObject(mat);
-            var floats = so.FindProperty("m_SavedProperties.m_Floats");
-            if (floats == null) return false;
-            for (int i = 0; i < floats.arraySize; i++)
-            {
-                var el = floats.GetArrayElementAtIndex(i);
-                var key = el.FindPropertyRelative("first");
-                var val = el.FindPropertyRelative("second");
-                if (key != null && val != null && key.stringValue == name)
-                {
-                    value = val.floatValue;
-                    return true;
-                }
-            }
-            return false;
-        }
+            => MaterialPropertyReader.TryGetFloat(mat, name, out value);
 
         private string AddTexture(Texture tex, bool envAtlas = false)
         {
@@ -1953,18 +1920,12 @@ namespace BabylonQuarks.UnityExporter
         }
 
         private static int ReadUnityInt(Material mat, string property, int fallback)
-        {
-            return TryGetMaterialFloat(mat, property, out float value) ? (int)value : fallback;
-        }
+            => MaterialPropertyReader.ReadInt(mat, property, fallback);
 
         private static float ReadUnityFloat(Material mat, string property, float fallback)
-        {
-            return TryGetMaterialFloat(mat, property, out float value) ? value : fallback;
-        }
+            => MaterialPropertyReader.ReadFloat(mat, property, fallback);
 
         private static bool ReadUnityBool(Material mat, string property, bool fallback)
-        {
-            return TryGetMaterialFloat(mat, property, out float value) ? value > 0.5f : fallback;
-        }
+            => MaterialPropertyReader.ReadBool(mat, property, fallback);
     }
 }
