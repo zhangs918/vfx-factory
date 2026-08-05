@@ -4,11 +4,14 @@ export {
   loadQuarksManifest,
   type QuarksManifestEntry,
   type QuarksManifest,
-  type VfxSemanticContract,
+  type VfxArtifactSource,
+  type PlayerState,
   type ParticleStateSnapshot,
   type PhysicsResolver,
   type QuarksEffectPlayerOptions,
 } from './QuarksEffectPlayer';
+
+export { type VfxSemanticContract } from './artifact-contract';
 
 export {
   type CfxrMaterialProps,

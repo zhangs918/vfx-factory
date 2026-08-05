@@ -28,8 +28,6 @@ import {
 import { BatchedRenderer, QuarksLoader, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
 import { Vector3 as QuarksVector3 } from 'quarks.core';
-import adapterRegistry from '../../../config/semantic-adapters.json';
-import { assertVfxArtifact } from '@vfx-factory/artifact-schema';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
 import { DeterministicClock, SeededRandom } from './deterministic';
 import {
@@ -54,6 +52,7 @@ import {
   type StartDelayGate,
   type CfxrMaterialProps,
 } from './cfxrQuarksFidelity';
+import { normalizeUnityQuarksJson } from './quarks-lowering';
 
 registerUnityEmitterShapes();
 
@@ -77,58 +76,8 @@ export interface QuarksManifest {
   effects: QuarksManifestEntry[];
 }
 
-export interface VfxSemanticContract {
-  schema: 'unity-vfx-ir@1';
-  runtime: 'three-quarks-semantic@1';
-  policy: 'strict';
-  representation?: 'live-particles@1' | 'camera-baked@1';
-  effectId: string;
-  seed: number;
-  fixedDelta: number;
-  referenceCamera: {
-    projection: 'perspective';
-    fov: number;
-    near: number;
-    far: number;
-    position: [number, number, number];
-    target: [number, number, number];
-  };
-  captureTimes: number[];
-  lifecycle: {
-    schema: 'effect-lifecycle@1';
-    rootLoopPolicy: 'one-shot';
-    terminalTime: number;
-    terminalAction: 'stop-and-clear';
-    timeDomain: 'unity-root-fixed-step@60hz';
-  };
-  qualification?: {
-    status: 'candidate' | 'qualified';
-    oracleRequired: boolean;
-    simulationAdapters: Array<{
-      id: string;
-      version: number;
-      kind: 'simulation' | 'scene-input' | 'geometry';
-      fidelity: string;
-      requiresOracle: boolean;
-    }>;
-  };
-  editability?: {
-    simulation: 'live' | 'hybrid-live';
-    material: 'live-ir';
-    spawnInitialization: 'calibrated-spawn-state@1' | 'deterministic-random-lanes@1';
-    limitations: string[];
-    plannedReplacement?: string;
-  };
-  diagnostics: Array<{
-    severity: string;
-    code: string;
-    domain?: string;
-    path: string;
-    message: string;
-    productionDisposition?: string;
-    requiredAction?: string;
-  }>;
-}
+export type VfxArtifactSource = string | URL | Record<string, unknown>;
+export type PlayerState = 'empty' | 'loading' | 'playing' | 'paused' | 'finished' | 'error' | 'disposed';
 
 export interface ParticleStateSnapshot {
   schema: 'web-particle-state@2';
@@ -158,366 +107,9 @@ export interface ParticleStateSnapshot {
   }>;
 }
 
-function requireSemanticContract(raw: any): VfxSemanticContract {
-  // Protocol boundary: every player load now enters through the neutral artifact
-  // reader. The legacy unity-vfx-ir shape remains accepted only as an explicit
-  // migration path; no renderer code should need to know which envelope it got.
-  const artifactRead = assertVfxArtifact(raw);
-  if (artifactRead.kind === 'artifact') {
-    if (artifactRead.contract.disposition === 'rejected') {
-      throw new Error(`Rejected VFX artifact '${artifactRead.contract.effect.id}' cannot be played.`);
-    }
-    const c = artifactRead.contract;
-    raw.vfxIR = {
-      schema: 'unity-vfx-ir@1',
-      runtime: c.contract.runtime,
-      policy: c.contract.policy,
-      effectId: c.effect.id,
-      seed: c.contract.seed,
-      fixedDelta: c.contract.fixedDelta,
-      referenceCamera: c.contract.referenceCamera,
-      captureTimes: c.contract.captureTimes,
-      lifecycle: c.contract.lifecycle,
-      diagnostics: c.diagnostics,
-    };
-  }
-  const ir = raw?.vfxIR as VfxSemanticContract | undefined;
-  if (ir?.schema !== 'unity-vfx-ir@1' || ir.runtime !== 'three-quarks-semantic@1' || ir.policy !== 'strict') {
-    throw new Error('Effect is not a strict unity-vfx-ir@1 export. Re-export it with the semantic exporter.');
-  }
-  const errors = (ir.diagnostics ?? []).filter((d) => d.severity === 'error');
-  if (errors.length) {
-    throw new Error(`Strict export contains unsupported semantics: ${errors.map((d) => `${d.code} at ${d.path}`).join(', ')}`);
-  }
-  const lifecycle = ir.lifecycle;
-  if (lifecycle?.schema !== 'effect-lifecycle@1'
-      || lifecycle.rootLoopPolicy !== 'one-shot'
-      || lifecycle.terminalAction !== 'stop-and-clear'
-      || lifecycle.timeDomain !== 'unity-root-fixed-step@60hz'
-      || !(Number(lifecycle.terminalTime) > 0)
-      || Number(lifecycle.terminalTime) > Math.max(...ir.captureTimes, 0) + 1e-6) {
-    throw new Error('Effect lacks a valid effect-lifecycle@1 one-shot contract.');
-  }
-  for (const required of ir.qualification?.simulationAdapters ?? []) {
-    const adapter = adapterRegistry.adapters.find((candidate) => candidate.id === required.id
-      && candidate.version === required.version && candidate.kind === required.kind);
-    if (!adapter) {
-      throw new Error(`Missing semantic adapter ${required.id}@${required.version} (${required.kind})`);
-    }
-  }
-  const controllers = raw?.controllers ?? [];
-  if (!Array.isArray(controllers)) throw new Error('Effect controllers must be an array.');
-  if (controllers.length && !(ir.qualification?.simulationAdapters ?? []).some(
-    (adapter) => adapter.id === 'unity-effect-controller' && adapter.version === 1,
-  )) {
-    throw new Error('Effect has controllers but lacks unity-effect-controller@1 in its contract.');
-  }
-  const nodeIds = new Set<string>();
-  const collectNodes = (node: any) => {
-    if (!node || typeof node !== 'object') return;
-    if (typeof node.uuid === 'string') nodeIds.add(node.uuid);
-    if (Array.isArray(node.children)) node.children.forEach(collectNodes);
-  };
-  collectNodes(raw?.object);
-  for (const controller of controllers) {
-    if (controller?.schema !== 'effect-controller@1') {
-      throw new Error(`Unsupported effect controller schema '${controller?.schema}'`);
-    }
-    if (controller.kind === 'projectile-host-motion') {
-      if (controller.lowering !== 'runtime-input-contract@1'
-          || controller.activation !== 'host-event:Fire'
-          || !nodeIds.has(controller.targetNode)
-          || !(Number(controller.speed) >= 0) || !(Number(controller.distance) >= 0)) {
-        throw new Error('Invalid projectile-host-motion controller contract.');
-      }
-    } else if (controller.kind === 'capsule-grounded-emitter-gate') {
-      if (controller.lowering !== 'reference-scene-schedule@1'
-          || controller.activation !== 'grounded-rising-edge'
-          || controller.sceneQuery !== 'reference-ground-plane@1'
-          || !nodeIds.has(controller.sourceEmitter) || !nodeIds.has(controller.targetEmitter)
-          || !(Number(controller.capsuleRadius) >= 0) || !(Number(controller.maxDistance) >= 0)) {
-        throw new Error('Invalid capsule-grounded-emitter-gate controller contract.');
-      }
-    } else if (controller.kind === 'deterministic-light-fade') {
-      if (controller.lowering !== 'deterministic-light-fade@1'
-          || controller.activation !== 'effect-enable'
-          || !nodeIds.has(controller.targetNode)
-          || !Array.isArray(controller.position) || controller.position.length !== 3
-          || !Array.isArray(controller.color) || controller.color.length !== 3
-          || !(Number(controller.range) >= 0) || !(Number(controller.baseIntensity) >= 0)
-          || !(Number(controller.finalIntensity) >= 0) || !(Number(controller.delay) >= 0)
-          || !(Number(controller.duration) > 0)) {
-        throw new Error('Invalid deterministic-light-fade controller contract.');
-      }
-    } else if (controller.kind === 'constant-euler-rotation') {
-      if (controller.lowering !== 'constant-euler-rotation@1'
-          || controller.activation !== 'effect-enable'
-          || !nodeIds.has(controller.targetNode)
-          || !Array.isArray(controller.degreesPerSecond) || controller.degreesPerSecond.length !== 3
-          || !controller.degreesPerSecond.every((value: unknown) => Number.isFinite(Number(value)))
-          || (controller.space !== 'self' && controller.space !== 'world')) {
-        throw new Error('Invalid constant-euler-rotation controller contract.');
-      }
-    } else if (controller.kind === 'sampled-unity-perlin-light') {
-      if (controller.lowering !== 'sampled-unity-perlin-light@1'
-          || controller.activation !== 'effect-enable'
-          || !nodeIds.has(controller.targetNode)
-          || !Array.isArray(controller.position) || controller.position.length !== 3
-          || !Array.isArray(controller.color) || controller.color.length !== 3
-          || !(Number(controller.range) >= 0) || !(Number(controller.baseIntensity) >= 0)
-          || !Number.isFinite(Number(controller.addIntensity))
-          || !(Number(controller.smoothFactor) >= 0) || !(Number(controller.domainStep) > 0)
-          || !Array.isArray(controller.samples) || controller.samples.length < 2) {
-        throw new Error('Invalid sampled-unity-perlin-light controller contract.');
-      }
-    } else {
-      throw new Error(`Unsupported effect controller kind '${controller.kind}'`);
-    }
-  }
-  return ir;
-}
-
 /**
  * Normalize babylon/unity-quarks-exporter JSON so three.quarks ObjectLoader can parse it.
  * Exporter emits QuarksMaterial / QuarksGeometry which MaterialLoader doesn't know.
- */
-export function normalizeUnityQuarksJson(json: any): any {
-  expandCfxrRingGeometry(json);
-
-  // Legacy/oversized exports can lose an editor-only mesh reference. Keep them loadable with
-  // an explicit editable quad fallback; new exports still carry the authored mesh and basis.
-  if (!Array.isArray(json.geometries)) json.geometries = [];
-  const fallbackGeometryUuid = '__unity_mesh_fallback_quad@1';
-  if (!json.geometries.some((g: any) => g?.uuid === fallbackGeometryUuid)) {
-    json.geometries.push({
-      uuid: fallbackGeometryUuid,
-      type: 'QuarksGeometry',
-      positions: [-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0],
-      indices: [0, 2, 1, 0, 3, 2],
-      uvs: [0, 0, 1, 0, 1, 1, 0, 1],
-      normals: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-    });
-  }
-  const patchMissingMeshBasis = (o: any) => {
-    if (!o || typeof o !== 'object') return;
-    if (o.type === 'ParticleEmitter' && o.ps?.renderMode === 2
-        && (!o.ps.unityMeshRendererBasis || !o.ps.instancingGeometry)) {
-      o.ps.instancingGeometry = fallbackGeometryUuid;
-      o.ps.unityMeshRendererBasis = {
-        schema: 'unity-mesh-renderer-basis@1', pivot: [0, 0, 0],
-        scaleSource: 'particle-current-size', handedness: 'reflect-z-once',
-        lowering: 'missing-source-quad-fallback@1',
-      };
-    }
-    if (Array.isArray(o.children)) o.children.forEach(patchMissingMeshBasis);
-  };
-  patchMissingMeshBasis(json.object);
-
-  // Compile Unity's renderer pivot into the unit Mesh before Quarks creates its instancing
-  // geometry. Pivot is measured in particle-size units and therefore must be applied before
-  // the per-particle current-size and quaternion TRS. Shape/hierarchy scales are deliberately
-  // absent from this operation: each coordinate-space transform has one owner.
-  const geometries = new Map<string, any>();
-  for (const geometry of json.geometries ?? []) geometries.set(geometry.uuid, geometry);
-  const lowerMeshBasis = (o: any) => {
-    if (!o || typeof o !== 'object') return;
-    if (o.type === 'ParticleEmitter' && o.ps?.unitySubEmitterLifecycle) {
-      const lifecycle = o.ps.unitySubEmitterLifecycle;
-      if (lifecycle.schema !== 'unity-sub-emitter-lifecycle@1'
-          || lifecycle.ownership !== 'parent-event'
-          || lifecycle.looping !== true
-          || lifecycle.termination !== 'child-duration'
-          || o.ps.onlyUsedByOther !== true
-          || o.ps.looping !== true
-          || o.ps.unitySpawnSchedule
-          || o.ps.unityInitialState
-          || o.ps.unityTrajectoryCache) {
-        throw new Error(`Emitter ${o.name ?? o.uuid} has an invalid live sub-emitter lifecycle contract`);
-      }
-    }
-    if (o.type === 'ParticleEmitter' && Array.isArray(o.ps?.behaviors)) {
-      for (const behavior of o.ps.behaviors) {
-        if (behavior?.type !== 'EmitSubParticleSystem') continue;
-        const inheritance = behavior.unityInheritance;
-        if (inheritance?.schema !== 'unity-sub-emitter-inheritance@1'
-            || typeof inheritance.size !== 'boolean'
-            || typeof inheritance.color !== 'boolean'
-            || typeof inheritance.rotation !== 'boolean'
-            || typeof inheritance.lifetime !== 'boolean') {
-          throw new Error(`Emitter ${o.name ?? o.uuid} has an unsupported sub-emitter inheritance contract`);
-        }
-      }
-    }
-    if (o.type === 'ParticleEmitter' && o.ps?.renderMode === 2) {
-      const alignment = o.ps.unityRendererAlignment;
-      if (alignment?.schema === 'unity-renderer-alignment@1'
-          && alignment.lowering === 'local-billboard-instanced-quad') {
-        if (alignment.sourceRenderMode !== 'Billboard' || alignment.alignment !== 'Local')
-          throw new Error(`Emitter ${o.name ?? o.uuid} has an invalid local billboard lowering`);
-      }
-      const basis = o.ps.unityMeshRendererBasis;
-      if (basis?.schema !== 'unity-mesh-renderer-basis@1') {
-        throw new Error(`Mesh emitter ${o.name ?? o.uuid} lacks unity-mesh-renderer-basis@1`);
-      }
-      const geometry = geometries.get(o.ps.instancingGeometry);
-      const pivot = basis.pivot;
-      if (!geometry || !Array.isArray(geometry.positions) || !Array.isArray(pivot)) {
-        throw new Error(`Mesh emitter ${o.name ?? o.uuid} has an invalid renderer basis`);
-      }
-      if (!geometry.__unityMeshBasisLowered) {
-        for (let i = 0; i + 2 < geometry.positions.length; i += 3) {
-          geometry.positions[i] -= Number(pivot[0]) || 0;
-          geometry.positions[i + 1] -= Number(pivot[1]) || 0;
-          geometry.positions[i + 2] -= Number(pivot[2]) || 0;
-        }
-        geometry.__unityMeshBasisLowered = true;
-      }
-    }
-    if (Array.isArray(o.children)) o.children.forEach(lowerMeshBasis);
-  };
-  lowerMeshBasis(json.object);
-
-  // Exporter attaches "(emitter source)" Mesh nodes for mesh_surface shape references.
-  // They carry no material — ObjectLoader would render them as default white meshes.
-  const hideSourceMeshes = (o: any) => {
-    if (!o || typeof o !== 'object') return;
-    if (o.type === 'Mesh' && typeof o.name === 'string' && o.name.endsWith('(emitter source)')) {
-      o.visible = false;
-    }
-    if (Array.isArray(o.children)) o.children.forEach(hideSourceMeshes);
-  };
-  hideSourceMeshes(json.object);
-
-  if (Array.isArray(json.materials)) {
-    for (const m of json.materials) {
-      if (m.type !== 'QuarksMaterial' && m.type !== 'MeshBasicMaterial') continue;
-      const quarksBlend = m.blending ?? m.alphaMode ?? 2; // 1=add, 2=alpha
-      const program = m.vfxProgram as { schema?: string; profile?: CfxrMaterialProps; blend?: string } | undefined;
-      if (program?.schema !== 'particle-material-program@2') {
-        throw new Error(`Material ${m.name ?? m.uuid} has no strict particle material program`);
-      }
-      const semanticProfile = program.profile;
-      const additive = program.blend === 'additive' || quarksBlend === 1;
-      const multiply = program.blend === 'multiply' || quarksBlend === 4;
-      const legacyMultiply = !!semanticProfile?.legacyMultiply;
-      const legacyPremultiply = program.blend === 'premultiplied-alpha' || !!semanticProfile?.legacyPremultiply;
-      m.type = 'MeshBasicMaterial';
-      m.map = m.map ?? m.texture;
-      m.transparent = m.transparent !== false;
-      m.depthWrite = false;
-      m.depthTest = m.depthTest !== false;
-      m.side = DoubleSide;
-      m.toneMapped = false;
-      if (legacyMultiply) {
-        m.blending = CustomBlending;
-        m.blendEquation = AddEquation;
-        m.blendSrc = ZeroFactor;
-        m.blendDst = SrcColorFactor;
-        m.blendEquationAlpha = AddEquation;
-        m.blendSrcAlpha = ZeroFactor;
-        m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
-      } else if (legacyPremultiply) {
-        m.blending = CustomBlending;
-        m.blendEquation = AddEquation;
-        m.blendSrc = OneFactor;
-        m.blendDst = OneMinusSrcAlphaFactor;
-        m.blendEquationAlpha = AddEquation;
-        m.blendSrcAlpha = ZeroFactor;
-        m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
-      } else if (multiply) {
-        // Unity shader source declares Blend DstColor Zero. Three's MultiplyBlending preset
-        // retains OneMinusSrcAlpha, making transparent texels draw visible rectangular quads.
-        m.blending = CustomBlending;
-        m.blendEquation = AddEquation;
-        m.blendSrc = DstColorFactor;
-        m.blendDst = ZeroFactor;
-        m.blendEquationAlpha = AddEquation;
-        m.blendSrcAlpha = ZeroFactor;
-        m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
-      } else {
-        m.blending = additive ? AdditiveBlending : NormalBlending;
-        m.premultipliedAlpha = false;
-      }
-      if (typeof m.alphaTest === 'number' && m.alphaTest > 0) {
-        m.alphaTest = m.alphaTest;
-      }
-      // ObjectLoader wants 0xRRGGBB. HDR punch lives in `cfxr.hdrMultiply` / fidelity shader;
-      // here only keep displayable chroma for the MeshBasicMaterial stand-in.
-      if (Array.isArray(m.color) && m.color.length >= 3) {
-        let r = Number(m.color[0]) || 0;
-        let g = Number(m.color[1]) || 0;
-        let b = Number(m.color[2]) || 0;
-        const peak = Math.max(r, g, b, 1e-4);
-        if (peak > 1) {
-          r /= peak;
-          g /= peak;
-          b /= peak;
-        }
-        const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
-        m.color =
-          (Math.round(clamp01(r) * 255) << 16) |
-          (Math.round(clamp01(g) * 255) << 8) |
-          Math.round(clamp01(b) * 255);
-      }
-      m.userData = {
-        ...(m.userData || {}),
-        vfxProgram: program,
-        cfxrProps: semanticProfile ?? null,
-        maps: m.maps ?? null,
-        alphaClip: !!m.alphaClip,
-      };
-      delete m.texture;
-      delete m.alphaMode;
-      delete m.reflectionAtlas;
-      delete m.reflectionLevel;
-      delete m.maps;
-      delete m.alphaClip;
-      delete m.shader;
-      delete m.vfxProgram;
-      delete m.cfxr;
-    }
-  }
-
-  if (Array.isArray(json.geometries)) {
-    for (const g of json.geometries) {
-      if (g.type !== 'QuarksGeometry') continue;
-      const positions = g.positions ?? [];
-      const indices = g.indices ?? [];
-      const uvs = g.uvs ?? [];
-      const uv1s = g.uv1s ?? [];
-      const normals = g.normals ?? [];
-      g.type = 'BufferGeometry';
-      g.data = {
-        attributes: {
-          position: { itemSize: 3, type: 'Float32Array', array: positions },
-          ...(uvs.length
-            ? { uv: { itemSize: 2, type: 'Float32Array', array: uvs } }
-            : {}),
-          ...(uv1s.length
-            ? { uv1: { itemSize: 2, type: 'Float32Array', array: uv1s } }
-            : {}),
-          ...(normals.length
-            ? { normal: { itemSize: 3, type: 'Float32Array', array: normals } }
-            : {}),
-        },
-        index: indices.length ? { type: 'Uint32Array', array: indices } : undefined,
-      };
-      delete g.positions;
-      delete g.indices;
-      delete g.uvs;
-      delete g.uv1s;
-      delete g.normals;
-    }
-  }
-
-  return json;
-}
-
-/**
- * Loads Unity→Quarks JSON and plays it via three.quarks (WebGL BatchedRenderer).
  */
 export class QuarksEffectPlayer {
   readonly root = new Group();
@@ -525,6 +117,7 @@ export class QuarksEffectPlayer {
   readonly effectLight = new CfxrEffectLight();
   private effectRoot: Object3D | null = null;
   private playing = false;
+  private state: PlayerState = 'empty';
   private label = '';
   private delayGate: StartDelayGate = createStartDelayGate(new Map());
   private sceneColorRT: WebGLRenderTarget | null = null;
@@ -549,6 +142,10 @@ export class QuarksEffectPlayer {
     return this.playing;
   }
 
+  get playbackState(): PlayerState {
+    return this.state;
+  }
+
   get currentLabel() {
     return this.label;
   }
@@ -556,25 +153,34 @@ export class QuarksEffectPlayer {
   /** URL-debug-safe state: lets regression tooling prove lifecycle progress without pixels. */
   get debugLifecycleState() {
     return {
+      state: this.state,
       playing: this.playing,
       elapsed: this.clock.time,
       lifecycle: this.contract?.lifecycle ?? null,
     };
   }
 
-  async loadAndPlay(url: string, label: string): Promise<void> {
+  async loadAndPlay(source: VfxArtifactSource, label: string): Promise<void> {
+    if (this.state === 'disposed') throw new Error('Cannot load an effect after dispose().');
+    this.state = 'loading';
+    let raw: any;
+    if (typeof source === 'object' && !(source instanceof URL)) {
+      raw = source;
+    } else {
+      const url = String(source);
+      const res = await fetch(url);
+      const ct = res.headers.get('content-type') ?? '';
+      if (!res.ok || !ct.includes('json')) {
+        throw new Error(
+          `缺少导出文件: ${url}\n请按 tools/unity-quarks-exporter/EXPORT_GUIDE.zh-CN.md 从 Unity 导出。\n` +
+            `保存为 public/assets/quarks/ 下的 JSON 后刷新本页。`,
+        );
+      }
+      raw = await res.json();
+    }
+    // Fetch/parse first. A failed load must not destroy the currently playing effect.
     this.clear();
     this.label = label;
-
-    const res = await fetch(url);
-    const ct = res.headers.get('content-type') ?? '';
-    if (!res.ok || !ct.includes('json')) {
-      throw new Error(
-        `缺少导出文件: ${url}\n请按 tools/unity-quarks-exporter/EXPORT_GUIDE.zh-CN.md 从 Unity 导出。\n` +
-          `保存为 public/assets/quarks/ 下的 JSON 后刷新本页。`,
-      );
-    }
-    const raw = await res.json();
     this.contract = validateArtifactContract(raw);
     this.clock.reset();
     setCfxrEffectTime(0);
@@ -772,6 +378,7 @@ export class QuarksEffectPlayer {
     this.updateBatchesExactlyOnce(0);
     this.effectLight.stop();
     this.playing = false;
+    this.state = 'finished';
   }
 
   /**
@@ -958,7 +565,7 @@ export class QuarksEffectPlayer {
   private hasEffectLight = false;
 
   restart() {
-    if (!this.effectRoot) return;
+    if (!this.effectRoot || this.state === 'disposed') return;
     this.random.reset(this.contract?.seed ?? 1);
     this.clock.reset();
     for (const controller of this.autoRotations)
@@ -969,17 +576,22 @@ export class QuarksEffectPlayer {
     this.applySolo();
     if (this.hasEffectLight) this.effectLight.restart();
     this.playing = true;
+    this.state = 'playing';
   }
 
   pause() {
     if (!this.effectRoot) return;
     QuarksUtil.pause(this.effectRoot);
     this.effectLight.stop();
+    this.state = 'paused';
   }
 
   resume() {
     if (!this.effectRoot) return;
     QuarksUtil.play(this.effectRoot);
+    if (this.hasEffectLight) this.effectLight.restart();
+    this.playing = true;
+    this.state = 'playing';
   }
 
   clear() {
@@ -1007,6 +619,14 @@ export class QuarksEffectPlayer {
     this.effectLight.stop();
     this.playing = false;
     this.contract = null;
+    if (this.state !== 'disposed') this.state = 'empty';
+  }
+
+  dispose() {
+    if (this.state === 'disposed') return;
+    this.clear();
+    this.root.remove(this.batchRenderer);
+    this.state = 'disposed';
   }
 }
 
