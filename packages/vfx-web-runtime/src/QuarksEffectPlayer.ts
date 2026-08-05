@@ -134,21 +134,25 @@ export class QuarksEffectPlayer {
       throw new Error(`Runtime artifact '${runtimeBundle.effectId}' is incomplete: missing compiled cfxrState.`);
     }
     const runtimeJson = runtimeBundle?.payload ?? raw;
+    const runtimeConfig = runtimeBundle?.runtimeConfig;
     this.clock.reset();
     setCfxrEffectTime(0);
     this.random.reset(this.contract.seed);
     if (this.contract.representation === 'camera-baked@1') {
       throw new Error('camera-baked@1 is an offline regression oracle and cannot be played in production.');
     }
-    this.delayGate = createStartDelayGate(extractStartDelays(runtimeJson));
-    setDissolveCurvesFromJson(runtimeJson);
+    this.delayGate = createStartDelayGate(runtimeConfig?.startDelays
+      ? new Map(runtimeConfig.startDelays)
+      : extractStartDelays(runtimeJson));
     if (runtimeBundle?.cfxrState) importCfxrRuntimeState(runtimeBundle.cfxrState);
     else setCfxrPropsFromJson(runtimeJson);
-    const lightController = Array.isArray(runtimeJson.controllers)
-      ? runtimeJson.controllers.find((controller: any) => controller?.kind === 'deterministic-light-fade'
+    if (!runtimeBundle) setDissolveCurvesFromJson(runtimeJson);
+    const controllers = runtimeConfig?.controllers ?? runtimeJson.controllers;
+    const lightController = Array.isArray(controllers)
+      ? controllers.find((controller: any) => controller?.kind === 'deterministic-light-fade'
           || controller?.kind === 'sampled-unity-perlin-light')
       : undefined;
-    this.hasEffectLight = !!runtimeJson.cfxrEffect || !!lightController;
+    this.hasEffectLight = !!(runtimeConfig?.cfxrEffect ?? runtimeJson.cfxrEffect) || !!lightController;
     if (lightController?.kind === 'deterministic-light-fade') {
       this.effectLight.configure({
         mode: 'linear-fade',
@@ -177,7 +181,7 @@ export class QuarksEffectPlayer {
         position: lightController.position,
         intensityScale: 2.8,
       });
-    } else if (this.hasEffectLight) this.effectLight.configure(runtimeJson.cfxrEffect);
+    } else if (this.hasEffectLight) this.effectLight.configure(runtimeConfig?.cfxrEffect ?? runtimeJson.cfxrEffect);
     else this.effectLight.stop();
     const obj = await loadQuarksObject(
       runtimeJson,
@@ -188,7 +192,7 @@ export class QuarksEffectPlayer {
 
     this.root.add(obj);
     this.effectRoot = obj;
-    this.autoRotations = buildAutoRotations(obj, runtimeJson.controllers ?? []);
+    this.autoRotations = buildAutoRotations(obj, controllers ?? []);
     // A freshly parsed Quarks system and a replayed system otherwise start from subtly
     // different emission state (the first deterministic freeze was one fixed frame ahead).
     // Normalize first play through the exact same seeded restart path used by regression/replay.

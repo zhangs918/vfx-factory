@@ -20,6 +20,11 @@ export interface WebRuntimeArtifact {
   resources?: Record<string, unknown>;
   materialVariants?: Record<string, unknown>;
   cfxrState?: Record<string, unknown>;
+  runtimeConfig?: {
+    startDelays?: Array<[string, number]>;
+    controllers?: unknown[];
+    cfxrEffect?: Record<string, unknown>;
+  };
 }
 
 export type BlendMode =

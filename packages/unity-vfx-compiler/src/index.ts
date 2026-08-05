@@ -13,6 +13,7 @@ export interface RuntimeArtifactInput {
   materialVariants?: Record<string, unknown>;
   /** Always present, even when empty: proves semantic lowering ran offline. */
   cfxrState: Record<string, unknown>;
+  runtimeConfig?: WebRuntimeArtifact['runtimeConfig'];
 }
 
 function assertJson(value: unknown, path: string): void {
@@ -45,6 +46,7 @@ export function compileRuntimeArtifact(input: RuntimeArtifactInput): WebRuntimeA
     // An empty table is still explicit: it tells playback that semantic
     // lowering was completed and must not be re-run online.
     cfxrState: input.cfxrState,
+    runtimeConfig: input.runtimeConfig,
   };
 }
 
