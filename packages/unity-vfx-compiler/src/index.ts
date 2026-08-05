@@ -88,3 +88,48 @@ export function writeRuntimeV2(artifact: WebVfxRuntimeV2): WebVfxRuntimeV2 {
   }
   return JSON.parse(JSON.stringify(artifact)) as WebVfxRuntimeV2;
 }
+
+export interface CompilerDiagnostic {
+  severity: 'info' | 'warning' | 'error';
+  code: string;
+  path: string;
+  message: string;
+}
+
+export interface SourceCompileResult {
+  artifact?: WebVfxRuntimeV2;
+  diagnostics: CompilerDiagnostic[];
+}
+
+/**
+ * Classify a Unity/Quarks source document before lowering. This deliberately
+ * does not emit a fake runtime artifact: unsupported source semantics become
+ * diagnostics and must be implemented by a compiler pass before promotion.
+ */
+export function compileSourceJson(source: unknown): SourceCompileResult {
+  const diagnostics: CompilerDiagnostic[] = [];
+  if (!source || typeof source !== 'object' || Array.isArray(source)) {
+    return { diagnostics: [{ severity: 'error', code: 'SOURCE_NOT_OBJECT', path: '$', message: 'Source document must be an object.' }] };
+  }
+  const value = source as Record<string, unknown>;
+  const contract = value.vfxIR;
+  if (!contract || typeof contract !== 'object') {
+    diagnostics.push({ severity: 'error', code: 'MISSING_SOURCE_CONTRACT', path: '$.vfxIR', message: 'Unity source is missing the semantic contract.' });
+  }
+  if (!value.object || typeof value.object !== 'object') {
+    diagnostics.push({ severity: 'error', code: 'MISSING_OBJECT', path: '$.object', message: 'Unity source is missing its Object3D hierarchy.' });
+  }
+  if (!Array.isArray(value.materials)) {
+    diagnostics.push({ severity: 'error', code: 'MISSING_MATERIALS', path: '$.materials', message: 'Unity source is missing serialized materials.' });
+  }
+  if (!Array.isArray(value.textures)) {
+    diagnostics.push({ severity: 'error', code: 'MISSING_TEXTURES', path: '$.textures', message: 'Unity source is missing serialized textures.' });
+  }
+  diagnostics.push({
+    severity: 'info',
+    code: 'LOWERING_REQUIRED',
+    path: '$',
+    message: 'Source is valid legacy IR but has not yet been lowered to web-vfx-runtime@2.',
+  });
+  return { diagnostics };
+}
