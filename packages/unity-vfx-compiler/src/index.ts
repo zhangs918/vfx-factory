@@ -112,16 +112,11 @@ const numberValue = (value: any, fallback = 0) =>
   typeof value === 'number' ? value : Number(value?.value ?? fallback);
 
 const COVERAGE_TINT_VERTEX = `
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec4 color;
 attribute vec3 instancePosition;
 attribute vec3 instanceSize;
 attribute vec4 instanceColor;
 attribute float instanceFrame;
 attribute vec4 instanceCustom1;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
 uniform float uTileColumns;
 uniform float uTileRows;
 varying vec2 vUv;
@@ -132,7 +127,7 @@ void main() {
   float col = mod(instanceFrame, max(1.0, uTileColumns));
   float row = floor(instanceFrame / max(1.0, uTileColumns));
   vUv = (uv + vec2(col, row)) / vec2(max(1.0, uTileColumns), max(1.0, uTileRows));
-  vColor = color * instanceColor;
+  vColor = instanceColor;
   vCustom1 = instanceCustom1;
   vec3 p = position * instanceSize + instancePosition;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
@@ -189,6 +184,20 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
     }
     resources.push({ id: texture.uuid, kind: 'texture', uri: image.url, colorSpace: image.sRGB ? 'srgb' : 'linear' });
   }
+  for (const geometry of source?.geometries ?? []) {
+    if (!Array.isArray(geometry.positions) || geometry.positions.length < 3) continue;
+    resources.push({
+      id: geometry.uuid,
+      kind: 'geometry',
+      uri: `embedded:${geometry.uuid}`,
+      metadata: {
+        positions: geometry.positions,
+        indices: geometry.indices ?? [],
+        uvs: geometry.uvs ?? [],
+        normals: geometry.normals ?? [],
+      },
+    });
+  }
   const runtimeMaterials: WebVfxRuntimeV2['materials'] = [];
   for (const material of materials.values()) {
     const program = material.vfxProgram;
@@ -218,9 +227,11 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       id: material.uuid,
       vertexShader: COVERAGE_TINT_VERTEX,
       fragmentShader: COVERAGE_TINT_FRAGMENT,
-      textures: Object.fromEntries(Object.entries(material.maps ?? {}).map(([slot, id]) => [slot, String(id)])),
+      textures: Object.fromEntries(Object.entries(material.maps ?? {})
+        .filter(([slot]) => slot === 'main' || slot === 'mask')
+        .map(([slot, id]) => [slot === 'main' ? 'uMainMap' : 'uMask', String(id)])),
       uniforms: {
-        color: material.color ?? [1, 1, 1, 1],
+        uTint: material.color ?? [1, 1, 1, 1],
         operations: program.operations ?? [],
         uUseMask: (program.operations ?? []).some((operation: any) => operation.op === 'mask') ? 1 : 0,
         uUseSceneColor: (program.operations ?? []).some((operation: any) => operation.op === 'manual-graph-lowering' && operation.id === 'slash-screen@2') ? 1 : 0,
@@ -257,6 +268,7 @@ export function compileLegacyQuarksSource(source: any, compilerVersion = 'unity-
       id: node.uuid,
       nodeId: node.uuid,
       material: String(ps.material),
+      geometry: ps.instancingGeometry ? String(ps.instancingGeometry) : undefined,
       capacity: Math.max(1, Number(ps.maxParticles ?? 256)),
       duration: Math.max(0, Number(ps.duration ?? 0)),
       particleLife: Math.max(0.0001, numberValue(ps.startLife, Number(ps.duration ?? 1))),

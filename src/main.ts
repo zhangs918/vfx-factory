@@ -27,9 +27,12 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import {
   QuarksEffectPlayer,
+  CompiledEffectPlayer,
+  ThreeRuntimeBackend,
   loadQuarksManifest,
   type QuarksManifestEntry,
 } from '../packages/vfx-web-runtime/src/index';
+import { compileLegacyQuarksSource } from '../packages/unity-vfx-compiler/src/index';
 
 /** Neutral preview studio: shallow blue zenith fading into a bright horizon. */
 function makePreviewSky() {
@@ -170,10 +173,17 @@ async function main() {
       },
     },
   });
+  // Migration channel: runtime=v2 exercises the compiler-produced player boundary
+  // without changing the qualified legacy preview path.
+  const runtimeV2Mode = urlParams.get('runtime') === 'v2';
+  const compiledPlayer = runtimeV2Mode
+    ? new CompiledEffectPlayer(new ThreeRuntimeBackend(), { parent: scene, resourceBaseUrl: '' })
+    : null;
+  if (runtimeV2Mode) (window as Window & { __VFX_RUNTIME2__?: unknown }).__VFX_RUNTIME2__ = compiledPlayer;
   if (urlParams.get('debug') === '1') {
     (window as unknown as { __vfxDebugPlayer?: QuarksEffectPlayer }).__vfxDebugPlayer = player;
   }
-  scene.add(player.root);
+  if (!runtimeV2Mode) scene.add(player.root);
   (window as Window & { __VFX_REGRESSION__?: unknown }).__VFX_REGRESSION__ = {
     get contract() { return player.semanticContract; },
     setSolo: (name: string | null) => player.setSolo(name),
@@ -307,15 +317,23 @@ async function main() {
     paused = next;
     pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
     pauseBtn.textContent = paused ? 'Resume' : 'Pause';
-    if (paused) player.pause();
+    if (runtimeV2Mode) {
+      if (paused) compiledPlayer?.pause();
+      else compiledPlayer?.resume();
+    } else if (paused) player.pause();
     else player.resume();
-    setStatus(`${paused ? 'Paused' : player.isPlaying ? 'Playing' : 'Ready'} · ${current().label}`);
+    const active = runtimeV2Mode
+      ? compiledPlayer?.playbackState === 'playing'
+      : player.isPlaying;
+    setStatus(`${paused ? 'Paused' : active ? 'Playing' : 'Ready'} · ${current().label}${runtimeV2Mode ? ' · runtime=v2' : ''}`);
   };
 
   const play = async () => {
     // Freeze/regression loads must never expose a newly loaded playing system to one RAF
     // before deterministic stepping starts.
-    setPaused(freezeParam != null && Number.isFinite(freezeParam));
+    // runtime@2 steps through its own transport state; keep it playing until the
+    // deterministic stepping loop has populated the instance buffers.
+    setPaused(!runtimeV2Mode && freezeParam != null && Number.isFinite(freezeParam));
     const entry = current();
     // Vite treats an encoded `+` path segment as an SPA fallback even though the real static
     // file contains a literal plus. Keep path separators and plus literal; encode spaces and
@@ -326,21 +344,34 @@ async function main() {
     try {
       setStatus(`Loading · ${entry.label}`);
       if (loadedId !== entry.id || !player.isPlaying) {
-        await player.loadAndPlay(url, entry.label);
+        if (runtimeV2Mode) {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`Failed to load source (${response.status}).`);
+          const source = await response.json();
+          const result = compileLegacyQuarksSource(source);
+          const errors = result.diagnostics.filter((diagnostic) => diagnostic.severity === 'error');
+          if (!result.artifact || errors.length) {
+            throw new Error(errors[0]?.message ?? 'Source could not be lowered to runtime@2.');
+          }
+          await compiledPlayer?.load(result.artifact);
+        } else {
+          await player.loadAndPlay(url, entry.label);
+        }
         loadedId = entry.id;
       } else {
-        player.restart();
+        if (runtimeV2Mode) compiledPlayer?.restart();
+        else player.restart();
       }
       // Interactive presentation is deliberately above the synthetic floor.  This is not an
       // authored-coordinate conversion: `effectHeight` is a host-only display transform and
       // remains overridable per URL for unusually large/small packs.
       const requestedHeight = Number(urlParams.get('effectHeight') ?? 2.0);
       const uprightPreview = !regressionMode && urlParams.get('presentation') !== 'authored';
-      player.setVerticalGroundPresentation(
+      if (!runtimeV2Mode) player.setVerticalGroundPresentation(
         uprightPreview,
         Number.isFinite(requestedHeight) ? requestedHeight : 2.0,
       );
-      const contract = player.semanticContract;
+      const contract = runtimeV2Mode ? null : player.semanticContract;
       if (contract) {
         referenceView = contract.referenceCamera;
         // Playback and camera ownership are independent in the interactive preview. Regression
@@ -358,11 +389,20 @@ async function main() {
         }
       }
       if (freezeParam != null && Number.isFinite(freezeParam)) {
-        setPaused(true);
-        await player.stepTo(freezeParam);
-        player.pause();
+        if (runtimeV2Mode) {
+          const step = 1 / 60;
+          for (let t = 0; t < freezeParam; t += step) compiledPlayer?.update(step);
+          compiledPlayer?.pause();
+          paused = true;
+          pauseBtn.setAttribute('aria-pressed', 'true');
+          pauseBtn.textContent = 'Resume';
+        } else {
+          setPaused(true);
+          await player.stepTo(freezeParam);
+          player.pause();
+        }
       }
-      setStatus(`${freezeParam != null ? 'Frozen' : 'Playing'} · ${entry.label}${soloParam ? ` · solo=${soloParam}` : ''}${freezeParam != null ? ` · t=${freezeParam}` : ''} · layer=${captureLayer}`);
+      setStatus(`${freezeParam != null ? 'Frozen' : 'Playing'} · ${entry.label}${soloParam ? ` · solo=${soloParam}` : ''}${freezeParam != null ? ` · t=${freezeParam}` : ''} · layer=${captureLayer}${runtimeV2Mode ? ' · runtime=v2' : ''}`);
       hintEl.textContent = '';
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -412,14 +452,20 @@ async function main() {
     const dt = paused ? 0 : Math.min(rawDt, 0.05);
     if (!regressionMode) controls.update();
     if (!paused) {
-      const wasPlaying = player.isPlaying;
-      player.update(dt);
-      if (wasPlaying && !player.isPlaying) {
+      const wasPlaying = runtimeV2Mode
+        ? compiledPlayer?.playbackState === 'playing'
+        : player.isPlaying;
+      if (runtimeV2Mode) compiledPlayer?.update(dt);
+      else player.update(dt);
+      const isPlaying = runtimeV2Mode
+        ? compiledPlayer?.playbackState === 'playing'
+        : player.isPlaying;
+      if (wasPlaying && !isPlaying) {
         setStatus(`Finished · ${current().label} · one-shot`);
       }
     }
     // Scene Color pre-pass for distortion/refraction materials (Free Slash Slash World etc.)
-    player.captureSceneColor(renderer, scene, camera);
+    if (!runtimeV2Mode) player.captureSceneColor(renderer, scene, camera);
     composer.render();
 
     if (!autoPlayed && clock.elapsedTime > 0.4) {
