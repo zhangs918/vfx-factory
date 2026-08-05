@@ -1,15 +1,9 @@
 import {
   Group,
   Object3D,
-  DepthTexture,
-  WebGLRenderTarget,
-  LinearFilter,
-  RGBAFormat,
-  Vector2,
   Vector3,
   Euler,
   Quaternion,
-  UnsignedIntType,
   type WebGLRenderer,
   type Scene,
   type Camera,
@@ -32,14 +26,13 @@ import {
   createStartDelayGate,
   armStartDelays,
   tickStartDelays,
-  cfxrNeedsSceneColor,
-  setCfxrSceneColorTexture,
   setCfxrEffectTime,
   updateCfxrCustomAttributes,
   type StartDelayGate,
 } from './cfxrQuarksFidelity';
 import { normalizeUnityQuarksJson } from './quarks-lowering';
 import { CfxrEffectLight } from './effect-light';
+import { SceneColorCapture } from './scene-color';
 
 registerUnityEmitterShapes();
 
@@ -107,7 +100,7 @@ export class QuarksEffectPlayer {
   private state: PlayerState = 'empty';
   private label = '';
   private delayGate: StartDelayGate = createStartDelayGate(new Map());
-  private sceneColorRT: WebGLRenderTarget | null = null;
+  private readonly sceneColor = new SceneColorCapture();
   private contract: RuntimeSemanticContract | null = null;
   private readonly random = new SeededRandom();
   private readonly clock = new DeterministicClock();
@@ -511,42 +504,8 @@ export class QuarksEffectPlayer {
     }
   }
 
-  /**
-   * Pre-pass: render the stage without particle batches into a RT so Shader Graph
-   * Scene Color / distortion can sample the background (mechanism, not per-effect).
-   */
-  private _sizeBuf = new Vector2();
-
   captureSceneColor(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
-    if (!cfxrNeedsSceneColor()) return;
-    const size = renderer.getSize(this._sizeBuf);
-    const w = Math.max(1, Math.floor(size.x * renderer.getPixelRatio()));
-    const h = Math.max(1, Math.floor(size.y * renderer.getPixelRatio()));
-    if (!this.sceneColorRT || this.sceneColorRT.width !== w || this.sceneColorRT.height !== h) {
-      this.sceneColorRT?.dispose();
-      this.sceneColorRT = new WebGLRenderTarget(w, h, {
-        minFilter: LinearFilter,
-        magFilter: LinearFilter,
-        format: RGBAFormat,
-      });
-      this.sceneColorRT.depthTexture = new DepthTexture(w, h, UnsignedIntType);
-    }
-    const prev = this.batchRenderer.visible;
-    this.batchRenderer.visible = false;
-    const prevTarget = renderer.getRenderTarget();
-    renderer.setRenderTarget(this.sceneColorRT);
-    renderer.render(scene, camera);
-    renderer.setRenderTarget(prevTarget);
-    this.batchRenderer.visible = prev;
-    const perspective = camera as Camera & { near?: number; far?: number };
-    setCfxrSceneColorTexture(
-      this.sceneColorRT.texture,
-      this.sceneColorRT.depthTexture,
-      w,
-      h,
-      perspective.near ?? 0.1,
-      perspective.far ?? 1000,
-    );
+    this.sceneColor.capture(renderer, scene, camera, this.batchRenderer);
   }
 
   private hasEffectLight = false;
@@ -597,9 +556,7 @@ export class QuarksEffectPlayer {
       }
     }
     this.batchRenderer.systemToBatchIndex.clear();
-    this.sceneColorRT?.dispose();
-    this.sceneColorRT = null;
-    setCfxrSceneColorTexture(null, null);
+    this.sceneColor.dispose();
     this.clock.reset();
     this.autoRotations = [];
     setCfxrEffectTime(0);
