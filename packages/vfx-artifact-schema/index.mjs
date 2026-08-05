@@ -2,6 +2,7 @@
 export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1';
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1';
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2';
+export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1';
 
 export const BLEND_MODES = Object.freeze([
   'opaque', 'alpha-test', 'alpha', 'premultiplied-alpha', 'additive', 'multiply',
@@ -16,6 +17,13 @@ export function isParticleMaterialProgram(value) {
     && value.schema === MATERIAL_PROGRAM_SCHEMA
     && isBlendMode(value.blend)
     && Array.isArray(value.operations);
+}
+
+export function isWebRuntimeArtifact(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+    && value.schema === WEB_RUNTIME_ARTIFACT_SCHEMA
+    && typeof value.effectId === 'string'
+    && !!value.payload && typeof value.payload === 'object' && !Array.isArray(value.payload);
 }
 
 export function isStrictArtifact(value) {

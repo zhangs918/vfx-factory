@@ -9,6 +9,7 @@ import {
 import { BatchedRenderer, QuarksUtil } from 'three.quarks';
 import { setPhysicsResolver } from 'quarks.core';
 import { Vector3 as QuarksVector3 } from 'quarks.core';
+import { isWebRuntimeArtifact } from '@vfx-factory/artifact-schema';
 import { registerUnityEmitterShapes } from './unityEmitterShapes';
 import { DeterministicClock, SeededRandom } from './deterministic';
 import {
@@ -19,6 +20,7 @@ import {
   extractStartDelays,
   setDissolveCurvesFromJson,
   setCfxrPropsFromJson,
+  importCfxrRuntimeState,
   createStartDelayGate,
   armStartDelays,
   tickStartDelays,
@@ -124,20 +126,26 @@ export class QuarksEffectPlayer {
     this.clear();
     this.label = label;
     this.contract = validateArtifactContract(raw);
+    const runtimeBundle = isWebRuntimeArtifact(raw.webRuntime) ? raw.webRuntime : null;
+    if (runtimeBundle && runtimeBundle.effectId !== this.contract.effectId) {
+      throw new Error(`Runtime artifact effect '${runtimeBundle.effectId}' does not match contract '${this.contract.effectId}'.`);
+    }
+    const runtimeJson = runtimeBundle?.payload ?? raw;
     this.clock.reset();
     setCfxrEffectTime(0);
     this.random.reset(this.contract.seed);
     if (this.contract.representation === 'camera-baked@1') {
       throw new Error('camera-baked@1 is an offline regression oracle and cannot be played in production.');
     }
-    this.delayGate = createStartDelayGate(extractStartDelays(raw));
-    setDissolveCurvesFromJson(raw);
-    setCfxrPropsFromJson(raw);
-    const lightController = Array.isArray(raw.controllers)
-      ? raw.controllers.find((controller: any) => controller?.kind === 'deterministic-light-fade'
+    this.delayGate = createStartDelayGate(extractStartDelays(runtimeJson));
+    setDissolveCurvesFromJson(runtimeJson);
+    if (runtimeBundle?.cfxrState) importCfxrRuntimeState(runtimeBundle.cfxrState);
+    else setCfxrPropsFromJson(runtimeJson);
+    const lightController = Array.isArray(runtimeJson.controllers)
+      ? runtimeJson.controllers.find((controller: any) => controller?.kind === 'deterministic-light-fade'
           || controller?.kind === 'sampled-unity-perlin-light')
       : undefined;
-    this.hasEffectLight = !!raw.cfxrEffect || !!lightController;
+    this.hasEffectLight = !!runtimeJson.cfxrEffect || !!lightController;
     if (lightController?.kind === 'deterministic-light-fade') {
       this.effectLight.configure({
         mode: 'linear-fade',
@@ -166,13 +174,18 @@ export class QuarksEffectPlayer {
         position: lightController.position,
         intensityScale: 2.8,
       });
-    } else if (this.hasEffectLight) this.effectLight.configure(raw.cfxrEffect);
+    } else if (this.hasEffectLight) this.effectLight.configure(runtimeJson.cfxrEffect);
     else this.effectLight.stop();
-    const obj = await loadQuarksObject(raw, this.batchRenderer, this.withSeededRandom.bind(this));
+    const obj = await loadQuarksObject(
+      runtimeJson,
+      this.batchRenderer,
+      this.withSeededRandom.bind(this),
+      !!runtimeBundle,
+    );
 
     this.root.add(obj);
     this.effectRoot = obj;
-    this.autoRotations = buildAutoRotations(obj, raw.controllers ?? []);
+    this.autoRotations = buildAutoRotations(obj, runtimeJson.controllers ?? []);
     // A freshly parsed Quarks system and a replayed system otherwise start from subtly
     // different emission state (the first deterministic freeze was one fixed frame ahead).
     // Normalize first play through the exact same seeded restart path used by regression/replay.

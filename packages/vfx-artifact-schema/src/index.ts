@@ -10,6 +10,17 @@
 export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1' as const;
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1' as const;
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2' as const;
+export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1' as const;
+
+export interface WebRuntimeArtifact {
+  schema: typeof WEB_RUNTIME_ARTIFACT_SCHEMA;
+  effectId: string;
+  sourceSchema?: string;
+  payload: Record<string, unknown>;
+  resources?: Record<string, unknown>;
+  materialVariants?: Record<string, unknown>;
+  cfxrState?: Record<string, unknown>;
+}
 
 export type BlendMode =
   | 'opaque' | 'alpha-test' | 'alpha' | 'premultiplied-alpha' | 'additive' | 'multiply';
@@ -54,6 +65,13 @@ export function isParticleMaterialProgram(value: unknown): value is ParticleMate
   return value.schema === MATERIAL_PROGRAM_SCHEMA
     && isBlendMode(value.blend)
     && Array.isArray(value.operations);
+}
+
+export function isWebRuntimeArtifact(value: unknown): value is WebRuntimeArtifact {
+  return isObject(value)
+    && value.schema === WEB_RUNTIME_ARTIFACT_SCHEMA
+    && typeof value.effectId === 'string'
+    && isObject(value.payload);
 }
 
 /** Production artifacts must expose the deterministic legacy contract until the

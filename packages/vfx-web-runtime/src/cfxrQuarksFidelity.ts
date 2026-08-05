@@ -1843,6 +1843,58 @@ type UnityTrailSemantics = {
 };
 let trailSemanticsByEmitter = new Map<string, UnityTrailSemantics>();
 
+/** JSON-safe semantic state generated offline; playback restores these tables. */
+export interface CfxrRuntimeState { [key: string]: unknown; }
+const mapEntries = (map: Map<unknown, unknown>) => [...map.entries()];
+const restoreMap = (state: CfxrRuntimeState, key: string) =>
+  new Map((Array.isArray(state[key]) ? state[key] : []) as [string, unknown][]);
+
+export function exportCfxrRuntimeState(): CfxrRuntimeState {
+  return {
+    custom1CurvesByEmitter: mapEntries(custom1CurvesByEmitter as Map<unknown, unknown>),
+    pendingCfxrByEmitter: mapEntries(pendingCfxrByEmitter as Map<unknown, unknown>),
+    profilesByEmitter: mapEntries(profilesByEmitter as Map<unknown, unknown>),
+    shapeTransformByEmitter: mapEntries(shapeTransformByEmitter as Map<unknown, unknown>),
+    initialStateByEmitter: mapEntries(initialStateByEmitter as Map<unknown, unknown>),
+    childDurationSubEmitterIds: [...childDurationSubEmitterIds],
+    subEmitterInheritanceByEmitter: mapEntries(subEmitterInheritanceByEmitter as Map<unknown, unknown>),
+    flipbookTimingByEmitter: mapEntries(flipbookTimingByEmitter as Map<unknown, unknown>),
+    rendererPivotByEmitter: mapEntries(rendererPivotByEmitter as Map<unknown, unknown>),
+    sizeTwoCurvesByEmitter: mapEntries(sizeTwoCurvesByEmitter as Map<unknown, unknown>),
+    sizeOverLifetimeByEmitter: mapEntries(sizeOverLifetimeByEmitter as Map<unknown, unknown>),
+    startSizeTwoCurvesByEmitter: mapEntries(startSizeTwoCurvesByEmitter as Map<unknown, unknown>),
+    limitVelocity3DByEmitter: mapEntries(limitVelocity3DByEmitter as Map<unknown, unknown>),
+    limitVelocityByEmitter: mapEntries(limitVelocityByEmitter as Map<unknown, unknown>),
+    velocityOverLifetimeByEmitter: mapEntries(velocityOverLifetimeByEmitter as Map<unknown, unknown>),
+    rotation3DByEmitter: mapEntries(rotation3DByEmitter as Map<unknown, unknown>),
+    trajectoryCacheByEmitter: mapEntries(trajectoryCacheByEmitter as Map<unknown, unknown>),
+    trailGeometryByEmitter: mapEntries(trailGeometryByEmitter as Map<unknown, unknown>),
+    trailSemanticsByEmitter: mapEntries(trailSemanticsByEmitter as Map<unknown, unknown>),
+  };
+}
+
+export function importCfxrRuntimeState(state: CfxrRuntimeState): void {
+  custom1CurvesByEmitter = restoreMap(state, 'custom1CurvesByEmitter') as typeof custom1CurvesByEmitter;
+  pendingCfxrByEmitter = restoreMap(state, 'pendingCfxrByEmitter') as typeof pendingCfxrByEmitter;
+  profilesByEmitter = restoreMap(state, 'profilesByEmitter') as typeof profilesByEmitter;
+  shapeTransformByEmitter = restoreMap(state, 'shapeTransformByEmitter') as typeof shapeTransformByEmitter;
+  initialStateByEmitter = restoreMap(state, 'initialStateByEmitter') as typeof initialStateByEmitter;
+  childDurationSubEmitterIds = new Set(Array.isArray(state.childDurationSubEmitterIds) ? state.childDurationSubEmitterIds as string[] : []);
+  subEmitterInheritanceByEmitter = restoreMap(state, 'subEmitterInheritanceByEmitter') as typeof subEmitterInheritanceByEmitter;
+  flipbookTimingByEmitter = restoreMap(state, 'flipbookTimingByEmitter') as typeof flipbookTimingByEmitter;
+  rendererPivotByEmitter = restoreMap(state, 'rendererPivotByEmitter') as typeof rendererPivotByEmitter;
+  sizeTwoCurvesByEmitter = restoreMap(state, 'sizeTwoCurvesByEmitter') as typeof sizeTwoCurvesByEmitter;
+  sizeOverLifetimeByEmitter = restoreMap(state, 'sizeOverLifetimeByEmitter') as typeof sizeOverLifetimeByEmitter;
+  startSizeTwoCurvesByEmitter = restoreMap(state, 'startSizeTwoCurvesByEmitter') as typeof startSizeTwoCurvesByEmitter;
+  limitVelocity3DByEmitter = restoreMap(state, 'limitVelocity3DByEmitter') as typeof limitVelocity3DByEmitter;
+  limitVelocityByEmitter = restoreMap(state, 'limitVelocityByEmitter') as typeof limitVelocityByEmitter;
+  velocityOverLifetimeByEmitter = restoreMap(state, 'velocityOverLifetimeByEmitter') as typeof velocityOverLifetimeByEmitter;
+  rotation3DByEmitter = restoreMap(state, 'rotation3DByEmitter') as typeof rotation3DByEmitter;
+  trajectoryCacheByEmitter = restoreMap(state, 'trajectoryCacheByEmitter') as typeof trajectoryCacheByEmitter;
+  trailGeometryByEmitter = restoreMap(state, 'trailGeometryByEmitter') as typeof trailGeometryByEmitter;
+  trailSemanticsByEmitter = restoreMap(state, 'trailSemanticsByEmitter') as typeof trailSemanticsByEmitter;
+}
+
 class UnityTrailSemanticsBehavior implements Behavior {
   type = 'UnityTrailSemantics';
   private width: any;

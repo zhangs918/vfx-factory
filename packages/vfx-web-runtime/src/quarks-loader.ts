@@ -11,8 +11,9 @@ export async function loadQuarksObject(
   raw: any,
   batchRenderer: BatchedRenderer,
   withSeededRandom: <T>(fn: () => T) => T,
+  precompiled = false,
 ): Promise<Object3D> {
-  const json = normalizeUnityQuarksJson(raw);
+  const json = precompiled ? raw : normalizeUnityQuarksJson(raw);
   const loader = new QuarksLoader();
   const object = await new Promise<Object3D>((resolve, reject) => {
     try {
