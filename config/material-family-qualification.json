@@ -389,30 +389,22 @@
     "material-family-6df828e001e950a6": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-b437f96e8a199a6d": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-448ba8983a1f4f6b": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-8262b5d5ae3e519c": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-fd667890128afc0a": {
       "status": "pixel-qualified",
@@ -907,9 +899,7 @@
     "material-family-2d09655c01a07225": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-5743a878a4cc4f56": {
       "status": "pixel-qualified",
@@ -1376,9 +1366,7 @@
     "material-family-62039603e8c351e2": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_forest_muzzle"
-      ]
+      "effects": []
     },
     "material-family-bd1115399b086d16": {
       "status": "KEEP",
@@ -1541,11 +1529,7 @@
     "material-family-30f6634e753b9477": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_projectiles_cartoon_fx_missile_01",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_impact_contrast",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_b_blue"
-      ]
+      "effects": []
     },
     "material-family-eca6b28729b1db74": {
       "status": "pixel-qualified",
@@ -1627,9 +1611,7 @@
     "material-family-aac71d917ecf493c": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_bullet_impact"
-      ]
+      "effects": []
     },
     "material-family-14fe8ac0532c296e": {
       "status": "pixel-qualified",
@@ -1648,10 +1630,7 @@
     "material-family-f478f0b804efa4ca": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_arrow_impact",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_forest_muzzle"
-      ]
+      "effects": []
     },
     "material-family-1852773b860de3ab": {
       "status": "pixel-qualified",
@@ -1909,9 +1888,7 @@
     "material-family-6a55e97e37f60d6e": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-677baf58c6b387d2": {
       "status": "pixel-qualified",
@@ -2148,30 +2125,19 @@
     "material-family-9df29a41c2e687cd": {
       "status": "KEEP",
       "evidence": "multi-freeze-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_cosmic_impact",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_red_impact",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_triangle_muzzle",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_explode_impact"
-      ],
+      "effects": [],
       "updatedAt": "2026-08-07T17:46:00.513Z"
     },
     "material-family-abcc15c1ce74c41f": {
       "status": "KEEP",
       "evidence": "multi-freeze-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_cosmic_impact",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_red_impact"
-      ],
+      "effects": [],
       "updatedAt": "2026-08-07T17:46:35.996Z"
     },
     "material-family-a912d35b4fa35ba8": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "magic_pig_games_infinity_pbr_synty_studios_polygon_particle_fx_particles_impacts_polygon_particle_fx_explosion_body_01",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_arrow_impact"
-      ]
+      "effects": []
     },
     "material-family-f12a003647e4b0f2": {
       "status": "KEEP",
@@ -2231,9 +2197,7 @@
     "material-family-1dd6e41e8efa9552": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-3a7afca5db8c5cad": {
       "status": "KEEP",
@@ -2315,9 +2279,7 @@
     "material-family-dda2b8a73f30f43a": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
-      "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
-      ]
+      "effects": []
     },
     "material-family-64de2816b29612a5": {
       "status": "KEEP",
@@ -2336,17 +2298,7 @@
     "material-family-91d922629d56821c": {
       "status": "KEEP",
       "evidence": "multi-freeze-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_lightning_beam_hit_point",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_projectiles_cartoon_fx_missile_01",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_triangle_muzzle",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_projectiles_toon_projectiles_2_red_star",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_explosion_smoke_1",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_magic_poof",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_arrow_muzzle",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_red_muzzle",
-        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_red_star_muzzle"
-      ]
+      "effects": []
     },
     "material-family-e5fbe6f844c91d56": {
       "status": "KEEP",
@@ -2463,17 +2415,12 @@
     "material-family-1a5375ad685be337": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_big_impact_hdr",
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_a_red"
-      ]
+      "effects": []
     },
     "material-family-d362d91f0478d828": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_big_impact_hdr"
-      ]
+      "effects": []
     },
     "material-family-dddba8608c128346": {
       "status": "KEEP",
@@ -2521,9 +2468,7 @@
     "material-family-68126440c56f0b00": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_a_red"
-      ]
+      "effects": []
     },
     "material-family-96efb9bdc3e6a21d": {
       "status": "pixel-qualified",
