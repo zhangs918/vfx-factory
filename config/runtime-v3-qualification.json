@@ -371,25 +371,6 @@
         "maxChannelDelta": 0
       }
     },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_lightning_strike_skill": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:34:55.826Z",
-        "artifactSha256": "0b2954dabdd9f31d6e7bc9dc0aa08823900cdc45f5fd158111e243e07b0a30d7",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:34:55.683Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_blood_cfx2_blood": {
       "disposition": "qualified",
       "evidence": {
@@ -1104,44 +1085,6 @@
         "maxChannelDelta": 0
       }
     },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_death_magic_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:10:12.985Z",
-        "artifactSha256": "bd9118d32e328eabea3346eb4eaea9ac0cba774e3584f6b1288f5d2c0a9fe081",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:10:12.917Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_death_magic_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T05:00:11.067Z",
-        "artifactSha256": "e95dbeac0717cd6e66c56f41e08271af04bc1e077144deaec03150bf5f924ea3",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T05:00:10.982Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "erbgameart_fantasy_effects_pack_prefabs_fireball": {
       "disposition": "qualified",
       "evidence": {
@@ -1152,25 +1095,6 @@
         "artifactSha256": "0ff6162343210fd090aeed531e5c842c590e965338478d61111c97cd3b5c0c72",
         "reportSchema": "vfx-runtime-regression-report@1",
         "reportCreatedAt": "2026-08-08T04:47:45.881Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_ground_spikes": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:16:23.916Z",
-        "artifactSha256": "89dc2d1cf248361013d12e146328bd713fa09539db581383716572f9aa727b01",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:16:23.845Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1237,25 +1161,6 @@
         "maxChannelDelta": 0
       }
     },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_lightning_strike_skill": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:55:51.932Z",
-        "artifactSha256": "23168688786ed9a42f9293f546a68157546236c8d3d8bf0bc0b3bf4dcb6110a4",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:55:51.864Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "erbgameart_fantasy_effects_pack_prefabs_magic_arrow": {
       "disposition": "qualified",
       "evidence": {
@@ -1266,101 +1171,6 @@
         "artifactSha256": "b77b62b17cc773990459fe505db260be62178fb0327ce502dc23e75161003074",
         "reportSchema": "vfx-runtime-regression-report@1",
         "reportCreatedAt": "2026-08-08T05:25:08.578Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_magic_buff": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T05:23:02.654Z",
-        "artifactSha256": "862c9e800ca0a41c5f61530e05ec5947111661596035f1fa58b71be9a6f995a1",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T05:23:02.575Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_magic_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T07:55:00.461Z",
-        "artifactSha256": "5aef655ed46978831e9b911723d408b51b5304fd0cd8d0b4e335d2baaea0dc0c",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T07:55:00.392Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_magic_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:02:10.338Z",
-        "artifactSha256": "b2ae7ee2130a24b5adc0d793f2115812800a448ffec1702fc7b9f92daf8c6132",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:02:10.267Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_mana_wall": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T07:07:52.739Z",
-        "artifactSha256": "631b91fbdc0acaa96400c252a46832086e6df822899256406c525490287ff77b",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T07:07:52.666Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_mana_wall": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:55:57.024Z",
-        "artifactSha256": "4bab00fe221d0e8f1b30d1c91002bbd6b3c3b80e6c5bd6daf032dd7107f3d0fa",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:55:56.872Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1382,99 +1192,6 @@
         "thinPlayer": false,
         "captureTimes": [
           0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_plazma_sphere": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T07:12:53.499Z",
-        "artifactSha256": "e8d888f6b9f94224e03f724e8ff3ea78f80fd5cf8e7ff4c6f0ba00c37b64e8e1",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T07:12:53.430Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_snow_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:55:03.186Z",
-        "artifactSha256": "7df74dbd2e85860e613f2f4081a30a4ea188d392743249054ec84cd4fe530595",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:55:03.109Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_spears_rain": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:25:56.643Z",
-        "artifactSha256": "3ddf03f9c0c693025d6a6751c81298fce3e51189ad930af6f384cdeb65e02b23",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:25:56.571Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_spears_rain": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "2b3ef58188dd95d4381d4efda0830cc6004957b214e457a9a0436c2e39c15444",
-        "updatedAt": "2026-08-08T02:35:22.391Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:35:22.302Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_yinyand_attack": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T08:01:16.982Z",
-        "artifactSha256": "17bf90b7971c0f017d47b416e77970279e6a1d1d8a47b69c5b19f57a025bd41a",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T08:01:16.907Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
         ],
         "changedPixels": 0,
         "maxChannelDelta": 0
@@ -1932,17 +1649,6 @@
         "changedPixels": 0,
         "maxChannelDelta": 0
       }
-    },
-    "erbgameart_fantasy_effects_pack_prefabs_effects_normal_snow_circle": {
-      "disposition": "failed",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:10:15.411Z",
-        "failure": "fixed-seed-pixel-regression"
-      },
-      "failure": "fixed-seed-pixel-regression"
     },
     "hovl_studio_magic_effects_pack_prefabs_slash_effects_charge_slash_red": {
       "disposition": "qualified",
