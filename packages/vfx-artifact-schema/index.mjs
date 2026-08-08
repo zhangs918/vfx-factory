@@ -4,6 +4,19 @@ export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1';
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2';
 export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1';
 export const WEB_VFX_RUNTIME_V2_SCHEMA = 'web-vfx-runtime@2';
+export {
+  VFX_RUNTIME_ARTIFACT_V3,
+  VFX_ALPHA_TEST_FLOOR,
+  VFX_ALPHA_TEST_DISABLED,
+  VFX_TONE_MAPPED_OFF,
+  VFX_BAKE_NON_DT_LEGACY_ALPHA_TINT_FACTOR,
+  VFX_TRANSPARENT_OVERDRAW_ALPHA_FLOOR,
+  VFX_UV_EDGE_CLAMP_EPS,
+  VFX_VERTEX_PATCH_IDS,
+  assertVfxRuntimeArtifactV3,
+  deriveBlendState,
+  deriveConstantUniforms,
+} from './runtime-v3.mjs';
 
 export function isWebVfxRuntimeV2(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value)

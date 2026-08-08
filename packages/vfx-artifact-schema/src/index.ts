@@ -11,6 +11,33 @@ export const VFX_ARTIFACT_SCHEMA = 'vfx-artifact@1' as const;
 export const LEGACY_UNITY_IR_SCHEMA = 'unity-vfx-ir@1' as const;
 export const MATERIAL_PROGRAM_SCHEMA = 'particle-material-program@2' as const;
 export const WEB_RUNTIME_ARTIFACT_SCHEMA = 'web-vfx-runtime@1' as const;
+export {
+  VFX_RUNTIME_ARTIFACT_V3,
+  VFX_ALPHA_TEST_FLOOR,
+  VFX_ALPHA_TEST_DISABLED,
+  VFX_TONE_MAPPED_OFF,
+  VFX_BAKE_NON_DT_LEGACY_ALPHA_TINT_FACTOR,
+  VFX_TRANSPARENT_OVERDRAW_ALPHA_FLOOR,
+  VFX_UV_EDGE_CLAMP_EPS,
+  assertVfxRuntimeArtifactV3,
+  deriveBlendState,
+  deriveConstantUniforms,
+} from './runtime-v3';
+export {
+  VFX_VERTEX_PATCH_IDS,
+} from './runtime-v3';
+export type {
+  VfxRuntimeArtifactV3,
+  VfxResourceRef,
+  VfxResourceKind,
+  VfxShaderModule,
+  VfxPipelineState,
+  VfxPipelineUniformValues,
+  VfxPipelineBlendState,
+  VfxBlendMode,
+  VfxBatchClosure,
+  VfxVertexPatchId,
+} from './runtime-v3';
 export { WEB_VFX_RUNTIME_V2_SCHEMA, isWebVfxRuntimeV2, assertWebVfxRuntimeV2 } from './runtime-v2';
 export type {
   WebVfxRuntimeV2,
