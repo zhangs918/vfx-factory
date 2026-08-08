@@ -5,6 +5,7 @@
  * Initial/trajectory/trail/sub-emitter/shape modules are imported directly by
  * mount cores — this file only owns particle behavior classes.
  */
+import { Matrix4, Quaternion, Vector3 } from 'three';
 import {
   Vector3 as QuarksVector3,
   Quaternion as QuarksQuaternion,
@@ -19,6 +20,7 @@ import {
   UnityTwoCurvesGenerator,
   type UnityTwoCurvesSpec,
 } from './cfxr-sim-curves';
+import { findAuthoredEffectRoot } from './stage-presentation';
 
 export { UnityTwoCurvesGenerator } from './cfxr-sim-curves';
 export type { UnityTwoCurvesSpec } from './cfxr-sim-curves';
@@ -195,6 +197,11 @@ export class UnityVelocityOverLifetimeBehavior implements Behavior {
   private rotation = new QuarksQuaternion();
   private scale = new QuarksVector3(1, 1, 1);
   private scratch = new QuarksVector3();
+  private readonly relativeMatrix = new Matrix4();
+  private readonly invAuthoredWorld = new Matrix4();
+  private readonly decomposePosition = new Vector3();
+  private readonly decomposeRotation = new Quaternion();
+  private readonly decomposeScale = new Vector3();
   constructor(private readonly spec: UnityVelocityOverLifetimeSpec) {
     if (spec.space !== 'local' && spec.space !== 'world') {
       throw new Error('UnityVelocityOverLifetime: space required (no invent)');
@@ -219,10 +226,39 @@ export class UnityVelocityOverLifetimeBehavior implements Behavior {
     const max = samplePiecewiseOrLinear(curve.max, t);
     return min + (max - min) * factor;
   }
+  private captureEmitterBasis(emitter: { matrixWorld: Matrix4 }, authoredRelative: boolean) {
+    if (authoredRelative) {
+      const authoredRoot = findAuthoredEffectRoot(emitter as any);
+      this.invAuthoredWorld.copy(authoredRoot.matrixWorld).invert();
+      this.relativeMatrix.multiplyMatrices(this.invAuthoredWorld, emitter.matrixWorld);
+      this.relativeMatrix.decompose(
+        this.decomposePosition,
+        this.decomposeRotation,
+        this.decomposeScale,
+      );
+    } else {
+      emitter.matrixWorld.decompose(
+        this.decomposePosition,
+        this.decomposeRotation,
+        this.decomposeScale,
+      );
+    }
+    this.rotation.set(
+      this.decomposeRotation.x,
+      this.decomposeRotation.y,
+      this.decomposeRotation.z,
+      this.decomposeRotation.w,
+    );
+    this.scale.set(this.decomposeScale.x, this.decomposeScale.y, this.decomposeScale.z);
+  }
   frameUpdate(): void {
     const emitter = (this.ps as any)?.emitter;
     if (!emitter) return;
-    emitter.matrixWorld.decompose(this.scratch, this.rotation, this.scale);
+    const systemWorld = !!this.ps?.worldSpace;
+    // Local VOL on a world-space system must land in scene/world (includes host
+    // stage tilt). World VOL on a local system must stay in effect-authored
+    // world — never let player.root -90° redefine Unity +Y.
+    this.captureEmitterBasis(emitter, this.spec.space === 'world' && !systemWorld);
   }
   update(particle: Particle): void {
     const state = this.states.get(particle as object);

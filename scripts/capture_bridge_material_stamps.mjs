@@ -1,11 +1,11 @@
 /**
- * Thick-path live material capture factory.
+ * Legacy-path live material capture factory.
  *
- * Loads each effect on QuarksEffectPlayer (v3, not thin), dumps the final
- * GLSL + blend/uniforms/texture bindings after inject/bind, and writes
- * tmp/material-captures/<effectId>.json.
+ * Loads each effect on QuarksEffectPlayer via ?compare=legacy (bridge inject),
+ * dumps the final GLSL + blend/uniforms/texture bindings after inject/bind, and
+ * writes tmp/material-captures/<effectId>.json.
  *
- * This is the production half of offline stamp — not pixel qualification.
+ * This is the oracle/bridge half of offline stamp — not pixel qualification.
  */
 import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -41,7 +41,7 @@ for (const id of ids) {
   });
   const force = forceBridgeFragment ? '&cfxrFragment=force' : '';
   const url = `${origin}/?candidate=1&effect=${encodeURIComponent(id)}`
-    + `&freeze=${freeze}&post=0&regression=1&frozen=1&v3=1${force}`;
+    + `&freeze=${freeze}&post=0&regression=1&frozen=1&compare=legacy${force}`;
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   try {
     await page.waitForFunction(
@@ -86,10 +86,16 @@ for (const id of ids) {
     continue;
   }
 
+  // Frozen quarks often carry Unity node ids (e.g. node-0) in contract.effectId.
+  // Stamp/promote resolve artifacts by catalog short-id from the CLI, so rewrite.
   const recordedCapture = {
     ...capture,
+    effectId: id,
     runtimeFingerprint: captureRuntimeFingerprint,
   };
+  if (capture.effectId && capture.effectId !== id) {
+    console.warn(`CAPTURE_EFFECT_ID_REWRITE ${id}: contract='${capture.effectId}' → catalog`);
+  }
   const outPath = join(outDir, `${id}.json`);
   await writeFile(outPath, `${JSON.stringify(recordedCapture, null, 2)}\n`);
   const modes = [...new Set(capture.batches.map((b) => b.injectMode))].join(',');

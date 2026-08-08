@@ -66,6 +66,15 @@ import {
   CFXR_COLOR_MUL_SOFT_IDENTITY,
   CFXR_OPACITY_SOFT_IDENTITY,
 } from './cfxr-material-profile';
+import {
+  clearAuthoredEffectRootMark,
+  DEFAULT_STAGE_PRESENTATION_LIFT,
+  markAuthoredEffectRoot,
+  resolveStagePresentationMode,
+  resolveStagePresentationPose,
+  type StagePresentationMode,
+  type StagePresentationOptions,
+} from './stage-presentation';
 
 registerUnityEmitterShapes();
 
@@ -245,6 +254,8 @@ export class QuarksEffectPlayer {
   /** Preview-only live tweaks; re-stamped after restart rebuilds batch materials. */
   private liveTweaks: ResolvedLiveTweaks = { ...DEFAULT_LIVE_TWEAKS, tint: [...DEFAULT_LIVE_TWEAKS.tint] };
   private tweakBaselines = new WeakMap<Material, TweakBaseline>();
+  private stagePresentationMode: StagePresentationMode = 'auto';
+  private stagePresentationLift = DEFAULT_STAGE_PRESENTATION_LIFT;
 
   constructor(options: QuarksEffectPlayerOptions = {}) {
     this.root.name = 'QuarksEffectPlayer';
@@ -457,6 +468,8 @@ export class QuarksEffectPlayer {
 
     this.root.add(obj);
     this.effectRoot = obj;
+    markAuthoredEffectRoot(obj);
+    this.applyStagePresentation();
     // Soft-fill remains for legacy/frozen payloads that omit explicit 0.
     // Thin ArtifactQuarksPlayer uses requireStartDelayCoverage (offline-complete only).
     ensureStartDelayCoverage(this.effectRoot, this.delayGate.delays);
@@ -778,12 +791,33 @@ export class QuarksEffectPlayer {
 
   /**
    * Interactive stage transform only. Exported particle state stays in authored coordinates;
-   * the player root rotates the finished live renderer and places its visual centre above the
-   * preview floor. This deliberately does not mutate authored particle coordinates or IR.
+   * the player root may tilt Z-up prefabs onto the Y-up floor and lift the visual centre.
+   * This deliberately does not mutate authored particle coordinates or IR.
+   *
+   * `auto` tilts only when effect-root local +Z is still ±Z; already-Y-up roots (e.g.
+   * CFX2_Big_Splash) keep identity rotation and only lift.
    */
-  setVerticalGroundPresentation(enabled: boolean, lift = 1.15) {
-    this.root.rotation.set(enabled ? -Math.PI / 2 : 0, 0, 0);
-    this.root.position.set(0, enabled ? Math.max(0, lift) : 0, 0);
+  setStagePresentation(options: StagePresentationOptions = {}) {
+    this.stagePresentationMode = resolveStagePresentationMode(options);
+    if (options.lift != null && Number.isFinite(options.lift)) {
+      this.stagePresentationLift = options.lift;
+    }
+    this.applyStagePresentation();
+  }
+
+  /** @deprecated Prefer {@link setStagePresentation} (`enabled` maps to auto/authored). */
+  setVerticalGroundPresentation(enabled: boolean, lift = DEFAULT_STAGE_PRESENTATION_LIFT) {
+    this.setStagePresentation({ mode: enabled ? 'auto' : 'authored', lift });
+  }
+
+  private applyStagePresentation() {
+    const pose = resolveStagePresentationPose(
+      this.stagePresentationMode,
+      this.effectRoot,
+      this.stagePresentationLift,
+    );
+    this.root.rotation.set(pose.rotationX, 0, 0);
+    this.root.position.set(0, pose.positionY, 0);
     this.root.updateMatrixWorld(true);
   }
 
@@ -1116,8 +1150,10 @@ export class QuarksEffectPlayer {
   clear() {
     if (this.effectRoot) {
       QuarksUtil.stop(this.effectRoot);
+      clearAuthoredEffectRootMark(this.effectRoot);
       this.root.remove(this.effectRoot);
       this.effectRoot = null;
+      this.applyStagePresentation();
     }
     // Drop old batches so materials/profiles don't leak across loads
     while (this.batchRenderer.batches.length) {

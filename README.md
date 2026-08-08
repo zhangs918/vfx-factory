@@ -49,18 +49,29 @@ resource closure, schemas, code/config splits, and dispositions, then promotes
 all three generated directories with rollback. Generated corpora remain ignored
 and are deployed separately from the Vite application bundle.
 
-Run the artifact-only qualification loop with:
+### Preview paths (two only)
+
+| URL | Meaning |
+|---|---|
+| `/?frozen=1` | **New:** thin player reads offline `v3-*` artifacts |
+| `/?frozen=1&compare=legacy` | **Old:** QuarksEffectPlayer on frozen source JSON |
+
+`frozen=1` selects the pinned `/assets/frozen-quarks` source corpus (compile input
+for v3). Omitting it uses live `/assets/quarks`. It is not an architecture switch.
+
+Run the thin qualification loop (legacy oracle vs default thin):
 
 ```bash
-VFX_THIN_PLAYER=1 VFX_CAPTURE_TIMES=0.25,0.5 \
+VFX_CAPTURE_TIMES=0.25,0.5 \
   npm run regression:runtime-v3:batch
 ```
 
 Each batch consumes machine-readable pixel evidence, validates all generated
-assets, and waits 60 seconds before rescanning. Production `?v3=1&thinPlayer=1`
-lists only entries with both an offline thin capability stamp and thin-player
-qualification evidence.
+assets, and waits 60 seconds before rescanning. Default `/?frozen=1` lists only
+entries with both an offline thin capability stamp and thin-player qualification
+evidence; use `?candidate=1` to inspect the rest.
 
-See [docs/VFX_SEMANTIC_ARCHITECTURE.md](docs/VFX_SEMANTIC_ARCHITECTURE.md)
+See [docs/runtime-v3-migration.md](docs/runtime-v3-migration.md),
+[docs/VFX_SEMANTIC_ARCHITECTURE.md](docs/VFX_SEMANTIC_ARCHITECTURE.md),
 and [tools/unity-quarks-exporter/SEMANTIC_IR.md](tools/unity-quarks-exporter/SEMANTIC_IR.md)
 for the semantic architecture and supported production paths.

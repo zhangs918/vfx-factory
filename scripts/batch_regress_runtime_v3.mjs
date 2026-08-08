@@ -28,9 +28,9 @@ if (!['forward', 'reverse'].includes(effectOrder)) {
 const captureTimes = (process.env.VFX_CAPTURE_TIMES ?? '0.25')
   .split(',').map(Number).filter(Number.isFinite);
 if (!captureTimes.length) throw new Error('VFX_CAPTURE_TIMES must contain at least one finite number.');
-// Match the single-run harness: thin is opt-in only. A sticky/undefined shell
-// value must never silently shrink a full-corpus qualification to thin-ready effects.
-const thinPlayer = process.env.VFX_THIN_PLAYER === '1';
+// Thin is the only production regression path. Opt out with VFX_THIN_PLAYER=0 only
+// for emergency non-thin selection (preview itself always plays thin).
+const thinPlayer = process.env.VFX_THIN_PLAYER !== '0';
 const skipThinReady = process.env.VFX_SKIP_THIN_READY === '1';
 const manifestPath = 'public/assets/v3-artifacts/manifest.json';
 const logPath = '/tmp/vfx-runtime-v3-batch.log';

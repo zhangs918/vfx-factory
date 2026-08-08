@@ -5,7 +5,8 @@
  * Usage: node scripts/promote_capture_spot.mjs <effect-id> [...]
  * Env: VFX_CAPTURE_TIMES=0.1,0.25,0.5,1 (recorded into evidence)
  */
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,6 +15,36 @@ const ids = process.argv.slice(2);
 if (!ids.length) throw new Error('Usage: node scripts/promote_capture_spot.mjs <effect-id> [...]');
 const captureTimes = (process.env.VFX_CAPTURE_TIMES ?? '0.1,0.25,0.5,1')
   .split(',').map(Number).filter(Number.isFinite);
+
+function sha256Hex(bytes) {
+  return createHash('sha256').update(bytes).digest('hex');
+}
+
+function computeThinPlayerCapability(artifact) {
+  const pipelines = Object.values(artifact.pipelines ?? {});
+  const closures = Object.values(artifact.batchClosures ?? {});
+  return pipelines.length > 0
+    && closures.length > 0
+    && artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && pipelines.every((pipeline) => {
+      const shader = artifact.shaders?.[pipeline.shader]
+        ?? artifact.files?.shaders?.[pipeline.shader];
+      return pipeline.executor === 'artifact-shader@1'
+        && !!pipeline.blendState
+        && !!pipeline.uniformValues
+        && Array.isArray(pipeline.tileCounts)
+        && pipeline.tileCounts.length === 2
+        && shader?.execution === 'quarks-fragment-v1'
+        && shader.vertexExecution === 'quarks-vertex-v1';
+    })
+    && closures.every((closure) => closure.qualification?.status === 'pixel-qualified');
+}
+
+async function atomicWriteJson(file, value) {
+  const temporary = `${file}.tmp-${process.pid}-${Date.now()}`;
+  await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`);
+  await rename(temporary, file);
+}
 
 async function resolveArtifactPath(effectId) {
   const dir = join(root, 'public', 'assets', 'v3-artifacts');
@@ -96,6 +127,21 @@ for (const id of ids) {
       };
     }
   }
-  await writeFile(artPath, `${JSON.stringify(artifact, null, 2)}\n`);
-  console.log(`PROMOTE_CAPTURE_OK ${id} pipelines=${touched} → ${artPath}`);
+  const artifactBytes = Buffer.from(`${JSON.stringify(artifact, null, 2)}\n`);
+  await writeFile(artPath, artifactBytes);
+  const manifestPath = join(root, 'public', 'assets', 'v3-artifacts', 'manifest.json');
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  const entry = manifest.effects?.find((candidate) => (
+    candidate.id === artifact.effectId || candidate.id === id
+  ));
+  if (!entry) throw new Error(`PROMOTE_MANIFEST_ENTRY ${id} missing`);
+  entry.sha256 = sha256Hex(artifactBytes);
+  entry.capabilities = {
+    ...(entry.capabilities ?? {}),
+    thinPlayer: computeThinPlayerCapability(artifact),
+  };
+  await atomicWriteJson(manifestPath, manifest);
+  console.log(
+    `PROMOTE_CAPTURE_OK ${id} pipelines=${touched} thinPlayer=${entry.capabilities.thinPlayer} → ${artPath}`,
+  );
 }

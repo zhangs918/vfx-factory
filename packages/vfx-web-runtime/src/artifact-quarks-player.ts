@@ -50,6 +50,15 @@ import {
   updateAutoRotations,
   type AutoRotation,
 } from './player-controls';
+import {
+  clearAuthoredEffectRootMark,
+  DEFAULT_STAGE_PRESENTATION_LIFT,
+  markAuthoredEffectRoot,
+  resolveStagePresentationMode,
+  resolveStagePresentationPose,
+  type StagePresentationMode,
+  type StagePresentationOptions,
+} from './stage-presentation';
 
 type CaptureAuxMaps = {
   dissolve: Texture | null;
@@ -166,6 +175,8 @@ export class ArtifactQuarksPlayer {
   private readonly sceneColor = new SceneColorCapture();
   /** Live-bridge-capture aux maps keyed by quarks material uuid. */
   private captureAuxByMaterial = new Map<string, CaptureAuxMaps>();
+  private stagePresentationMode: StagePresentationMode = 'auto';
+  private stagePresentationLift = DEFAULT_STAGE_PRESENTATION_LIFT;
 
   constructor(options: {
     physicsResolver?: {
@@ -393,6 +404,8 @@ export class ArtifactQuarksPlayer {
     this.bindExecutableShaders(this.boundShaders);
     this.root.add(object);
     this.effectRoot = object;
+    markAuthoredEffectRoot(object);
+    this.applyStagePresentation();
     // QuarksLoader decomposes authored float32 matrices into noisy non-1 scale on
     // emitters (including nested children). Match thick stampLiveTweaks intent:
     // keep preview scale on player.root only.
@@ -480,9 +493,25 @@ export class ArtifactQuarksPlayer {
     }
   }
   setSolo(name: string | null) { this.soloName = name; this.applySolo(); }
-  setVerticalGroundPresentation(enabled: boolean, lift = 1.15) {
-    this.root.rotation.set(enabled ? -Math.PI / 2 : 0, 0, 0);
-    this.root.position.set(0, enabled ? Math.max(0, lift) : 0, 0);
+  setStagePresentation(options: StagePresentationOptions = {}) {
+    this.stagePresentationMode = resolveStagePresentationMode(options);
+    if (options.lift != null && Number.isFinite(options.lift)) {
+      this.stagePresentationLift = options.lift;
+    }
+    this.applyStagePresentation();
+  }
+  /** @deprecated Prefer {@link setStagePresentation} (`enabled` maps to auto/authored). */
+  setVerticalGroundPresentation(enabled: boolean, lift = DEFAULT_STAGE_PRESENTATION_LIFT) {
+    this.setStagePresentation({ mode: enabled ? 'auto' : 'authored', lift });
+  }
+  private applyStagePresentation() {
+    const pose = resolveStagePresentationPose(
+      this.stagePresentationMode,
+      this.effectRoot,
+      this.stagePresentationLift,
+    );
+    this.root.rotation.set(pose.rotationX, 0, 0);
+    this.root.position.set(0, pose.positionY, 0);
     this.root.updateMatrixWorld(true);
   }
   captureSceneColor(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
@@ -492,8 +521,10 @@ export class ArtifactQuarksPlayer {
   clear() {
     if (this.effectRoot) {
       QuarksUtil.stop(this.effectRoot);
+      clearAuthoredEffectRootMark(this.effectRoot);
       this.root.remove(this.effectRoot);
       this.effectRoot = null;
+      this.applyStagePresentation();
     }
     // Drop old batches so materials/shaders don't leak across loads.
     // Object3D.remove alone leaves entries in BatchedRenderer.batches.

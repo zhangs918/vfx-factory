@@ -42,7 +42,8 @@ function computeThinPlayerCapability(artifact) {
     && closures.length > 0
     && artifact.execution?.simulation === 'artifact-emitter-sim@1'
     && pipelines.every((pipeline) => {
-      const shader = artifact.shaders?.[pipeline.shader];
+      const shader = artifact.shaders?.[pipeline.shader]
+        ?? artifact.files?.shaders?.[pipeline.shader];
       return pipeline.executor === 'artifact-shader@1'
         && !!pipeline.blendState
         && !!pipeline.uniformValues
@@ -241,20 +242,44 @@ async function resolveArtifactPath(effectId) {
   throw new Error(`STAMP_MISSING_ARTIFACT ${effectId}`);
 }
 
-function findPipelineForBatch(artifact, batch) {
+function uniformSignatureKey(uniformValues, tileCounts) {
+  const color = uniformValues?.materialColor;
+  if (!Array.isArray(color) || color.length < 3 || !Array.isArray(tileCounts)) return null;
+  return JSON.stringify({
+    color: color.slice(0, 3),
+    opacityGain: uniformValues.opacityGain,
+    legacyAlphaTintFactor: uniformValues.legacyAlphaTintFactor,
+    hdrMultiply: uniformValues.hdrMultiply,
+    vertColorGain: uniformValues.vertColorGain,
+    tiles: tileCounts,
+  });
+}
+
+function findPipelineForBatch(artifact, batch, claimed = new Set()) {
   const pipelines = artifact.pipelines ?? {};
   if (batch.artifactShaderId) {
     const hit = Object.entries(pipelines).find(([, p]) => p.shader === batch.artifactShaderId);
-    if (hit) return hit;
+    if (hit && !claimed.has(hit[0])) return hit;
   }
-  const entries = Object.entries(pipelines);
+  const entries = Object.entries(pipelines).filter(([id]) => !claimed.has(id));
   if (entries.length === 1) return entries[0];
-  if (typeof batch.batchIndex === 'number' && entries[batch.batchIndex]) {
-    return entries[batch.batchIndex];
+  // Legacy captures lack artifactShaderId — match baked uniforms/tiles, then
+  // fall back to batchIndex among remaining unclaimed pipelines.
+  const want = uniformSignatureKey(batch.uniformValues, batch.tileCounts);
+  if (want) {
+    const matches = entries.filter(([, p]) => (
+      uniformSignatureKey(p.uniformValues, p.tileCounts) === want
+    ));
+    if (matches.length === 1) return matches[0];
+  }
+  if (typeof batch.batchIndex === 'number') {
+    const byIndex = Object.entries(pipelines)[batch.batchIndex];
+    if (byIndex && !claimed.has(byIndex[0])) return byIndex;
   }
   throw new Error(
     `Cannot map capture batch ${batch.batchIndex} to a pipeline `
-    + `(shaderId=${batch.artifactShaderId ?? 'none'}, pipelines=${entries.length})`,
+    + `(shaderId=${batch.artifactShaderId ?? 'none'}, pipelines=${Object.keys(pipelines).length}, `
+    + `unclaimed=${entries.length})`,
   );
 }
 
@@ -311,6 +336,7 @@ for (const capturePath of capturePaths) {
   if (!artifact.files.shaders) artifact.files.shaders = {};
 
   const stampedPipelines = [];
+  const claimedPipelines = new Set();
   for (const batch of capture.batches ?? []) {
     if (!batch.fragmentShader?.trim() || !batch.vertexShader?.trim()) {
       throw new Error(`STAMP_EMPTY_SHADER ${effectId} batch=${batch.batchIndex}`);
@@ -323,7 +349,8 @@ for (const capturePath of capturePaths) {
       throw new Error(`STAMP_MISSING_TILES ${effectId} batch=${batch.batchIndex}`);
     }
 
-    const [pipelineId, pipeline] = findPipelineForBatch(artifact, batch);
+    const [pipelineId, pipeline] = findPipelineForBatch(artifact, batch, claimedPipelines);
+    claimedPipelines.add(pipelineId);
     const shaderId = pipeline.shader || batch.artifactShaderId || `shader-${pipelineId}`;
     const vertBytes = Buffer.from(batch.vertexShader, 'utf8');
     const fragBytes = Buffer.from(batch.fragmentShader, 'utf8');

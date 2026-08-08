@@ -35,18 +35,18 @@ import type {
   ArtifactQuarksPlayer,
 } from '@vfx-factory/web-runtime/artifact-runtime';
 
-/** Neutral preview studio: shallow blue zenith fading into a bright horizon. */
+/** Dark preview studio: low zenith fading into a muted horizon (below bloom). */
 function makePreviewSky() {
   const c = document.createElement('canvas');
   c.width = 4;
   c.height = 64;
   const ctx = c.getContext('2d')!;
   const g = ctx.createLinearGradient(0, 0, 0, 64);
-  g.addColorStop(0, '#2f4c5e');
-  g.addColorStop(0.48, '#466477');
+  g.addColorStop(0, '#0e141a');
+  g.addColorStop(0.48, '#151c24');
   // Stay below bloom threshold: the sky is a clean stage, not an emissive buffer.
-  g.addColorStop(0.76, '#617b89');
-  g.addColorStop(1, '#788991');
+  g.addColorStop(0.76, '#1c242e');
+  g.addColorStop(1, '#232b34');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 4, 64);
   const tex = new CanvasTexture(c);
@@ -55,7 +55,7 @@ function makePreviewSky() {
   return tex;
 }
 
-/** Neutral one-metre checker floor used by the interactive VFX stage. */
+/** Oracle-only checker floor (Unity regression stage includes this plane). */
 function makeCheckerFloorTexture() {
   const c = document.createElement('canvas');
   c.width = 2;
@@ -119,11 +119,14 @@ async function main() {
   const runtimeV2ArtifactMode = urlParams.get('runtime') === 'v2-artifact';
   const runtimeV2Mode = runtimeV2ArtifactMode || urlParams.get('runtime') === 'v2';
   const compareLegacy = urlParams.get('compare') === 'legacy' || urlParams.get('legacy') === '1';
-  // Shadow thin-player path for fully material-qualified effects. Production
-  // default remains QuarksEffectPlayer; ?thinPlayer=1 opts into ArtifactQuarksPlayer.
-  const thinPlayerMode = urlParams.get('thinPlayer') === '1' && !compareLegacy;
-  // Thin corpus + v3-artifacts are keyed off frozen-quarks; without frozen=1 the
-  // live quarks manifest has no thin-ready entries.
+  // Two preview paths only:
+  //   default          → thin player + offline v3 artifacts (new)
+  //   ?compare=legacy  → QuarksEffectPlayer on source JSON (old oracle)
+  // ?thinPlayer=1 is a deprecated no-op alias for the default path.
+  const runtimeV3Mode = !runtimeV2Mode && !compareLegacy;
+  const thinPlayerMode = runtimeV3Mode;
+  // Thin playback is compiled from frozen-quarks; force that corpus on the new path.
+  // Legacy may still opt into live /assets/quarks by omitting frozen=1.
   const frozenQuarks = urlParams.get('frozen') === '1' || thinPlayerMode;
   // Production imports only the artifact facade. Legacy/runtime2 is a separate, explicit
   // comparison chunk and cannot enter the production bundle by accident.
@@ -131,10 +134,8 @@ async function main() {
   const {
     QuarksEffectPlayer,
     V3ArtifactPlayer,
-    QuarksArtifactBackend,
     ArtifactQuarksPlayer,
     ThinArtifactBackend,
-    isEffectMaterialThinReady,
   } = runtimeModule;
   const legacyModule = runtimeV2Mode || compareLegacy
     ? await import('@vfx-factory/web-runtime/legacy-runtime')
@@ -178,35 +179,33 @@ async function main() {
   controls.enableDamping = !regressionMode;
   controls.enabled = !regressionMode;
 
-  // Flat lit stage — particles are unlit; keep fill gentle
-  scene.add(new AmbientLight(0xffffff, 0.55));
-  const sun = new DirectionalLight(0xffffff, 0.35);
+  // Flat lit stage — particles are unlit; keep fill gentle and dim for dark preview.
+  scene.add(new AmbientLight(0xffffff, regressionMode ? 0.55 : 0.28));
+  const sun = new DirectionalLight(0xffffff, regressionMode ? 0.35 : 0.16);
   sun.position.set(4, 8, 2);
   scene.add(sun);
 
-  const checkerFloor = regressionMode ? null : makeCheckerFloorTexture();
-  const ground = new Mesh(
-    new PlaneGeometry(36, 36),
-    new MeshBasicMaterial({
-      color: regressionMode ? 0x7a7e82 : 0xffffff,
-      map: checkerFloor,
-    }),
-  );
-  ground.rotation.x = -Math.PI / 2;
-  // A prefab export does not own a scene collider. Keep the synthetic reference stage opt-in:
-  // otherwise it can depth-occlude world-space particles that legitimately live below y=0.
-  // Oracle regression passes stage=1 explicitly because its Unity capture includes this plane.
-  ground.visible = !regressionMode || urlParams.get('stage') === '1';
-  scene.add(ground);
+  // Interactive preview has no ground plane. Oracle regression may opt in with stage=1
+  // because Unity captures include that reference floor.
+  if (regressionMode && urlParams.get('stage') === '1') {
+    const ground = new Mesh(
+      new PlaneGeometry(36, 36),
+      new MeshBasicMaterial({
+        color: 0x7a7e82,
+        map: makeCheckerFloorTexture(),
+      }),
+    );
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+  }
 
-  // Interactive-only modeling grid. Keeping it out of regression preserves the fixed oracle
-  // buffers, while the slight lift avoids z-fighting with the solid ground plane.
+  // Interactive-only modeling grid (no solid floor). Kept out of regression buffers.
   if (!regressionMode) {
-    const grid = new GridHelper(36, 36, 0x30383d, 0x50595e);
+    const grid = new GridHelper(36, 36, 0x1a2228, 0x2a333c);
     grid.position.y = 0.002;
     const gridMaterial = grid.material;
     gridMaterial.transparent = true;
-    gridMaterial.opacity = 0.42;
+    gridMaterial.opacity = 0.28;
     gridMaterial.depthWrite = false;
     scene.add(grid);
   }
@@ -219,18 +218,11 @@ async function main() {
       return true;
     },
   };
-  // v3 artifact playback is the only production path. The old paths are diagnostic-only
-  // and require an explicit query switch so a failed qualification can never silently
-  // fall back to a different renderer.
-  const runtimeV3Mode = !runtimeV2Mode && !compareLegacy;
-  if (thinPlayerMode && !runtimeV3Mode) {
-    throw new Error('?thinPlayer=1 requires the production v3 path (not compare=legacy / runtime=v2).');
-  }
+  // Thin artifact playback is the only production path. Legacy/runtime2 require an
+  // explicit query switch so a failed qualification can never silently fall back.
   const player: QuarksEffectPlayer | ArtifactQuarksPlayer = runtimeV2Mode || compareLegacy
     ? new (legacyModule as NonNullable<typeof legacyModule>).QuarksEffectPlayer({ physicsResolver })
-    : thinPlayerMode
-      ? new ArtifactQuarksPlayer({ physicsResolver })
-      : new QuarksEffectPlayer({ physicsResolver });
+    : new ArtifactQuarksPlayer({ physicsResolver });
   const artifactUrl = urlParams.get('artifact') ?? '';
   const artifactBase = artifactUrl.includes('/') ? artifactUrl.slice(0, artifactUrl.lastIndexOf('/')) : '';
   const compiledPlayer = runtimeV2Mode
@@ -240,11 +232,7 @@ async function main() {
     )
     : null;
   const v3Player = runtimeV3Mode
-    ? new V3ArtifactPlayer(
-      thinPlayerMode
-        ? new ThinArtifactBackend(player as ArtifactQuarksPlayer)
-        : new QuarksArtifactBackend(player as QuarksEffectPlayer),
-    )
+    ? new V3ArtifactPlayer(new ThinArtifactBackend(player as ArtifactQuarksPlayer))
     : null;
   if (runtimeV2Mode) (window as Window & { __VFX_RUNTIME2__?: unknown }).__VFX_RUNTIME2__ = compiledPlayer;
   if (urlParams.get('debug') === '1') {
@@ -362,7 +350,6 @@ async function main() {
     runtimeV3: runtimeV3ById.get(entry.id),
   }));
   const showAllCandidates = new URLSearchParams(location.search).get('all') === '1';
-  const explicitCandidateMode = urlParams.get('candidate') === '1' || showAllCandidates;
   // Candidate catalog hygiene: hide exports that contain particles but no renderable
   // material/geometry. They remain available through ?all=1 for diagnostics; production
   // entries are never hidden by this heuristic.
@@ -391,30 +378,15 @@ async function main() {
     return entry;
   }))).filter((entry): entry is (typeof allEntries)[number] => entry !== null);
   if (runtimeV3Mode) {
+    // Visual QA: list every compiled v3 artifact. ThinBackend still hard-gates on
+    // load — broken effects surface as status/hint errors for targeted fixes.
     entries = entries.filter((entry) => entry.runtimeV3?.status === 'compiled'
-      && (explicitCandidateMode || entry.runtimeV3.disposition === 'qualified'));
-  }
-  // Thin preview: dropdown only lists effects that load on ArtifactQuarksPlayer
-  // with no bridge / soft invent fallback (same gate as ThinArtifactBackend).
-  if (thinPlayerMode) {
-    entries = (await Promise.all(entries.map(async (entry) => {
-      try {
-        if (entry.runtimeV3?.capabilities?.thinPlayer === false) return null;
-        if (!explicitCandidateMode && entry.runtimeV3?.qualification?.thinPlayer !== true) return null;
-        const v3Url = entry.runtimeV3?.artifact;
-        if (!v3Url) return null;
-        const response = await fetch(v3Url);
-        if (!response.ok) return null;
-        const artifact = await response.json();
-        return isEffectMaterialThinReady(artifact) ? entry : null;
-      } catch {
-        return null;
-      }
-    }))).filter((entry): entry is (typeof allEntries)[number] => entry !== null);
+      && typeof entry.runtimeV3?.artifact === 'string'
+      && entry.runtimeV3.artifact.length > 0);
   }
   if (!entries.length) {
     setStatus(thinPlayerMode
-      ? 'Thin 清单为空（无 pixel-qualified / artifact-shader@1 特效）'
+      ? 'Thin 清单为空（无已编译 v3 artifact）'
       : '特效清单为空');
     return;
   }
@@ -422,11 +394,15 @@ async function main() {
   for (const e of entries) {
     const opt = document.createElement('option');
     opt.value = e.id;
-    opt.textContent = thinPlayerMode
-      ? `${e.label} · Thin`
-      : `${e.label}${e.isCandidate ? ' · Candidate' : ''}`;
+    if (thinPlayerMode) {
+      const disposition = e.runtimeV3?.disposition ?? 'candidate';
+      opt.textContent = `${e.label} · Thin · ${disposition}`;
+    } else {
+      opt.textContent = `${e.label}${e.isCandidate ? ' · Candidate' : ''}`;
+    }
     selectEl.appendChild(opt);
   }
+
   selectEl.value = entries[0].id;
 
   const current = () =>
@@ -467,11 +443,20 @@ async function main() {
   //   ?freeze=<sec>  deterministically step to t then pause
   //   ?post=0        disable bloom for raw silhouette comparison
   //   ?cameraPosition=x,y,z&cameraTarget=x,y,z  interactive custom opening view
-  //   ?presentation=authored  show raw Unity orientation instead of the upright preview stage
+  //   ?presentation=auto|authored|force-z-up
+  //        auto (default): tilt only Z-up prefabs onto the Y-up stage; already-Y-up keep upright
+  //        authored: raw Unity orientation (no host -90° X)
+  //        force-z-up: always apply host -90° X (legacy debug)
   //   ?effectHeight=1.15      override the upright preview centre height above the floor
   const effectParam = urlParams.get('effect');
   const soloParam = urlParams.get('solo');
   const freezeParam = urlParams.get('freeze') ? Number(urlParams.get('freeze')) : null;
+  const presentationParam = urlParams.get('presentation');
+  const stagePresentationMode = presentationParam === 'authored'
+    ? 'authored' as const
+    : presentationParam === 'force-z-up'
+      ? 'force-z-up' as const
+      : 'auto' as const;
   // Manifest ids are lowercase; accept case-insensitive ?effect= so regressions
   // cannot silently fall through to the first catalog entry (false PASS).
   if (effectParam) {
@@ -502,8 +487,8 @@ async function main() {
       ? ' · runtime=v2'
       : thinPlayerMode
         ? ' · runtime=v3-thin'
-        : runtimeV3Mode
-          ? ' · runtime=v3-quarks'
+        : compareLegacy
+          ? ' · runtime=legacy'
           : '';
     setStatus(`${paused ? 'Paused' : active ? 'Playing' : 'Ready'} · ${current().label}${runtimeLabel}`);
   };
@@ -556,15 +541,15 @@ async function main() {
         if (runtimeV2Mode) compiledPlayer?.restart();
         else player.restart();
       }
-      // Interactive presentation is deliberately above the synthetic floor.  This is not an
-      // authored-coordinate conversion: `effectHeight` is a host-only display transform and
-      // remains overridable per URL for unusually large/small packs.
+      // Interactive presentation is host-only. `auto` tilts Z-up prefabs onto the Y-up
+      // stage; already-Y-up roots (e.g. Big Splash) only lift. Regression stays authored.
       const requestedHeight = Number(urlParams.get('effectHeight') ?? 2.0);
-      const uprightPreview = !regressionMode && urlParams.get('presentation') !== 'authored';
-      if (!runtimeV2Mode) player.setVerticalGroundPresentation(
-        uprightPreview,
-        Number.isFinite(requestedHeight) ? requestedHeight : 2.0,
-      );
+      if (!runtimeV2Mode) {
+        player.setStagePresentation({
+          mode: regressionMode ? 'authored' : stagePresentationMode,
+          lift: Number.isFinite(requestedHeight) ? requestedHeight : 2.0,
+        });
+      }
       const contract = runtimeV2Mode ? null : player.semanticContract;
       if (contract) {
         referenceView = contract.referenceCamera;
@@ -599,9 +584,9 @@ async function main() {
       // Re-apply preview tweaks after load/restart rebuilt batch materials.
       if (canLiveTweak) pushLiveTweaks();
       const runtimeTag = useV3
-        ? (thinPlayerMode ? ' · runtime=v3-thin' : ' · runtime=v3-quarks')
-        : frozenQuarks
-          ? ' · runtime=frozen-quarks'
+        ? ' · runtime=v3-thin'
+        : compareLegacy
+          ? (frozenQuarks ? ' · runtime=legacy-frozen' : ' · runtime=legacy')
           : runtimeV2Mode
             ? ' · runtime=v2'
             : '';

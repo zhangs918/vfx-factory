@@ -18,10 +18,11 @@ if (!captureTimes.length) throw new Error('VFX_CAPTURE_TIMES must contain at lea
 const reportPath = process.env.VFX_REGRESSION_REPORT ?? DEFAULT_REGRESSION_REPORT;
 const solo = process.env.VFX_SOLO?.trim() ?? '';
 const dumpUniforms = process.env.VFX_DUMP_UNIFORMS === '1';
-// Only enable thin when explicitly "1" — avoid sticky shell exports from prior runs.
-const thinPlayer = process.env.VFX_THIN_PLAYER === '1';
-if (process.env.VFX_THIN_PLAYER && process.env.VFX_THIN_PLAYER !== '1') {
-  console.warn(`Ignoring VFX_THIN_PLAYER='${process.env.VFX_THIN_PLAYER}' (only '1' enables thin)`);
+// Thin is the only production path under test. Set VFX_THIN_PLAYER=0 only for
+// emergency opt-out (should not be needed after the two-path preview cutover).
+const thinPlayer = process.env.VFX_THIN_PLAYER !== '0';
+if (process.env.VFX_THIN_PLAYER === '0') {
+  console.warn('VFX_THIN_PLAYER=0 disables thin; regression still loads the default thin preview URL');
 }
 
 const regressionRuntimeFingerprint = runtimeFingerprint(process.cwd());
@@ -53,10 +54,8 @@ try {
       const base = `${origin}/?candidate=1&effect=${encodeURIComponent(id)}&freeze=${captureTime}&post=0&regression=1&frozen=1`
         + (solo ? `&solo=${encodeURIComponent(solo)}` : '');
       const files = [];
-      // The oracle explicitly selects legacy. The tested side explicitly selects
-      // v3 and, when requested, the artifact-only thin player.
-      const v3Suffix = thinPlayer ? '&v3=1&thinPlayer=1' : '&v3=1';
-      for (const [kind, suffix] of [['frozen', '&compare=legacy'], ['v3', v3Suffix]]) {
+      // Oracle = legacy source player. Tested side = default thin offline player.
+      for (const [kind, suffix] of [['legacy', '&compare=legacy'], ['thin', '']]) {
         let page;
         let lastWaitError;
         for (let attempt = 1; attempt <= 3; attempt++) {
