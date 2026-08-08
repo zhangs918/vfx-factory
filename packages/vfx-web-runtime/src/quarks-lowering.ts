@@ -7,17 +7,21 @@ import {
   OneMinusSrcAlphaFactor,
   NormalBlending,
   SrcColorFactor,
-  DoubleSide,
   ZeroFactor,
 } from 'three';
-import { expandCfxrRingGeometry, type CfxrMaterialProps } from './cfxrQuarksFidelity';
+import { expandCfxrRingGeometry } from './cfxr-ring-geometry';
+import type { CfxrMaterialProps } from './cfxr-material-profile';
+export type { CfxrMaterialProps } from './cfxr-material-profile';
+export { expandCfxrRingGeometry } from './cfxr-ring-geometry';
 
 export function normalizeUnityQuarksJson(json: any): any {
   expandCfxrRingGeometry(json);
 
   // Legacy/oversized exports can lose an editor-only mesh reference. Keep them loadable with
   // an explicit editable quad fallback; new exports still carry the authored mesh and basis.
-  if (!Array.isArray(json.geometries)) json.geometries = [];
+  if (!Array.isArray(json.geometries)) {
+    throw new Error('normalizeUnityQuarksJson: geometries[] required (no invent)');
+  }
   const fallbackGeometryUuid = '__unity_mesh_fallback_quad@1';
   if (!json.geometries.some((g: any) => g?.uuid === fallbackGeometryUuid)) {
     json.geometries.push({
@@ -49,7 +53,7 @@ export function normalizeUnityQuarksJson(json: any): any {
   // the per-particle current-size and quaternion TRS. Shape/hierarchy scales are deliberately
   // absent from this operation: each coordinate-space transform has one owner.
   const geometries = new Map<string, any>();
-  for (const geometry of json.geometries ?? []) geometries.set(geometry.uuid, geometry);
+  for (const geometry of json.geometries) geometries.set(geometry.uuid, geometry);
   const lowerMeshBasis = (o: any) => {
     if (!o || typeof o !== 'object') return;
     if (o.type === 'ParticleEmitter' && o.ps?.unitySubEmitterLifecycle) {
@@ -122,7 +126,12 @@ export function normalizeUnityQuarksJson(json: any): any {
   if (Array.isArray(json.materials)) {
     for (const m of json.materials) {
       if (m.type !== 'QuarksMaterial' && m.type !== 'MeshBasicMaterial') continue;
-      const quarksBlend = m.blending ?? m.alphaMode ?? 2; // 1=add, 2=alpha
+      if (typeof m.blending !== 'number') {
+        throw new Error(
+          `Material ${m.name ?? m.uuid} missing numeric blending (no invent)`,
+        );
+      }
+      const quarksBlend = m.blending; // 1=add, 2=alpha, 4=multiply, …
       const program = m.vfxProgram as { schema?: string; profile?: CfxrMaterialProps; blend?: string } | undefined;
       if (program?.schema !== 'particle-material-program@2') {
         throw new Error(`Material ${m.name ?? m.uuid} has no strict particle material program`);
@@ -133,12 +142,27 @@ export function normalizeUnityQuarksJson(json: any): any {
       const legacyMultiply = !!semanticProfile?.legacyMultiply;
       const legacyPremultiply = program.blend === 'premultiplied-alpha' || !!semanticProfile?.legacyPremultiply;
       m.type = 'MeshBasicMaterial';
-      m.map = m.map ?? m.texture;
-      m.transparent = m.transparent !== false;
-      m.depthWrite = false;
-      m.depthTest = m.depthTest !== false;
-      m.side = DoubleSide;
-      m.toneMapped = false;
+      // Alias Unity `texture` → three `map` when only the former is authored.
+      if (m.map == null && m.texture != null) m.map = m.texture;
+      if (typeof m.transparent !== 'boolean') {
+        throw new Error(`Material ${m.name ?? m.uuid} missing transparent (no invent)`);
+      }
+      if (typeof m.depthWrite !== 'boolean') {
+        throw new Error(`Material ${m.name ?? m.uuid} missing depthWrite (no invent)`);
+      }
+      if (typeof m.depthTest !== 'boolean') {
+        throw new Error(`Material ${m.name ?? m.uuid} missing depthTest (no invent)`);
+      }
+      // Pending corpus stamps side/toneMapped; do not invent DoubleSide / false.
+      if (m.side == null) {
+        throw new Error(`Material ${m.name ?? m.uuid} missing side (no invent)`);
+      }
+      if (typeof m.toneMapped !== 'boolean') {
+        throw new Error(`Material ${m.name ?? m.uuid} missing toneMapped (no invent)`);
+      }
+      if (typeof m.premultipliedAlpha !== 'boolean') {
+        throw new Error(`Material ${m.name ?? m.uuid} missing premultipliedAlpha (no invent)`);
+      }
       if (legacyMultiply) {
         m.blending = CustomBlending;
         m.blendEquation = AddEquation;
@@ -147,7 +171,7 @@ export function normalizeUnityQuarksJson(json: any): any {
         m.blendEquationAlpha = AddEquation;
         m.blendSrcAlpha = ZeroFactor;
         m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
+        // Corpus stamps false; keep authored premultipliedAlpha (no invent).
       } else if (legacyPremultiply) {
         m.blending = CustomBlending;
         m.blendEquation = AddEquation;
@@ -156,7 +180,6 @@ export function normalizeUnityQuarksJson(json: any): any {
         m.blendEquationAlpha = AddEquation;
         m.blendSrcAlpha = ZeroFactor;
         m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
       } else if (multiply) {
         // Unity shader source declares Blend DstColor Zero. Three's MultiplyBlending preset
         // retains OneMinusSrcAlpha, making transparent texels draw visible rectangular quads.
@@ -167,10 +190,8 @@ export function normalizeUnityQuarksJson(json: any): any {
         m.blendEquationAlpha = AddEquation;
         m.blendSrcAlpha = ZeroFactor;
         m.blendDstAlpha = OneFactor;
-        m.premultipliedAlpha = false;
       } else {
         m.blending = additive ? AdditiveBlending : NormalBlending;
-        m.premultipliedAlpha = false;
       }
       if (typeof m.alphaTest === 'number' && m.alphaTest > 0) {
         m.alphaTest = m.alphaTest;
@@ -215,11 +236,16 @@ export function normalizeUnityQuarksJson(json: any): any {
   if (Array.isArray(json.geometries)) {
     for (const g of json.geometries) {
       if (g.type !== 'QuarksGeometry') continue;
-      const positions = g.positions ?? [];
-      const indices = g.indices ?? [];
-      const uvs = g.uvs ?? [];
-      const uv1s = g.uv1s ?? [];
-      const normals = g.normals ?? [];
+      if (!Array.isArray(g.positions) || g.positions.length === 0) {
+        throw new Error(
+          `QuarksGeometry ${g.uuid ?? '(anonymous)'} missing positions (no invent)`,
+        );
+      }
+      const positions = g.positions;
+      const indices = Array.isArray(g.indices) ? g.indices : [];
+      const uvs = Array.isArray(g.uvs) ? g.uvs : [];
+      const uv1s = Array.isArray(g.uv1s) ? g.uv1s : [];
+      const normals = Array.isArray(g.normals) ? g.normals : [];
       g.type = 'BufferGeometry';
       g.data = {
         attributes: {

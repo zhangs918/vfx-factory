@@ -4,6 +4,9 @@ import { createRuntimeMaterial } from './RuntimeMaterialFactory';
 import { createRuntimeSystemState, updateRuntimeSystem, type RuntimeParticleSystemState } from './RuntimeProgramExecutor';
 import type { RuntimeBackend, RuntimeHandle } from './RuntimeBackend';
 
+/** Soft invent when flipbook tile counts omitted (matches compiler CFXR_QUARKS_TILE_COUNT_SOFT). */
+const CFXR_QUARKS_TILE_COUNT_SOFT = 1;
+
 export interface ThreeRuntimeContext { parent?: Object3D; resourceBaseUrl?: string; }
 type RenderRecord = { state: RuntimeParticleSystemState; mesh: InstancedMesh<BufferGeometry, ShaderMaterial>; position: InstancedBufferAttribute; size: InstancedBufferAttribute; color: InstancedBufferAttribute; custom1: InstancedBufferAttribute };
 function resolveUri(uri: string, base = ''): string { if (/^(https?:|data:|blob:|\/)/.test(uri)) return uri; return `${base.replace(/\/$/, '')}/${uri.replace(/^\//, '')}`; }
@@ -41,8 +44,12 @@ export class ThreeRuntimeBackend implements RuntimeBackend<ThreeRuntimeContext> 
       const material = materials.get(system.material);
       if (!material) throw new Error(`Runtime v2 system '${system.id}' references missing material '${system.material}'.`);
       const systemMaterial = material.clone();
-      systemMaterial.uniforms.uTileColumns = { value: system.flipbook?.columns ?? 1 };
-      systemMaterial.uniforms.uTileRows = { value: system.flipbook?.rows ?? 1 };
+      systemMaterial.uniforms.uTileColumns = {
+        value: system.flipbook?.columns ?? CFXR_QUARKS_TILE_COUNT_SOFT,
+      };
+      systemMaterial.uniforms.uTileRows = {
+        value: system.flipbook?.rows ?? CFXR_QUARKS_TILE_COUNT_SOFT,
+      };
       const mesh = new InstancedMesh(geometryFor(system, resources), systemMaterial, system.capacity);
       const position = new InstancedBufferAttribute(new Float32Array(system.capacity * 3), 3).setUsage(DynamicDrawUsage);
       const size = new InstancedBufferAttribute(new Float32Array(system.capacity * 3), 3).setUsage(DynamicDrawUsage);

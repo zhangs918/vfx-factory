@@ -1,5 +1,19 @@
 import type { RuntimeProgram, RuntimeSystem } from '@vfx-factory/artifact-schema';
 
+/** Soft invents mirrored from the Unity→runtime@2 compile path. */
+const CFXR_INITIAL_POSITION_SOFT: [number, number, number] = [0, 0, 0];
+const CFXR_INITIAL_VELOCITY_SOFT: [number, number, number] = [0, 0, 0];
+const CFXR_INITIAL_SIZE_SOFT: [number, number, number] = [1, 1, 1];
+const CFXR_INITIAL_COLOR_SOFT: [number, number, number, number] = [1, 1, 1, 1];
+const CFXR_STREAM_CUSTOM_ZERO_SOFT: [number, number, number, number] = [0, 0, 0, 0];
+const CFXR_FRAME_SOFT = 0;
+const CFXR_QUARKS_TILE_COUNT_SOFT = 1;
+const CFXR_COLOR_CHANNEL_SOFT = 1;
+const CFXR_SIZE_OVER_LIFE_SOFT = 1;
+const CFXR_VELOCITY_AXIS_SOFT = 0;
+const CFXR_PARTICLE_LIFE_MIN = 1e-4;
+const CFXR_INITIAL_LIST_LEN_SOFT = 1;
+
 export interface RuntimeParticle {
   age: number;
   life: number;
@@ -29,21 +43,31 @@ function applyProgram(program: RuntimeProgram, particle: RuntimeParticle, normal
   const params = program.params as any;
   if (program.op === 'SizeOverLife') {
     const curve = params.size?.curve ?? params.curve;
-    const value = scalar(curve, 1);
+    const value = scalar(curve, CFXR_SIZE_OVER_LIFE_SOFT);
     particle.size[0] *= value;
     particle.size[1] *= value;
     particle.size[2] *= value;
   } else if (program.op === 'ColorOverLife') {
     const color = params.color?.color ?? params.color;
-    if (color?.color) particle.color = [Number(color.color.r ?? 1), Number(color.color.g ?? 1), Number(color.color.b ?? 1), Number(color.color.a ?? 1)];
+    if (color?.color) {
+      particle.color = [
+        Number(color.color.r ?? CFXR_COLOR_CHANNEL_SOFT),
+        Number(color.color.g ?? CFXR_COLOR_CHANNEL_SOFT),
+        Number(color.color.b ?? CFXR_COLOR_CHANNEL_SOFT),
+        Number(color.color.a ?? CFXR_COLOR_CHANNEL_SOFT),
+      ];
+    }
   } else if (program.op === 'FrameOverLife') {
-    const frameCount = Math.max(1, Number(params.frame?.count ?? params.frameCount ?? 1));
+    const frameCount = Math.max(
+      1,
+      Number(params.frame?.count ?? params.frameCount ?? CFXR_QUARKS_TILE_COUNT_SOFT),
+    );
     particle.frame = Math.min(frameCount - 1, Math.floor(normalizedAge * frameCount));
   } else if (program.op === 'VelocityOverLife') {
     const velocity = params.velocity ?? params;
-    particle.velocity[0] += scalar(velocity.x, 0);
-    particle.velocity[1] += scalar(velocity.y, 0);
-    particle.velocity[2] += scalar(velocity.z, 0);
+    particle.velocity[0] += scalar(velocity.x, CFXR_VELOCITY_AXIS_SOFT);
+    particle.velocity[1] += scalar(velocity.y, CFXR_VELOCITY_AXIS_SOFT);
+    particle.velocity[2] += scalar(velocity.z, CFXR_VELOCITY_AXIS_SOFT);
   }
 }
 
@@ -55,16 +79,18 @@ export function updateRuntimeSystem(state: RuntimeParticleSystemState, programs:
     if ((burst.time > previous || (previous === 0 && burst.time === 0)) && burst.time <= state.elapsed) {
       const count = Math.min(state.system.capacity, Math.max(0, Math.floor(burst.count)));
       for (let i = 0; i < count && state.particles.length < state.system.capacity; i++) {
-        const initial = state.system.initialParticles?.[i % (state.system.initialParticles.length || 1)];
+        const initial = state.system.initialParticles?.[
+          i % (state.system.initialParticles.length || CFXR_INITIAL_LIST_LEN_SOFT)
+        ];
         state.particles.push({
           age: 0,
-          life: Math.max(1e-4, initial?.life ?? state.system.particleLife),
-          position: [...(initial?.position ?? [0, 0, 0])],
-          velocity: [...(initial?.velocity ?? [0, 0, 0])],
-          size: [...(initial?.size ?? [1, 1, 1])],
-          color: [...(initial?.color ?? [1, 1, 1, 1])],
-          frame: initial?.frame ?? 0,
-          custom1: [...(initial?.custom1 ?? [0, 0, 0, 0])],
+          life: Math.max(CFXR_PARTICLE_LIFE_MIN, initial?.life ?? state.system.particleLife),
+          position: [...(initial?.position ?? CFXR_INITIAL_POSITION_SOFT)],
+          velocity: [...(initial?.velocity ?? CFXR_INITIAL_VELOCITY_SOFT)],
+          size: [...(initial?.size ?? CFXR_INITIAL_SIZE_SOFT)],
+          color: [...(initial?.color ?? CFXR_INITIAL_COLOR_SOFT)],
+          frame: initial?.frame ?? CFXR_FRAME_SOFT,
+          custom1: [...(initial?.custom1 ?? CFXR_STREAM_CUSTOM_ZERO_SOFT)],
           alive: true,
         });
       }

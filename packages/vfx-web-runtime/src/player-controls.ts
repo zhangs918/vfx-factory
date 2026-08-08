@@ -10,9 +10,19 @@ export interface AutoRotation {
 export function buildAutoRotations(root: Object3D, controllers: any[]): AutoRotation[] {
   return controllers.flatMap((controller) => {
     if (controller?.kind !== 'constant-euler-rotation') return [];
+    if (typeof controller.targetNode !== 'string' || !controller.targetNode) {
+      throw new Error('constant-euler-rotation: targetNode required (no invent)');
+    }
+    if (controller.space !== 'self' && controller.space !== 'world') {
+      throw new Error('constant-euler-rotation: space required (no invent)');
+    }
+    if (!Array.isArray(controller.degreesPerSecond) || controller.degreesPerSecond.length !== 3
+      || controller.degreesPerSecond.some((value: unknown) => typeof value !== 'number')) {
+      throw new Error('constant-euler-rotation: degreesPerSecond[3] required (no invent)');
+    }
     const target = root.getObjectByProperty('uuid', controller.targetNode);
     if (!target) throw new Error(`Auto-rotate target '${controller.targetNode}' was not loaded`);
-    const d = controller.degreesPerSecond.map(Number) as [number, number, number];
+    const d = controller.degreesPerSecond as [number, number, number];
     return [{
       target,
       baseQuaternion: target.quaternion.clone(),

@@ -34,7 +34,11 @@ class UnityBoxVolumeEmitter implements EmitterShape {
  */
 class UnityConeVolumeEmitter implements EmitterShape {
   readonly type = 'unity-cone-volume';
-  constructor(readonly radius = 1, readonly angle = 0, readonly length = 1) {}
+  constructor(readonly radius: number, readonly angle: number, readonly length: number) {
+    if (![radius, angle, length].every((value) => typeof value === 'number' && Number.isFinite(value))) {
+      throw new Error('unity-cone-volume: radius/angle/length required (no invent)');
+    }
+  }
   initialize(particle: Particle, _emissionState: EmissionState) {
     const z = Math.random() * this.length;
     const theta = Math.random() * Math.PI * 2;
@@ -56,7 +60,11 @@ class UnityConeVolumeEmitter implements EmitterShape {
     return { type: this.type, radius: this.radius, angle: this.angle, length: this.length } as UnityConeVolumeJson;
   }
   static fromJSON(json: UnityConeVolumeJson) {
-    return new UnityConeVolumeEmitter(Number(json.radius), Number(json.angle), Number(json.length));
+    if (typeof json.radius !== 'number' || typeof json.angle !== 'number'
+      || typeof json.length !== 'number') {
+      throw new Error('unity-cone-volume: radius/angle/length required (no invent)');
+    }
+    return new UnityConeVolumeEmitter(json.radius, json.angle, json.length);
   }
 }
 

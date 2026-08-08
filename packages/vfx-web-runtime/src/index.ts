@@ -5,11 +5,22 @@ export {
   type PlayerState,
   type PhysicsResolver,
   type QuarksEffectPlayerOptions,
+  type LiveTweaks,
 } from './QuarksEffectPlayer';
 
 export { loadQuarksManifest, type QuarksManifestEntry, type QuarksManifest } from './manifest';
+export { V3ArtifactPlayer, type ArtifactRuntimeSink, type PreparedV3Effect } from './v3-artifact-player';
+export { QuarksArtifactBackend } from './quarks-artifact-backend';
+export { V3ResourceCache } from './v3-resource-cache';
 
 export { type ParticleStateSnapshot } from './particle-snapshot';
+
+export {
+  dumpLiveMaterialCapture,
+  LIVE_MATERIAL_CAPTURE_SCHEMA,
+  type LiveMaterialBatchStamp,
+  type LiveMaterialCapture,
+} from './live-material-stamp';
 
 export { type VfxSemanticContract } from './artifact-contract';
 
@@ -22,4 +33,5 @@ export { ThreeRuntimeBackend, type ThreeRuntimeContext } from './runtime2/ThreeR
 export {
   type CfxrMaterialProps,
   type CfxrRuntimeProfile,
-} from './cfxrQuarksFidelity';
+} from './cfxr-material-profile';
+export { expandCfxrRingGeometry } from './cfxr-ring-geometry';

@@ -1,15 +1,33 @@
 import { Color, PointLight, Vector3, type Object3D } from 'three';
 
+/**
+ * Reference-stage calibration between Unity built-in Light.intensity and
+ * the non-physical three.js stage lighting units (Quarks deterministic light).
+ */
+export const UNITY_TO_THREE_LIGHT_INTENSITY_SCALE = 2.8;
+
+/**
+ * Host calibration for plain `cfxrEffect` payloads (corpus omits intensityScale).
+ * Distinct from UNITY_TO_THREE_LIGHT_INTENSITY_SCALE used by deterministic controllers.
+ */
+export const CFXR_EFFECT_HOST_INTENSITY_SCALE = 0.035;
+
+/** Plain cfxrEffect payloads omit mode; burst-curve is the only host path for that shape. */
+const PLAIN_CFXR_EFFECT_MODE = 'burst-curve' as const;
+/** Corpus omits intensityEnd / delay on plain cfxrEffect — host fade floor. */
+const PLAIN_CFXR_EFFECT_INTENSITY_END = 0;
+const PLAIN_CFXR_EFFECT_DELAY = 0;
+
 /** Optional CFXR_Effect light — enabled when JSON metadata present (future) or always mild. */
 export class CfxrEffectLight {
   readonly light: PointLight;
   private elapsed = 0;
   private playing = false;
-  private intensityStart = 21.11;
+  private intensityStart = 0;
   private intensityEnd = 0;
-  private duration = 0.5;
+  private duration = 0;
   private delay = 0;
-  private intensityScale = 0.035;
+  private intensityScale = CFXR_EFFECT_HOST_INTENSITY_SCALE;
   private mode: 'burst-curve' | 'linear-fade' | 'sampled-flicker' = 'burst-curve';
   private flickerAdd = 0;
   private flickerSmooth = 1;
@@ -46,20 +64,44 @@ export class CfxrEffectLight {
     if (!meta) return;
     // configure() is called for every newly loaded effect. Reset all controller-only
     // state so a sampled flicker cannot leak into a later plain cfxrEffect payload.
-    this.mode = meta.mode ?? 'burst-curve';
+    // Plain cfxrEffect payloads omit mode; burst-curve is the only host path for that shape.
+    this.mode = meta.mode ?? PLAIN_CFXR_EFFECT_MODE;
     this.flickerAdd = 0;
     this.flickerSmooth = 1;
     this.flickerPhase = 0;
     this.flickerDomainStep = 1 / 128;
     this.flickerSamples = [0.5, 0.5];
-    if (meta.intensityStart != null) this.intensityStart = meta.intensityStart;
-    if (meta.duration != null) this.duration = meta.duration;
-    if (meta.color) this.light.color.setRGB(meta.color[0], meta.color[1], meta.color[2]);
-    if (meta.range != null) this.light.distance = meta.range;
+    if (typeof meta.intensityStart !== 'number' || !Number.isFinite(meta.intensityStart)) {
+      throw new Error('CfxrEffectLight: intensityStart required (no invent)');
+    }
+    if (!Array.isArray(meta.color) || meta.color.length !== 3
+      || meta.color.some((channel) => typeof channel !== 'number')) {
+      throw new Error('CfxrEffectLight: color[3] required (no invent)');
+    }
+    if (typeof meta.range !== 'number' || !Number.isFinite(meta.range)) {
+      throw new Error('CfxrEffectLight: range required (no invent)');
+    }
+    // sampled-flicker is driven by samples, not a fade duration.
+    if (this.mode !== 'sampled-flicker') {
+      if (typeof meta.duration !== 'number' || !Number.isFinite(meta.duration)) {
+        throw new Error('CfxrEffectLight: duration required (no invent)');
+      }
+      this.duration = meta.duration;
+    } else {
+      this.duration = typeof meta.duration === 'number' ? meta.duration : 0;
+    }
+    this.intensityStart = meta.intensityStart;
+    this.light.color.setRGB(meta.color[0], meta.color[1], meta.color[2]);
+    this.light.distance = meta.range;
     if (meta.intensityEnd != null) this.intensityEnd = meta.intensityEnd;
+    else this.intensityEnd = PLAIN_CFXR_EFFECT_INTENSITY_END;
     if (meta.delay != null) this.delay = Math.max(0, meta.delay);
+    else this.delay = PLAIN_CFXR_EFFECT_DELAY;
     if (meta.position) this.light.position.set(meta.position[0], meta.position[1], meta.position[2]);
-    if (meta.intensityScale != null) this.intensityScale = meta.intensityScale;
+    // Corpus cfxrEffect omits intensityScale; host calibration stays explicit.
+    this.intensityScale = typeof meta.intensityScale === 'number'
+      ? meta.intensityScale
+      : CFXR_EFFECT_HOST_INTENSITY_SCALE;
     if (meta.flickerAdd != null) this.flickerAdd = meta.flickerAdd;
     if (meta.flickerSmooth != null) this.flickerSmooth = Math.max(0, meta.flickerSmooth);
     if (meta.flickerPhase != null) this.flickerPhase = meta.flickerPhase;

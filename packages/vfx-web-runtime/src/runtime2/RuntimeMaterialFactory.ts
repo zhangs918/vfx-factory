@@ -12,6 +12,7 @@ import {
   ZeroFactor,
 } from 'three';
 import type { RuntimeMaterial, RuntimeResource } from '@vfx-factory/artifact-schema';
+import { VFX_TONE_MAPPED_OFF } from '@vfx-factory/artifact-schema';
 
 export interface RuntimeTextureResolver {
   resolve(resource: RuntimeResource): Texture | null;
@@ -37,7 +38,7 @@ export function createRuntimeMaterial(
     transparent: spec.renderState.blend !== 'opaque',
     depthTest: spec.renderState.depthTest,
     depthWrite: spec.renderState.depthWrite,
-    toneMapped: spec.renderState.toneMapped ?? false,
+    toneMapped: spec.renderState.toneMapped ?? VFX_TONE_MAPPED_OFF,
     side: spec.renderState.cull === 'none' ? DoubleSide : spec.renderState.cull === 'front' ? 1 : 0,
   });
   material.blending = spec.renderState.blend === 'additive'

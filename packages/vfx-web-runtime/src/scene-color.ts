@@ -11,9 +11,9 @@ import {
 } from 'three';
 import { BatchedRenderer } from 'three.quarks';
 import {
-  cfxrNeedsSceneColor,
-  setCfxrSceneColorTexture,
-} from './cfxrQuarksFidelity';
+  artifactNeedsSceneColor,
+  setArtifactSceneColorTexture,
+} from './artifact-scene-inputs';
 
 /** Host-side SceneColor prepass for materials whose IR explicitly requests refraction. */
 export class SceneColorCapture {
@@ -21,7 +21,7 @@ export class SceneColorCapture {
   private readonly size = new Vector2();
 
   capture(renderer: WebGLRenderer, scene: Scene, camera: Camera, batches: BatchedRenderer) {
-    if (!cfxrNeedsSceneColor()) return;
+    if (!artifactNeedsSceneColor()) return;
     const size = renderer.getSize(this.size);
     const w = Math.max(1, Math.floor(size.x * renderer.getPixelRatio()));
     const h = Math.max(1, Math.floor(size.y * renderer.getPixelRatio()));
@@ -42,19 +42,22 @@ export class SceneColorCapture {
     renderer.setRenderTarget(previousTarget);
     batches.visible = visible;
     const perspective = camera as Camera & { near?: number; far?: number };
-    setCfxrSceneColorTexture(
+    if (typeof perspective.near !== 'number' || typeof perspective.far !== 'number') {
+      throw new Error('SceneColorCapture: camera.near/far required (no invent)');
+    }
+    setArtifactSceneColorTexture(
       this.target.texture,
       this.target.depthTexture,
       w,
       h,
-      perspective.near ?? 0.1,
-      perspective.far ?? 1000,
+      perspective.near,
+      perspective.far,
     );
   }
 
   dispose() {
     this.target?.dispose();
     this.target = null;
-    setCfxrSceneColorTexture(null, null);
+    setArtifactSceneColorTexture(null, null);
   }
 }

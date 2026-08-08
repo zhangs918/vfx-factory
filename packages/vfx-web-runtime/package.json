@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./artifact-runtime": "./src/artifact-runtime.ts",
+    "./legacy-runtime": "./src/legacy-runtime.ts",
+    "./manifest": "./src/manifest.ts"
   },
   "dependencies": {
     "@vfx-factory/artifact-schema": "0.1.0",
