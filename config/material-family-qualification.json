@@ -1295,14 +1295,7 @@
     "material-family-0e3e08f7e5b42312": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06",
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-385e912c1d85072a": {
       "status": "KEEP",
@@ -1367,14 +1360,7 @@
     "material-family-bd1115399b086d16": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06",
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-aadefe54eca28d7e": {
       "status": "pixel-qualified",
@@ -1712,33 +1698,17 @@
     "material-family-4d24b8339a39a350": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06"
-      ]
+      "effects": []
     },
     "material-family-ae44a04adf11720f": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06",
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-669f2acf15cde841": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06",
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-ec6513036d24c5cc": {
       "status": "KEEP",
@@ -2057,7 +2027,7 @@
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx4_prefabs_fire_cfx4_fire"
+        "cfx4_fire"
       ]
     },
     "material-family-012f9ca7603500f0": {
@@ -2092,15 +2062,15 @@
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_electric_cfx_electricityball",
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+        "cfx_electricityball",
+        "cfx_magical_source"
       ]
     },
     "material-family-7bbb385698e1a851": {
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+        "cfx_hit_a_redrandomtext"
       ]
     },
     "material-family-9df29a41c2e687cd": {
@@ -2172,7 +2142,7 @@
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx3_prefabs_misc_cfx3_hit_misc_b_gravity"
+        "cfx3_hit_misc_b_gravity"
       ]
     },
     "material-family-1dd6e41e8efa9552": {
@@ -2256,14 +2226,14 @@
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx4_prefabs_fire_cfx4_fire"
+        "cfx4_fire"
       ]
     },
     "material-family-5ff7afe5914293af": {
       "status": "KEEP",
       "evidence": "capture-stamp-1bridge",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_electric_cfx_electricityball"
+        "cfx_electricityball"
       ]
     },
     "material-family-91d922629d56821c": {
@@ -2323,9 +2293,7 @@
     "material-family-62bcc100e47c3315": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_06"
-      ]
+      "effects": []
     },
     "material-family-07a52e66870c61fe": {
       "status": "KEEP",
@@ -2351,28 +2319,28 @@
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+        "cfx_hit_a_redrandomtext"
       ]
     },
     "material-family-8fe315f69618e8fd": {
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+        "cfx_hit_a_redrandomtext"
       ]
     },
     "material-family-4b789d3575db10c3": {
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+        "cfx_magical_source"
       ]
     },
     "material-family-f4fba8d1a72601fb": {
       "status": "KEEP",
       "evidence": "capture-stamp",
       "effects": [
-        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+        "cfx_magical_source"
       ]
     },
     "material-family-1a5375ad685be337": {
@@ -2388,24 +2356,12 @@
     "material-family-dddba8608c128346": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-4d4ea9a49afbd20c": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "particlecollection_free_samples_prefab_bullet_01",
-        "particlecollection_free_samples_prefab_bullet_02",
-        "particlecollection_free_samples_prefab_bullet_03",
-        "particlecollection_free_samples_prefab_bullet_04",
-        "particlecollection_free_samples_prefab_bullet_05"
-      ]
+      "effects": []
     },
     "material-family-d0333f37009b599e": {
       "status": "KEEP",
