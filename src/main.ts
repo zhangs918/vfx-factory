@@ -378,11 +378,13 @@ async function main() {
     return entry;
   }))).filter((entry): entry is (typeof allEntries)[number] => entry !== null);
   if (runtimeV3Mode) {
-    // Visual QA: list every compiled v3 artifact. ThinBackend still hard-gates on
-    // load — broken effects surface as status/hint errors for targeted fixes.
+    // Production preview lists only artifacts whose complete material/simulation/
+    // trajectory closure is thin-ready. Candidates remain available in the
+    // manifests and qualification tools, but cannot masquerade as playable Thin.
     entries = entries.filter((entry) => entry.runtimeV3?.status === 'compiled'
       && typeof entry.runtimeV3?.artifact === 'string'
-      && entry.runtimeV3.artifact.length > 0);
+      && entry.runtimeV3.artifact.length > 0
+      && entry.runtimeV3.capabilities?.thinPlayer === true);
   }
   if (!entries.length) {
     setStatus(thinPlayerMode
@@ -395,8 +397,10 @@ async function main() {
     const opt = document.createElement('option');
     opt.value = e.id;
     if (thinPlayerMode) {
-      const disposition = e.runtimeV3?.disposition ?? 'candidate';
-      opt.textContent = `${e.label} · Thin · ${disposition}`;
+      const evidence = e.runtimeV3?.qualification?.changedPixels === 0
+        ? 'Pixel'
+        : 'Manual';
+      opt.textContent = `${e.label} · Thin ${evidence}`;
     } else {
       opt.textContent = `${e.label}${e.isCandidate ? ' · Candidate' : ''}`;
     }
@@ -593,6 +597,9 @@ async function main() {
       setStatus(`${freezeParam != null ? 'Frozen' : 'Playing'} · ${entry.label}${soloParam ? ` · solo=${soloParam}` : ''}${freezeParam != null ? ` · t=${freezeParam}` : ''} · layer=${captureLayer}${runtimeTag}`);
       hintEl.textContent = '';
     } catch (err) {
+      // A failed selection must never leave the previous successful effect on
+      // screen under a new label.
+      if (useV3) player.clear();
       const msg = err instanceof Error ? err.message : String(err);
       setStatus(msg.split('\n')[0]);
       hintEl.textContent = msg;

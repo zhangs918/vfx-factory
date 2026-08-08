@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { access, mkdir, mkdtemp, readFile, readdir, rename, rm } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { runtimeFingerprint } from './runtime_fingerprint.mjs';
 
@@ -39,6 +39,53 @@ function runNode(script, args = []) {
 }
 
 async function materialCaptures() {
+  const bundleFile = path.join(root, 'config/runtime-v3-manual-captures.json');
+  if (await exists(bundleFile)) {
+    const currentFingerprint = runtimeFingerprint(root);
+    const bundle = JSON.parse(await readFile(bundleFile, 'utf8'));
+    if (bundle.schema !== 'vfx-manual-capture-bundle@1') {
+      throw new Error('manual capture bundle schema is invalid');
+    }
+    if (bundle.runtimeFingerprint !== currentFingerprint) {
+      throw new Error('manual capture bundle is stale for the current runtime fingerprint');
+    }
+    const stagedManifest = JSON.parse(await readFile(
+      path.join(env.VFX_V3_ARTIFACT_DIR, 'manifest.json'),
+      'utf8',
+    ));
+    const required = new Set((stagedManifest.effects ?? []).map((entry) => String(entry.id)));
+    const missing = [...required].filter((id) => !bundle.effects?.[id]);
+    if (missing.length) {
+      throw new Error(`manual capture bundle missing ${missing.length} effects`);
+    }
+    const expandedDir = path.join(stageRoot, '.manual-captures');
+    await mkdir(expandedDir, { recursive: true });
+    const files = [];
+    for (const id of [...required].sort()) {
+      const stored = bundle.effects[id];
+      const capture = {
+        ...stored,
+        batches: (stored.batches ?? []).map((batch) => {
+          const shader = bundle.shaders?.[batch.shaderBundleId];
+          if (!shader) throw new Error(`${id}: missing bundled shader ${batch.shaderBundleId}`);
+          const { shaderBundleId: _shaderBundleId, ...metadata } = batch;
+          return {
+            ...metadata,
+            vertexShader: shader.vertex,
+            fragmentShader: shader.fragment,
+          };
+        }),
+      };
+      const file = path.join(expandedDir, `${id}.json`);
+      await writeFile(file, JSON.stringify(capture));
+      files.push(file);
+    }
+    console.log(`expanded ${files.length} checked-in manual captures`);
+    return files;
+  }
+  if (process.env.VFX_ALLOW_TMP_CAPTURES !== '1') {
+    throw new Error('checked-in manual capture bundle is required for release');
+  }
   const dir = path.join(root, 'tmp/material-captures');
   try {
     const currentFingerprint = runtimeFingerprint(root);

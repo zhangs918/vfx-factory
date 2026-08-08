@@ -42,6 +42,7 @@
     "stamp:from-capture": "node scripts/stamp_artifact_from_capture.mjs",
     "qualify:material-capture": "node scripts/qualify_material_capture.mjs",
     "qualify:material-captures:manual": "node scripts/approve_material_captures_manual.mjs --all",
+    "bundle:material-captures:manual": "node scripts/build_manual_capture_bundle.mjs",
     "promote:capture-spot": "node scripts/promote_capture_spot.mjs",
     "regression:runtime-v3": "node scripts/regress_runtime_v3.mjs",
     "promote:runtime-v3": "node scripts/promote_runtime_v3.mjs",

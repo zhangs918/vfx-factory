@@ -18,5 +18,19 @@ export default defineConfig({
     // the multi-GB local corpus into every application build is both wasteful
     // and an easy way to publish licensed/generated fixtures accidentally.
     copyPublicDir: false,
+    rolldownOptions: {
+      output: {
+        // Keep the initial preview entry below the warning/budget threshold.
+        // This changes cache granularity only; it does not duplicate modules.
+        codeSplitting: {
+          groups: [{
+            name: 'vendor',
+            test: /node_modules/,
+            minSize: 20_000,
+            maxSize: 450_000,
+          }],
+        },
+      },
+    },
   },
 });
