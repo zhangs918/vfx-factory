@@ -7,6 +7,7 @@ dist/
 
 # Local captures and generated comparison artifacts
 tmp-*.png
+tmp/
 tmp-cfxr-compare/
 tmp-semantic-regression/
 tmp-oracle-comparison/
@@ -29,6 +30,12 @@ unity-ref/Assets/
 # licensed source assets. Regenerate them locally with the export scripts.
 public/assets/quarks/
 public/assets/runtime-v2-candidates/
+public/assets/frozen-quarks/
+public/assets/v3-artifacts/
+public/assets/v3-code/
+public/assets/v3-resources/
+public/assets/.runtime-v3-stage-*/
+public/assets/.runtime-v3-backup-*/
 public/unity-ref
 
 # Image/state oracles are regenerated locally and may derive from licensed VFX.

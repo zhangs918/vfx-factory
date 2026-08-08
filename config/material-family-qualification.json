@@ -1,0 +1,2725 @@
+{
+  "schema": "vfx-material-family-qualification@1",
+  "families": {
+    "material-family-3608c574e27fd140": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-3c332dba3d471dd8": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-47f8ec4346b06659": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-632a7cf6f784c4e5": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-745bcbb2ffdd0f16": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c71c0dadf822f5ce": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-bea54a1b4ebd5ca0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-d31e53f916faf44f": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c871c7ce2a0653f1": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-7cddbd2e02bc473e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4c69caf7a2251224": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-dbfffcf8ccb72099": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-7a2e571ff8614747": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2419801d9f83dd59": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-0e1d04f77c60c25e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c1ac29bc4c4b1ea2": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-272b5ec6986d84a7": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_skull_explosion"
+      ]
+    },
+    "material-family-a20967744793f6bb": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2496f389f58c3105": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-145b4dc6654245ea": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-d91c8c532d664fba": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-a3a7dd259e8dfdff": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4f171cea4476a1d4": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-7e85c9900da93ac2": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-8ed4a940d990e38c": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c36af1a781f0a46b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-5fa5575e8583c75e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c21929d1ce755766": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-6df828e001e950a6": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-b437f96e8a199a6d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-448ba8983a1f4f6b": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-8262b5d5ae3e519c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-fd667890128afc0a": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-afbe04f033453eac": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-71ec2c54777e53c4": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-064c761b3dbaaa26": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-85eb83c18aff0ce3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-5c43cfb8648a7f47": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-62a563892b33f45a": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9ca03e1d31e40f60": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_fire"
+      ]
+    },
+    "material-family-4bd99ba8c653f525": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-15722ddc4a481c45": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c6b68350ce044a9c": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c74a29f071e4fcaf": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-e5b57a3bcab760f7": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-ebb66ce726f41994": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-cc36cfd59b54e88b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4c1f2c7dcb354485": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fa538f5ea747ad75": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-25ccff520b24edec": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9d5215e29175c5ba": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2c3e3e7ddbae0562": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-e1f86ebf6931b075": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fc52f18e4d342783": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-7f8abe9eb08c3333": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-dd67d57b519f6515": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-39770c321178b658": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-52f7128663010664": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-61aa6e3ade638dfb": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-b2292178cfcda38a": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2832619d34db1d8f": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-61f497cbedc4f91b": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_magic_hit"
+      ]
+    },
+    "material-family-79dc748deef38c73": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c9ef816ada05bb43": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-89673a64fe1c0e02": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4431704dadebc711": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_hit_light_c_air"
+      ]
+    },
+    "material-family-f651bfc043479b22": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_magic_hit"
+      ]
+    },
+    "material-family-827e94536e89e391": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-6bdd9ee359f8930b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2d09655c01a07225": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-5743a878a4cc4f56": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-a25069c2a72f659e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@9",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-ed5bb29d413fb0e0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-66cf189cf46db7cd": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-d4a950b94a5466c8": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-92def57d628003e3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-cb6ab8d5e9b916cb": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-e7666a62417363b7": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_vortex_ground"
+      ]
+    },
+    "material-family-1a8d0e5599b5fcce": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_magicaura_b_runic"
+      ]
+    },
+    "material-family-4ffb980c30d93936": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_aura_bubble_c"
+      ]
+    },
+    "material-family-7e948d90c83cbde4": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_hit_pow"
+      ]
+    },
+    "material-family-d5f6c65387f7f0d8": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_magicaura_b_runic"
+      ]
+    },
+    "material-family-19b390fc3618fff1": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-1326f56e2cf8c930": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_vortex_ground"
+      ]
+    },
+    "material-family-1ee7d5d785ddf0a0": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_firework_trails_gravity",
+        "cfx2_wandering_spirits",
+        "cfx3_magicaura_b_runic"
+      ]
+    },
+    "material-family-abf59c60da4724a6": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_hit_light_c_air",
+        "cfx4_aura_bubble_c",
+        "cfx4_magic_hit"
+      ]
+    },
+    "material-family-e96385c2a067cc26": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_hit_pow",
+        "cfx3_skull_explosion",
+        "cfx4_drill_air_hit_no_collision"
+      ]
+    },
+    "material-family-5a2b73d470850c1d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_skull_explosion"
+      ]
+    },
+    "material-family-cf6c966d19f5bd30": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_skull_explosion"
+      ]
+    },
+    "material-family-a5873d5ea62bc083": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-386105a8312d83d5": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fb1fc176c9f1d7c3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-3e18da839c51d320": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_magical_source"
+      ]
+    },
+    "material-family-fc43a2995caebd05": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-212ccb0dacc47ed3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9d1ef7e3137b88e8": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-b41c2461b6e2a757": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-a1cefd430ec128dd": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9e4b87d978470143": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9272bce4fa601a8f": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-617ed4835db3a13a": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-41d95490c8140764": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2f12daefedc72d06": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fe5c7cc902f2df86": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "cfx3_hit_electric_c_air"
+      ]
+    },
+    "material-family-3cb613f048d95ad2": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "cfx3_hit_electric_c_air"
+      ]
+    },
+    "material-family-0e3e08f7e5b42312": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_lightning_strike_skill",
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_magic_circle",
+        "particlecollection_free_samples_prefab_bullet_06",
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-385e912c1d85072a": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_death_magic_circle"
+      ]
+    },
+    "material-family-43af841ed73fdd50": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_sparkshit_b_sphere",
+        "cfx2_rockhit"
+      ]
+    },
+    "material-family-59d80aa2b795a190": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9ba253aff7ee918e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-049ae52bc5d812db": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-62039603e8c351e2": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_forest_muzzle"
+      ]
+    },
+    "material-family-bd1115399b086d16": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_06",
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-aadefe54eca28d7e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-82cc9a24a16a6a9d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_mana_wall"
+      ]
+    },
+    "material-family-1083ab1ea1eef307": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-0ef3a7d3e547598a": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@9",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-e09c7f1bb1a51c3e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-d24a383102fecd5c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_death_magic_circle",
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_magic_circle"
+      ]
+    },
+    "material-family-76c7ce499412c72b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-98ea510da5107ac8": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-9a9898c52ee92bef": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_magic_circle"
+      ]
+    },
+    "material-family-1e65e83b2bad62d9": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_rockhit"
+      ]
+    },
+    "material-family-b94af4cc35f89ca3": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_rockhit"
+      ]
+    },
+    "material-family-26f3c4529179d3ac": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@9",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-8b4a8f400ce98531": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-sprays",
+      "effects": [
+        "particlecollection_free_samples_prefab_sprays_sprays_04",
+        "particlecollection_free_samples_prefab_sprays_sprays_01",
+        "particlecollection_free_samples_prefab_sprays_sprays_02",
+        "particlecollection_free_samples_prefab_sprays_sprays_03",
+        "particlecollection_free_samples_prefab_sprays_sprays_05",
+        "particlecollection_free_samples_prefab_sprays_sprays_06"
+      ]
+    },
+    "material-family-30f6634e753b9477": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_projectiles_cartoon_fx_missile_01",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_impact_contrast",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_b_blue"
+      ]
+    },
+    "material-family-eca6b28729b1db74": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-d8e833160cf8d152": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-a60bf0927e911416": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_death_magic_circle"
+      ]
+    },
+    "material-family-af5f0016e68e2814": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_death_magic_circle"
+      ]
+    },
+    "material-family-e85e6e38f421014e": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_mana_wall"
+      ]
+    },
+    "material-family-4dbfb24fa84d4643": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-da093692ef8b6e6b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@9",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-aac71d917ecf493c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_bullet_impact"
+      ]
+    },
+    "material-family-14fe8ac0532c296e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@9",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-f478f0b804efa4ca": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_arrow_impact",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_forest_muzzle"
+      ]
+    },
+    "material-family-1852773b860de3ab": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-6aa0addb321e5721": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_healing_buff"
+      ]
+    },
+    "material-family-b477658f9cb73bc8": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-sprays",
+      "effects": [
+        "particlecollection_free_samples_prefab_sprays_sprays_04",
+        "particlecollection_free_samples_prefab_sprays_sprays_01",
+        "particlecollection_free_samples_prefab_sprays_sprays_02",
+        "particlecollection_free_samples_prefab_sprays_sprays_03",
+        "particlecollection_free_samples_prefab_sprays_sprays_05",
+        "particlecollection_free_samples_prefab_sprays_sprays_06"
+      ]
+    },
+    "material-family-32eddbd03c2eb413": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4100613dd224a7d1": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_death_magic_circle"
+      ]
+    },
+    "material-family-1b91e7fc6919c084": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-429f9062074cf6e5": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-5c4476b4799c6095": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4d24b8339a39a350": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_06"
+      ]
+    },
+    "material-family-ae44a04adf11720f": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_06",
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-669f2acf15cde841": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_06",
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-ec6513036d24c5cc": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_healing_buff"
+      ]
+    },
+    "material-family-772dd5cde5cfa2ac": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_healing_buff"
+      ]
+    },
+    "material-family-85689cd40fc8879b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-1efdbdce87aea79e": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-a7f2179b3bcd4345": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fa2c63db9075817f": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-b4bb95a5afda66f0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4bb8bccbcac0a601": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-0fe4f62c617d0406": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-88bd8fded29b502f": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-6a55e97e37f60d6e": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-677baf58c6b387d2": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-81ff76b7ec7556a6": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-761af2b5c494dbc9": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4deea62e18b658d1": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-ea047e730c7476f0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-240b03b4e61d6eb3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-7c1870fe87eac289": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-4193c56e565c0be5": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-dee52d27c57ef420": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-21d06ec157b6be5b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-933fc3b37fb9d5da": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-01a8167fb99a6be7": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-00cc2b6619dee50d": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-8f4c00541e415339": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx4_prefabs_fire_cfx4_fire"
+      ]
+    },
+    "material-family-012f9ca7603500f0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-c8870ac2b9f3bcd0": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@8",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-f5b5299c00651583": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_electric_cfx_electricityball",
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+      ]
+    },
+    "material-family-7bbb385698e1a851": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-9df29a41c2e687cd": {
+      "status": "KEEP",
+      "evidence": "multi-freeze-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_cosmic_impact",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_red_impact",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_triangle_muzzle",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_explode_impact"
+      ],
+      "updatedAt": "2026-08-07T17:46:00.513Z"
+    },
+    "material-family-abcc15c1ce74c41f": {
+      "status": "KEEP",
+      "evidence": "multi-freeze-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_cosmic_impact",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_red_impact"
+      ],
+      "updatedAt": "2026-08-07T17:46:35.996Z"
+    },
+    "material-family-a912d35b4fa35ba8": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "magic_pig_games_infinity_pbr_synty_studios_polygon_particle_fx_particles_impacts_polygon_particle_fx_explosion_body_01",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_impacts_toon_projectiles_2_arrow_impact"
+      ]
+    },
+    "material-family-f12a003647e4b0f2": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-sprays",
+      "effects": [
+        "particlecollection_free_samples_prefab_sprays_sprays_04",
+        "particlecollection_free_samples_prefab_sprays_sprays_01",
+        "particlecollection_free_samples_prefab_sprays_sprays_02",
+        "particlecollection_free_samples_prefab_sprays_sprays_03",
+        "particlecollection_free_samples_prefab_sprays_sprays_05",
+        "particlecollection_free_samples_prefab_sprays_sprays_06"
+      ]
+    },
+    "material-family-b7fb044006fbac3e": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_firework_trails_gravity"
+      ]
+    },
+    "material-family-85d1669ad65c3f3f": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_wandering_spirits"
+      ]
+    },
+    "material-family-677dac16ba17e009": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_vortex_ground"
+      ]
+    },
+    "material-family-a0984cf68114e6de": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_hit_pow"
+      ]
+    },
+    "material-family-b65e229d6c83f1df": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_hit_light_c_air",
+        "cfx3_skull_explosion"
+      ]
+    },
+    "material-family-70c3ed7c9b62b561": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx3_prefabs_misc_cfx3_hit_misc_b_gravity"
+      ]
+    },
+    "material-family-1dd6e41e8efa9552": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-3a7afca5db8c5cad": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_sparkshit_b_sphere"
+      ]
+    },
+    "material-family-1d906f1cc684fd5f": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx3_magicaura_b_runic"
+      ]
+    },
+    "material-family-2af7e93994e200d7": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_aura_bubble_c"
+      ]
+    },
+    "material-family-a03be546d2ae76c9": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_fire"
+      ]
+    },
+    "material-family-296224f9470dff3c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_magic_hit"
+      ]
+    },
+    "material-family-f9ca33328f4b84d5": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_death_magic_circle"
+      ]
+    },
+    "material-family-54f86d460af5050d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_lightning_strike_skill"
+      ]
+    },
+    "material-family-e4e3423ca42c08ba": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_death_magic_circle"
+      ]
+    },
+    "material-family-6992eefa68f645ea": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_magic_circle"
+      ]
+    },
+    "material-family-55c755dfd59164f7": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_with_projectors_mana_wall"
+      ]
+    },
+    "material-family-eb7a2d5442cf4acd": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_healing_buff"
+      ]
+    },
+    "material-family-dda2b8a73f30f43a": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx2_prefabs_skull_ghosts_effects_cfx2_enemydeathskull"
+      ]
+    },
+    "material-family-64de2816b29612a5": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx4_prefabs_fire_cfx4_fire"
+      ]
+    },
+    "material-family-5ff7afe5914293af": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_electric_cfx_electricityball"
+      ]
+    },
+    "material-family-91d922629d56821c": {
+      "status": "KEEP",
+      "evidence": "multi-freeze-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_lightning_beam_hit_point",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_projectiles_cartoon_fx_missile_01",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_triangle_muzzle",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_projectiles_toon_projectiles_2_red_star",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_explosion_smoke_1",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_magic_poof",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_arrow_muzzle",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_red_muzzle",
+        "magic_pig_games_infinity_pbr_hovl_toon_projectiles_2_particles_muzzles_toon_projectiles_2_red_star_muzzle"
+      ]
+    },
+    "material-family-e5fbe6f844c91d56": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx2_rockhit"
+      ]
+    },
+    "material-family-a4ace9235fc7d18d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_drill_air_hit_no_collision"
+      ]
+    },
+    "material-family-3cef2dfd85b56e69": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx4_drill_air_hit_no_collision"
+      ]
+    },
+    "material-family-1effbaf9f4788380": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-269829a11801580c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-609200d163f60adc": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_magical_source"
+      ]
+    },
+    "material-family-62ad7a49e2d0b20b": {
+      "status": "KEEP",
+      "evidence": "capture-stamp-1bridge",
+      "effects": [
+        "cfx_magical_source"
+      ]
+    },
+    "material-family-62bcc100e47c3315": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_06"
+      ]
+    },
+    "material-family-07a52e66870c61fe": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_mana_wall"
+      ]
+    },
+    "material-family-0bc318d836320f0d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "erbgameart_fantasy_effects_pack_prefabs_effects_normal_mana_wall"
+      ]
+    },
+    "material-family-800d9e98f4da21de": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "free_slash_vfx_prefabs_multiple_slashes"
+      ]
+    },
+    "material-family-efaa5a2715f7f313": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "free_slash_vfx_prefabs_multiple_slashes"
+      ]
+    },
+    "material-family-a49fe104358954b5": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-8fe315f69618e8fd": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_hits_cfx_hit_a_redrandomtext"
+      ]
+    },
+    "material-family-4b789d3575db10c3": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+      ]
+    },
+    "material-family-f4fba8d1a72601fb": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "jmo_assets_cartoon_fx_legacy_cfx_prefabs_misc_cfx_magical_source"
+      ]
+    },
+    "material-family-1a5375ad685be337": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_big_impact_hdr",
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_a_red"
+      ]
+    },
+    "material-family-d362d91f0478d828": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_big_impact_hdr"
+      ]
+    },
+    "material-family-dddba8608c128346": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-4d4ea9a49afbd20c": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "particlecollection_free_samples_prefab_bullet_01",
+        "particlecollection_free_samples_prefab_bullet_02",
+        "particlecollection_free_samples_prefab_bullet_03",
+        "particlecollection_free_samples_prefab_bullet_04",
+        "particlecollection_free_samples_prefab_bullet_05"
+      ]
+    },
+    "material-family-d0333f37009b599e": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "cfx3_hit_electric_c_air"
+      ]
+    },
+    "material-family-4be658eb21a1985d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "cfx3_hit_electric_c_air"
+      ]
+    },
+    "material-family-1fc6bed482b71e3d": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "cfx3_hit_electric_c_air"
+      ]
+    },
+    "material-family-68126440c56f0b00": {
+      "status": "KEEP",
+      "evidence": "capture-stamp",
+      "effects": [
+        "magic_pig_games_infinity_pbr_cartoon_fx_remastered_particles_cartoon_fx_hit_a_red"
+      ]
+    },
+    "material-family-96efb9bdc3e6a21d": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-6b69c38dc50d7c25": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-5871b004796730d3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-5855f71910999366": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-404e7f7ddbba87e1": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-941b357d5cd592bd": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-ba82800aedb7e02b": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-234c604e7d994bb1": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-2cffdb20ff2c5983": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-1d5cb095024aea96": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-391d068540fb31de": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-e57c874afdf63ea8": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-f55b7ba6affc46b3": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "material-family-fcfccc05eab39ec6": {
+      "status": "pixel-qualified",
+      "evidence": {
+        "compilerVersion": "unity-vfx-material-emitter@10",
+        "captureTimes": [
+          0.1,
+          0.25,
+          0.5,
+          1
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    }
+  }
+}
