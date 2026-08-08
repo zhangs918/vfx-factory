@@ -35,9 +35,32 @@ npm run build
 npm run validate:live-ir
 npm run validate:candidate-ir
 npm run smoke:candidate-runtime
+npm run validate:runtime-v3-assets
 ```
+
+Build and publish runtime-v3 assets with:
+
+```bash
+npm run compile:runtime-v3:release
+```
+
+The release command compiles into an isolated staging tree, verifies hashes,
+resource closure, schemas, code/config splits, and dispositions, then promotes
+all three generated directories with rollback. Generated corpora remain ignored
+and are deployed separately from the Vite application bundle.
+
+Run the artifact-only qualification loop with:
+
+```bash
+VFX_THIN_PLAYER=1 VFX_CAPTURE_TIMES=0.25,0.5 \
+  npm run regression:runtime-v3:batch
+```
+
+Each batch consumes machine-readable pixel evidence, validates all generated
+assets, and waits 60 seconds before rescanning. Production `?v3=1&thinPlayer=1`
+lists only entries with both an offline thin capability stamp and thin-player
+qualification evidence.
 
 See [docs/VFX_SEMANTIC_ARCHITECTURE.md](docs/VFX_SEMANTIC_ARCHITECTURE.md)
 and [tools/unity-quarks-exporter/SEMANTIC_IR.md](tools/unity-quarks-exporter/SEMANTIC_IR.md)
 for the semantic architecture and supported production paths.
-

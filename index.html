@@ -21,11 +21,35 @@
           <button id="pauseBtn" type="button" aria-pressed="false">Pause</button>
           <button id="resetCameraBtn" type="button">Reset View</button>
         </div>
+        <fieldset id="tweakPanel" class="tweak-panel">
+          <legend>Live Tweaks</legend>
+          <label>
+            Tint
+            <input id="tweakTint" type="color" value="#ffffff" />
+          </label>
+          <label>
+            <span class="tweak-label-row">HDR <span id="tweakHdrVal" class="tweak-val">1.00</span></span>
+            <input id="tweakHdr" type="range" min="0.1" max="4" step="0.05" value="1" />
+          </label>
+          <label>
+            <span class="tweak-label-row">Opacity <span id="tweakOpacityVal" class="tweak-val">1.00</span></span>
+            <input id="tweakOpacity" type="range" min="0" max="2" step="0.05" value="1" />
+          </label>
+          <label>
+            <span class="tweak-label-row">Scale <span id="tweakScaleVal" class="tweak-val">1.00</span></span>
+            <input id="tweakScale" type="range" min="0.25" max="3" step="0.05" value="1" />
+          </label>
+          <label>
+            <span class="tweak-label-row">Speed <span id="tweakSpeedVal" class="tweak-val">1.00</span></span>
+            <input id="tweakSpeed" type="range" min="0.1" max="2" step="0.05" value="1" />
+          </label>
+          <button id="tweakResetBtn" type="button">Reset Tweaks</button>
+        </fieldset>
         <p class="tip">Space 播放 · P 暂停 · R 重置视角</p>
         <div id="status">Booting WebGL…</div>
-        <pre id="exportHint" class="tip" style="white-space: pre-wrap; font-size: 11px; line-height: 1.45"></pre>
+        <pre id="exportHint" class="tip"></pre>
       </aside>
     </div>
-    <script type="module" src="/src/main.artifact.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

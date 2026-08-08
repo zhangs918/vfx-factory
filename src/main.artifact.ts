@@ -4,8 +4,7 @@ import {
   RepeatWrapping, Scene, SRGBColorSpace, DirectionalLight, WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { CompiledEffectPlayer } from '../packages/vfx-web-runtime/src/runtime2/CompiledEffectPlayer';
-import { ThreeRuntimeBackend } from '../packages/vfx-web-runtime/src/runtime2/ThreeRuntimeBackend';
+import { CompiledEffectPlayer, ThreeRuntimeBackend } from '@vfx-factory/web-runtime/legacy-runtime';
 
 type RuntimeEntry = { id: string; label: string; artifact: string; status: string };
 const statusEl = document.querySelector('#status') as HTMLElement;
@@ -67,7 +66,13 @@ const play = async () => {
 const manifest = await fetch(`${artifactRoot}/manifest.json`).then((response) => response.json()) as { effects: RuntimeEntry[] };
 entries = manifest.effects.filter((entry) => entry.status === 'compiled');
 for (const entry of entries) { const option = document.createElement('option'); option.value = entry.id; option.textContent = `${entry.label} · Artifact${params.get('candidates') === '1' ? ' · Candidate' : ''}`; selectEl.appendChild(option); }
-const effectParam = params.get('effect'); if (effectParam && entries.some((entry) => entry.id === effectParam)) selectEl.value = effectParam;
+const effectParam = params.get('effect');
+if (effectParam) {
+  const matched = entries.find((entry) => entry.id === effectParam)
+    ?? entries.find((entry) => entry.id.toLowerCase() === effectParam.toLowerCase());
+  if (matched) selectEl.value = matched.id;
+  else throw new Error(`Unknown effect id '${effectParam}'.`);
+}
 selectEl.addEventListener('change', () => { loaded = ''; void play(); }); playBtn.addEventListener('click', () => void play());
 pauseBtn.addEventListener('click', () => { setPaused(!paused); }); resetBtn.addEventListener('click', () => { camera.position.set(2.15, 1.55, 4.55); controls.target.set(0, 0.95, 0); });
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });

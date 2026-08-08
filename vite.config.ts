@@ -13,5 +13,10 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    modulePreload: false,
+    // Runtime payloads are deployed from public/assets independently. Copying
+    // the multi-GB local corpus into every application build is both wasteful
+    // and an easy way to publish licensed/generated fixtures accidentally.
+    copyPublicDir: false,
   },
 });

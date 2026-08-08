@@ -26,13 +26,14 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import {
-  QuarksEffectPlayer,
-  CompiledEffectPlayer,
-  ThreeRuntimeBackend,
   loadQuarksManifest,
-  type QuarksManifestEntry,
-} from '../packages/vfx-web-runtime/src/index';
-import { compileLegacyQuarksSource } from '../packages/unity-vfx-compiler/src/index';
+  loadRuntimeV3Manifest,
+  type RuntimeV3ManifestEntry,
+} from '@vfx-factory/web-runtime/manifest';
+import type {
+  QuarksEffectPlayer,
+  ArtifactQuarksPlayer,
+} from '@vfx-factory/web-runtime/artifact-runtime';
 
 /** Neutral preview studio: shallow blue zenith fading into a bright horizon. */
 function makePreviewSky() {
@@ -83,14 +84,61 @@ const pauseBtn = document.querySelector('#pauseBtn') as HTMLButtonElement;
 const resetCameraBtn = document.querySelector('#resetCameraBtn') as HTMLButtonElement;
 const hintEl = document.querySelector('#exportHint') as HTMLElement;
 const canvas = document.querySelector('#c') as HTMLCanvasElement;
+const tweakPanel = document.querySelector('#tweakPanel') as HTMLElement | null;
+const tweakTint = document.querySelector('#tweakTint') as HTMLInputElement | null;
+const tweakHdr = document.querySelector('#tweakHdr') as HTMLInputElement | null;
+const tweakOpacity = document.querySelector('#tweakOpacity') as HTMLInputElement | null;
+const tweakScale = document.querySelector('#tweakScale') as HTMLInputElement | null;
+const tweakSpeed = document.querySelector('#tweakSpeed') as HTMLInputElement | null;
+const tweakHdrVal = document.querySelector('#tweakHdrVal') as HTMLElement | null;
+const tweakOpacityVal = document.querySelector('#tweakOpacityVal') as HTMLElement | null;
+const tweakScaleVal = document.querySelector('#tweakScaleVal') as HTMLElement | null;
+const tweakSpeedVal = document.querySelector('#tweakSpeedVal') as HTMLElement | null;
+const tweakResetBtn = document.querySelector('#tweakResetBtn') as HTMLButtonElement | null;
 
 function setStatus(msg: string) {
   statusEl.textContent = msg;
 }
 
+function hexToRgb01(hex: string): [number, number, number] {
+  const raw = hex.replace('#', '');
+  const n = Number.parseInt(raw.length === 3
+    ? raw.split('').map((c) => c + c).join('')
+    : raw, 16);
+  if (!Number.isFinite(n)) return [1, 1, 1];
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+}
+
+function formatTweak(value: number) {
+  return value.toFixed(2);
+}
+
 async function main() {
   const urlParams = new URLSearchParams(location.search);
   const regressionMode = urlParams.get('regression') === '1';
+  const runtimeV2ArtifactMode = urlParams.get('runtime') === 'v2-artifact';
+  const runtimeV2Mode = runtimeV2ArtifactMode || urlParams.get('runtime') === 'v2';
+  const compareLegacy = urlParams.get('compare') === 'legacy' || urlParams.get('legacy') === '1';
+  // Shadow thin-player path for fully material-qualified effects. Production
+  // default remains QuarksEffectPlayer; ?thinPlayer=1 opts into ArtifactQuarksPlayer.
+  const thinPlayerMode = urlParams.get('thinPlayer') === '1' && !compareLegacy;
+  // Thin corpus + v3-artifacts are keyed off frozen-quarks; without frozen=1 the
+  // live quarks manifest has no thin-ready entries.
+  const frozenQuarks = urlParams.get('frozen') === '1' || thinPlayerMode;
+  // Production imports only the artifact facade. Legacy/runtime2 is a separate, explicit
+  // comparison chunk and cannot enter the production bundle by accident.
+  const runtimeModule = await import('@vfx-factory/web-runtime/artifact-runtime');
+  const {
+    QuarksEffectPlayer,
+    V3ArtifactPlayer,
+    QuarksArtifactBackend,
+    ArtifactQuarksPlayer,
+    ThinArtifactBackend,
+    isEffectMaterialThinReady,
+  } = runtimeModule;
+  const legacyModule = runtimeV2Mode || compareLegacy
+    ? await import('@vfx-factory/web-runtime/legacy-runtime')
+    : null;
   if (regressionMode) (document.querySelector('#hud') as HTMLElement).style.display = 'none';
   const renderer = new WebGLRenderer({
     canvas,
@@ -163,35 +211,106 @@ async function main() {
     scene.add(grid);
   }
 
-  const player = new QuarksEffectPlayer({
-    physicsResolver: {
-      resolve(position, normal) {
-        if (position.y > 0) return false;
-        position.y = 0;
-        normal.set(0, 1, 0);
-        return true;
-      },
+  const physicsResolver = {
+    resolve(position: any, normal: any) {
+      if (position.y > 0) return false;
+      position.y = 0;
+      normal.set(0, 1, 0);
+      return true;
     },
-  });
-  // Migration channel: runtime=v2 exercises the compiler-produced player boundary
-  // without changing the qualified legacy preview path.
-  const runtimeV2ArtifactMode = urlParams.get('runtime') === 'v2-artifact';
-  const runtimeV2Mode = runtimeV2ArtifactMode || urlParams.get('runtime') === 'v2';
+  };
+  // v3 artifact playback is the only production path. The old paths are diagnostic-only
+  // and require an explicit query switch so a failed qualification can never silently
+  // fall back to a different renderer.
+  const runtimeV3Mode = !runtimeV2Mode && !compareLegacy;
+  if (thinPlayerMode && !runtimeV3Mode) {
+    throw new Error('?thinPlayer=1 requires the production v3 path (not compare=legacy / runtime=v2).');
+  }
+  const player: QuarksEffectPlayer | ArtifactQuarksPlayer = runtimeV2Mode || compareLegacy
+    ? new (legacyModule as NonNullable<typeof legacyModule>).QuarksEffectPlayer({ physicsResolver })
+    : thinPlayerMode
+      ? new ArtifactQuarksPlayer({ physicsResolver })
+      : new QuarksEffectPlayer({ physicsResolver });
   const artifactUrl = urlParams.get('artifact') ?? '';
   const artifactBase = artifactUrl.includes('/') ? artifactUrl.slice(0, artifactUrl.lastIndexOf('/')) : '';
   const compiledPlayer = runtimeV2Mode
-    ? new CompiledEffectPlayer(new ThreeRuntimeBackend(), { parent: scene, resourceBaseUrl: urlParams.get('runtimeBase') ?? artifactBase })
+    ? new (legacyModule as NonNullable<typeof legacyModule>).CompiledEffectPlayer(
+      new (legacyModule as NonNullable<typeof legacyModule>).ThreeRuntimeBackend(),
+      { parent: scene, resourceBaseUrl: urlParams.get('runtimeBase') ?? artifactBase },
+    )
+    : null;
+  const v3Player = runtimeV3Mode
+    ? new V3ArtifactPlayer(
+      thinPlayerMode
+        ? new ThinArtifactBackend(player as ArtifactQuarksPlayer)
+        : new QuarksArtifactBackend(player as QuarksEffectPlayer),
+    )
     : null;
   if (runtimeV2Mode) (window as Window & { __VFX_RUNTIME2__?: unknown }).__VFX_RUNTIME2__ = compiledPlayer;
   if (urlParams.get('debug') === '1') {
-    (window as unknown as { __vfxDebugPlayer?: QuarksEffectPlayer }).__vfxDebugPlayer = player;
+    (window as unknown as { __vfxDebugPlayer?: unknown }).__vfxDebugPlayer = player;
   }
   if (!runtimeV2Mode) scene.add(player.root);
+
+  const canLiveTweak = typeof (player as QuarksEffectPlayer).applyLiveTweaks === 'function'
+    && !runtimeV2Mode
+    && !thinPlayerMode;
+  if (tweakPanel) tweakPanel.hidden = !canLiveTweak;
+
+  const syncTweakLabels = () => {
+    if (tweakHdr && tweakHdrVal) tweakHdrVal.textContent = formatTweak(Number(tweakHdr.value));
+    if (tweakOpacity && tweakOpacityVal) tweakOpacityVal.textContent = formatTweak(Number(tweakOpacity.value));
+    if (tweakScale && tweakScaleVal) tweakScaleVal.textContent = formatTweak(Number(tweakScale.value));
+    if (tweakSpeed && tweakSpeedVal) tweakSpeedVal.textContent = formatTweak(Number(tweakSpeed.value));
+  };
+
+  const resetTweakUi = () => {
+    if (tweakTint) tweakTint.value = '#ffffff';
+    if (tweakHdr) tweakHdr.value = '1';
+    if (tweakOpacity) tweakOpacity.value = '1';
+    if (tweakScale) tweakScale.value = '1';
+    if (tweakSpeed) tweakSpeed.value = '1';
+    syncTweakLabels();
+  };
+
+  const pushLiveTweaks = () => {
+    if (!canLiveTweak) return;
+    (player as QuarksEffectPlayer).applyLiveTweaks({
+      tint: hexToRgb01(tweakTint?.value ?? '#ffffff'),
+      hdrGain: Number(tweakHdr?.value ?? 1),
+      opacityGain: Number(tweakOpacity?.value ?? 1),
+      scale: Number(tweakScale?.value ?? 1),
+      speed: Number(tweakSpeed?.value ?? 1),
+    });
+  };
+
+  if (canLiveTweak) {
+    for (const el of [tweakTint, tweakHdr, tweakOpacity, tweakScale, tweakSpeed]) {
+      el?.addEventListener('input', () => {
+        syncTweakLabels();
+        pushLiveTweaks();
+      });
+    }
+    tweakResetBtn?.addEventListener('click', () => {
+      resetTweakUi();
+      (player as QuarksEffectPlayer).resetLiveTweaks();
+    });
+    syncTweakLabels();
+  }
+
   (window as Window & { __VFX_REGRESSION__?: unknown }).__VFX_REGRESSION__ = {
     get contract() { return player.semanticContract; },
     setSolo: (name: string | null) => player.setSolo(name),
     stepTo: (seconds: number) => player.stepTo(seconds),
     snapshot: () => player.snapshotState(),
+    debugLifecycleState: () => player.debugLifecycleState,
+    dumpLiveMaterialStamp: () => {
+      const dump = (player as { dumpLiveMaterialStamp?: () => unknown }).dumpLiveMaterialStamp;
+      if (typeof dump !== 'function') {
+        throw new Error('dumpLiveMaterialStamp unavailable on current player');
+      }
+      return dump.call(player);
+    },
   };
 
   // camera-baked oracle frames are ARGB32. Use the same LDR blend target only for raw
@@ -216,20 +335,34 @@ async function main() {
   if (postEnabled) composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
-  // The preview catalog is the union of exported candidates and the production manifest.
-  // Production qualification remains authoritative metadata; it no longer hides useful
-  // in-progress effects from artists during ordinary preview work.
-  const [productionManifest, candidateManifest] = await Promise.all([
-    loadQuarksManifest(false),
-    loadQuarksManifest(true),
+  // Build a common catalog first; the v3 disposition gate below then exposes
+  // candidates only under the explicit artist/debug query switches.
+  const [productionManifest, candidateManifest, runtimeV3Manifest] = await Promise.all([
+    loadQuarksManifest(false, frozenQuarks ? '/assets/frozen-quarks' : '/assets/quarks'),
+    loadQuarksManifest(true, frozenQuarks ? '/assets/frozen-quarks' : '/assets/quarks'),
+    runtimeV3Mode ? loadRuntimeV3Manifest() : Promise.resolve(null),
   ]);
+  if (frozenQuarks) {
+    // A frozen manifest is authoritative: rejected source effects are not selectable and
+    // therefore cannot be mistaken for a runtime regression caused by a missing artifact.
+    productionManifest.effects = productionManifest.effects.filter((entry: any) => entry.status === 'compiled');
+    candidateManifest.effects = candidateManifest.effects.filter((entry: any) => entry.status === 'compiled');
+  }
   const productionById = new Map(productionManifest.effects.map((entry) => [entry.id, entry]));
   const candidateById = new Map(candidateManifest.effects.map((entry) => [entry.id, entry]));
+  const runtimeV3ById = new Map<string, RuntimeV3ManifestEntry>(
+    (runtimeV3Manifest?.effects ?? []).map((entry) => [entry.id, entry]),
+  );
   const allEntries = [
     ...candidateManifest.effects.map((entry) => productionById.get(entry.id) ?? entry),
     ...productionManifest.effects.filter((entry) => !candidateById.has(entry.id)),
-  ].map((entry) => ({ ...entry, isCandidate: !productionById.has(entry.id) }));
+  ].map((entry) => ({
+    ...entry,
+    isCandidate: !productionById.has(entry.id),
+    runtimeV3: runtimeV3ById.get(entry.id),
+  }));
   const showAllCandidates = new URLSearchParams(location.search).get('all') === '1';
+  const explicitCandidateMode = urlParams.get('candidate') === '1' || showAllCandidates;
   // Candidate catalog hygiene: hide exports that contain particles but no renderable
   // material/geometry. They remain available through ?all=1 for diagnostics; production
   // entries are never hidden by this heuristic.
@@ -249,7 +382,7 @@ async function main() {
     walk(json?.object);
     return renderable;
   };
-  const entries = showAllCandidates ? allEntries : (await Promise.all(allEntries.map(async (entry) => {
+  let entries = showAllCandidates ? allEntries : (await Promise.all(allEntries.map(async (entry) => {
     if (!entry.isCandidate) return entry;
     try {
       const response = await fetch(`/assets/quarks/${encodeURIComponent(entry.file)}`);
@@ -257,20 +390,46 @@ async function main() {
     } catch { return null; }
     return entry;
   }))).filter((entry): entry is (typeof allEntries)[number] => entry !== null);
+  if (runtimeV3Mode) {
+    entries = entries.filter((entry) => entry.runtimeV3?.status === 'compiled'
+      && (explicitCandidateMode || entry.runtimeV3.disposition === 'qualified'));
+  }
+  // Thin preview: dropdown only lists effects that load on ArtifactQuarksPlayer
+  // with no bridge / soft invent fallback (same gate as ThinArtifactBackend).
+  if (thinPlayerMode) {
+    entries = (await Promise.all(entries.map(async (entry) => {
+      try {
+        if (entry.runtimeV3?.capabilities?.thinPlayer === false) return null;
+        if (!explicitCandidateMode && entry.runtimeV3?.qualification?.thinPlayer !== true) return null;
+        const v3Url = entry.runtimeV3?.artifact;
+        if (!v3Url) return null;
+        const response = await fetch(v3Url);
+        if (!response.ok) return null;
+        const artifact = await response.json();
+        return isEffectMaterialThinReady(artifact) ? entry : null;
+      } catch {
+        return null;
+      }
+    }))).filter((entry): entry is (typeof allEntries)[number] => entry !== null);
+  }
   if (!entries.length) {
-    setStatus('特效清单为空');
+    setStatus(thinPlayerMode
+      ? 'Thin 清单为空（无 pixel-qualified / artifact-shader@1 特效）'
+      : '特效清单为空');
     return;
   }
 
   for (const e of entries) {
     const opt = document.createElement('option');
     opt.value = e.id;
-    opt.textContent = `${e.label}${e.isCandidate ? ' · Candidate' : ''}`;
+    opt.textContent = thinPlayerMode
+      ? `${e.label} · Thin`
+      : `${e.label}${e.isCandidate ? ' · Candidate' : ''}`;
     selectEl.appendChild(opt);
   }
   selectEl.value = entries[0].id;
 
-  const current = (): QuarksManifestEntry =>
+  const current = () =>
     entries.find((e) => e.id === selectEl.value) ?? entries[0];
 
   hintEl.textContent =
@@ -313,7 +472,20 @@ async function main() {
   const effectParam = urlParams.get('effect');
   const soloParam = urlParams.get('solo');
   const freezeParam = urlParams.get('freeze') ? Number(urlParams.get('freeze')) : null;
-  if (effectParam && entries.some((e) => e.id === effectParam)) selectEl.value = effectParam;
+  // Manifest ids are lowercase; accept case-insensitive ?effect= so regressions
+  // cannot silently fall through to the first catalog entry (false PASS).
+  if (effectParam) {
+    const matched = entries.find((e) => e.id === effectParam)
+      ?? entries.find((e) => e.id.toLowerCase() === effectParam.toLowerCase());
+    if (matched) selectEl.value = matched.id;
+    else {
+      throw new Error(
+        `Unknown effect id '${effectParam}'. Refusing to fall back to the default catalog entry.`
+        + ` catalog=${entries.length} has=${entries.some((e) => e.id.toLowerCase() === effectParam.toLowerCase())}`
+        + ` frozen=${frozenQuarks} thin=${thinPlayerMode}`,
+      );
+    }
+  }
   player.soloName = soloParam;
 
   const setPaused = (next: boolean) => {
@@ -325,10 +497,15 @@ async function main() {
       else compiledPlayer?.resume();
     } else if (paused) player.pause();
     else player.resume();
-    const active = runtimeV2Mode
-      ? compiledPlayer?.playbackState === 'playing'
-      : player.isPlaying;
-    setStatus(`${paused ? 'Paused' : active ? 'Playing' : 'Ready'} · ${current().label}${runtimeV2Mode ? ' · runtime=v2' : ''}`);
+    const active = runtimeV2Mode ? compiledPlayer?.playbackState === 'playing' : player.isPlaying;
+    const runtimeLabel = runtimeV2Mode
+      ? ' · runtime=v2'
+      : thinPlayerMode
+        ? ' · runtime=v3-thin'
+        : runtimeV3Mode
+          ? ' · runtime=v3-quarks'
+          : '';
+    setStatus(`${paused ? 'Paused' : active ? 'Playing' : 'Ready'} · ${current().label}${runtimeLabel}`);
   };
 
   const play = async () => {
@@ -338,16 +515,22 @@ async function main() {
     // deterministic stepping loop has populated the instance buffers.
     setPaused(!runtimeV2Mode && freezeParam != null && Number.isFinite(freezeParam));
     const entry = current();
+    const useV3 = runtimeV3Mode;
     // Vite treats an encoded `+` path segment as an SPA fallback even though the real static
     // file contains a literal plus. Keep path separators and plus literal; encode spaces and
     // every other unsafe filename character normally.
-    const url = `/assets/quarks/${encodeURIComponent(entry.file)
+    const artifactRoot = frozenQuarks ? '/assets/frozen-quarks' : '/assets/quarks';
+    const url = `${artifactRoot}/${encodeURIComponent(entry.file)
       .replace(/%2F/gi, '/')
       .replace(/%2B/gi, '+')}`;
     try {
       setStatus(`Loading · ${entry.label}`);
       if (loadedId !== entry.id || !player.isPlaying) {
-        if (runtimeV2ArtifactMode) {
+        if (useV3) {
+          const v3Url = entry.runtimeV3?.artifact;
+          if (!v3Url) throw new Error(`No runtime-v3 artifact declared for '${entry.id}'`);
+          await v3Player?.load(v3Url, entry.label, entry.id, entry.runtimeV3?.sha256);
+        } else if (runtimeV2ArtifactMode) {
           if (!artifactUrl) throw new Error('runtime=v2-artifact requires ?artifact=/path/runtime.json.');
           const artifactResponse = await fetch(artifactUrl);
           if (!artifactResponse.ok) throw new Error(`Failed to load compiled artifact (${artifactResponse.status}).`);
@@ -356,14 +539,17 @@ async function main() {
           const response = await fetch(url);
           if (!response.ok) throw new Error(`Failed to load source (${response.status}).`);
           const source = await response.json();
+          const { compileLegacyQuarksSource } = await import('@vfx-factory/unity-vfx-compiler');
           const result = compileLegacyQuarksSource(source);
           const errors = result.diagnostics.filter((diagnostic) => diagnostic.severity === 'error');
           if (!result.artifact || errors.length) {
             throw new Error(errors[0]?.message ?? 'Source could not be lowered to runtime@2.');
           }
           await compiledPlayer?.load(result.artifact);
-        } else {
+        } else if (compareLegacy) {
           await player.loadAndPlay(url, entry.label);
+        } else {
+          throw new Error('No production artifact runtime selected. Use ?compare=legacy only for diagnostics.');
         }
         loadedId = entry.id;
       } else {
@@ -410,7 +596,16 @@ async function main() {
           player.pause();
         }
       }
-      setStatus(`${freezeParam != null ? 'Frozen' : 'Playing'} · ${entry.label}${soloParam ? ` · solo=${soloParam}` : ''}${freezeParam != null ? ` · t=${freezeParam}` : ''} · layer=${captureLayer}${runtimeV2Mode ? ' · runtime=v2' : ''}`);
+      // Re-apply preview tweaks after load/restart rebuilt batch materials.
+      if (canLiveTweak) pushLiveTweaks();
+      const runtimeTag = useV3
+        ? (thinPlayerMode ? ' · runtime=v3-thin' : ' · runtime=v3-quarks')
+        : frozenQuarks
+          ? ' · runtime=frozen-quarks'
+          : runtimeV2Mode
+            ? ' · runtime=v2'
+            : '';
+      setStatus(`${freezeParam != null ? 'Frozen' : 'Playing'} · ${entry.label}${soloParam ? ` · solo=${soloParam}` : ''}${freezeParam != null ? ` · t=${freezeParam}` : ''} · layer=${captureLayer}${runtimeTag}`);
       hintEl.textContent = '';
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -422,6 +617,10 @@ async function main() {
 
   selectEl.addEventListener('change', () => {
     loadedId = '';
+    if (canLiveTweak) {
+      resetTweakUi();
+      (player as QuarksEffectPlayer).resetLiveTweaks();
+    }
     setStatus(`Selected · ${current().label}`);
   });
   playBtn.addEventListener('click', () => void play());
