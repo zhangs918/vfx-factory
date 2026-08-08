@@ -1197,23 +1197,6 @@
         "maxChannelDelta": 0
       }
     },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_fireball": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "2b3ef58188dd95d4381d4efda0830cc6004957b214e457a9a0436c2e39c15444",
-        "updatedAt": "2026-08-08T02:35:22.391Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:35:22.302Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "eric_vfx_studio_free_game_vfx_prefab_fx_green_hit": {
       "disposition": "qualified",
       "evidence": {
@@ -1252,42 +1235,6 @@
         "maxChannelDelta": 0
       }
     },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_lightpillar": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:22:41.088Z",
-        "artifactSha256": "970f5d71cd98dfd5e5a10dbba390448424a4a40737ea69d24df506a5e1c98735",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:22:41.014Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_lootdrop_blue": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "2b3ef58188dd95d4381d4efda0830cc6004957b214e457a9a0436c2e39c15444",
-        "updatedAt": "2026-08-08T02:35:22.391Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:35:22.302Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "eric_vfx_studio_free_game_vfx_prefab_fx_magic_door_gold": {
       "disposition": "qualified",
       "evidence": {
@@ -1307,78 +1254,6 @@
         "maxChannelDelta": 0
       }
     },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_orange_slash_1": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:11:10.331Z",
-        "artifactSha256": "63f742ba0895aeae36d77cacf09f1984e5bb9ec507156dd28b3eb0aab2a50704",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:11:10.261Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_pinkcross_up": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:17:22.699Z",
-        "artifactSha256": "50560f9eb94a241ae81a6eb7d4334481d1b78d58bceac9999e8204e4df34fe67",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:17:22.626Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_purple_hit_02": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:10:10.177Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:10:10.042Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "eric_vfx_studio_free_game_vfx_prefab_fx_weapon_effect": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:10:10.177Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:10:10.042Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "free_slash_vfx_prefabs_impact": {
       "disposition": "qualified",
       "evidence": {
@@ -1389,44 +1264,6 @@
         "artifactSha256": "fdbb8215e147ccdaf88d03215b12d20a9c3a4343eba37cba2bb92a296ce99105",
         "reportSchema": "vfx-runtime-regression-report@1",
         "reportCreatedAt": "2026-08-08T04:03:10.415Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "free_slash_vfx_prefabs_multiple_impact": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:15:23.345Z",
-        "artifactSha256": "15005ff44bfe3bc52c2230dacd5c28a471f063269f1121a55e3af21a09f4b737",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:15:23.272Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "free_slash_vfx_prefabs_multiple_slashes": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:34:06.242Z",
-        "artifactSha256": "fb9893d7d210379dd442aa29497f9382e0a9685cbb6a3e6ba0a17dd56e3fa4c3",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:34:06.142Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1597,25 +1434,6 @@
         "maxChannelDelta": 0
       }
     },
-    "hovl_studio_magic_effects_pack_prefabs_character_auras_buff": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T05:57:08.454Z",
-        "artifactSha256": "3e428e560be01339585d7cf3a8a34f9401de53e57f7eccb41b46c0df10515a8c",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T05:57:08.380Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "hovl_studio_magic_effects_pack_prefabs_slash_effects_charge_slash_blue": {
       "disposition": "qualified",
       "evidence": {
@@ -1651,61 +1469,6 @@
       }
     },
     "hovl_studio_magic_effects_pack_prefabs_slash_effects_charge_slash_red": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_environment_crystal_effect_blue": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:52:44.906Z",
-        "artifactSha256": "fcda2e01ba375a1c5d6c5198378429f9e4c90842b5f3bda046853423f1f92c39",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:52:44.726Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_environment_crystal_effect_green": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T05:44:09.179Z",
-        "artifactSha256": "97d5a4effe55d66fe48c9a635a2028a26aa4cbdb7b87491effc158e97a8f7545",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T05:44:09.102Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_environment_crystal_effect_red": {
       "disposition": "qualified",
       "evidence": {
         "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
@@ -1794,82 +1557,6 @@
         "maxChannelDelta": 0
       }
     },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_dust_ground": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:48:39.261Z",
-        "artifactSha256": "335c2a9ab010a884e5c1e616ca6ccb59f90bbadbaf637004918306ba5b189414",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:48:39.164Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_dust_hemisphere_loop": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:48:39.262Z",
-        "artifactSha256": "dc39cf8afea39b29d296bc4b0a3a060dec8f49e8bc9eea52dd6f70e91d3c63e1",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:48:39.164Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_dust_loop": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:48:39.262Z",
-        "artifactSha256": "b8441682528d115265c6667670beaa08d97f6c3fa109bb50b835d4be2203a5cf",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:48:39.164Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_dust_puff": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:48:39.262Z",
-        "artifactSha256": "8b77c8d845a5ecfb92808a37b5e454db147bb188b515d2478d08cff58c2d31cc",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:48:39.164Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "hovl_studio_magic_effects_pack_prefabs_hits_and_explosions_electro_hit": {
       "disposition": "qualified",
       "evidence": {
@@ -1946,23 +1633,6 @@
         "maxChannelDelta": 0
       }
     },
-    "hovl_studio_magic_effects_pack_prefabs_magic_circles_freeze_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "hovl_studio_magic_effects_pack_prefabs_hits_and_explosions_green_hit": {
       "disposition": "qualified",
       "evidence": {
@@ -2015,23 +1685,6 @@
         "captureTimes": [
           0.25,
           0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_magic_circles_healing_circle": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
         ],
         "changedPixels": 0,
         "maxChannelDelta": 0
@@ -2308,97 +1961,6 @@
         "maxChannelDelta": 0
       }
     },
-    "hovl_studio_magic_effects_pack_prefabs_magic_shields_magic_shield_blue": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:56:03.855Z",
-        "artifactSha256": "df92af20ccf12d92a033cc6e09dd4d0b96a8e5295411ff0f093ac174cf9f3910",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:56:03.778Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_magic_shields_magic_shield_pink": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_magic_shields_magic_shield_yellow": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_aoe_effects_meteors_aoe": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T08:04:29.392Z",
-        "artifactSha256": "4e07ab35b71583ce71a65e1de75d0cc79bfcfa564e4057fc0943928d67f8d168",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T08:04:29.312Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_character_auras_plexus": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:58:51.377Z",
-        "artifactSha256": "f991a92c14ebde73786a16d845dd74923e667ae2b5e8d5c96101c550179ce222",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:58:51.306Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
     "hovl_studio_magic_effects_pack_prefabs_aoe_effects_plexus_aoe": {
       "disposition": "qualified",
       "evidence": {
@@ -2413,76 +1975,6 @@
         "captureTimes": [
           0.25,
           0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_portals_portal_blue": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:44:32.729Z",
-        "artifactSha256": "adceee7c4727e9a26771a70c0e8f6b4c71385ff020ed54f09d6ecea00d21ed82",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:44:32.630Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_portals_portal_green": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_portals_portal_red": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_portals_portal_yellow": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
-        "captureTimes": [
-          0.25
         ],
         "changedPixels": 0,
         "maxChannelDelta": 0
@@ -2517,120 +2009,6 @@
         "thinPlayer": false,
         "captureTimes": [
           0.25
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_smoke_ground": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:48:39.262Z",
-        "artifactSha256": "aea497fe59acb908852f54740fd77e1c6051377739fb7be3fd5104d59ede3518",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:48:39.164Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_smoke_hemisphere_loop": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:50:26.637Z",
-        "artifactSha256": "160ed80f11577e1d020850e1b00989145a5f5d06e9f3efc6fbbde01c1213b918",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:50:26.492Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_smoke_loop": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:50:26.637Z",
-        "artifactSha256": "6d1aeea3c883253a5c2d10d9454064ee5fb47f3e6c619d88b27573ad867bbaaa",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:50:26.492Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_smoke_puff": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:50:26.637Z",
-        "artifactSha256": "750d63e42f418df0cc167e3706dd55a366ca1b850c099885fa78f2e064494c2d",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:50:26.492Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_smoke_effects_smoke_vortex": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:49:51.586Z",
-        "artifactSha256": "7da43f4ca8ac9c850461edf517a95966084ae13b6cc5b8d0a4ff939c750aa2a3",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:49:51.517Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
-        ],
-        "changedPixels": 0,
-        "maxChannelDelta": 0
-      }
-    },
-    "hovl_studio_magic_effects_pack_prefabs_aoe_effects_snow_aoe": {
-      "disposition": "qualified",
-      "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T06:18:22.632Z",
-        "artifactSha256": "25fa00060d3480af3150c05491c8b8c02ae5039d324db6c1416581864489c171",
-        "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T06:18:22.559Z",
-        "thinPlayer": true,
-        "captureTimes": [
-          0.25,
-          0.5
         ],
         "changedPixels": 0,
         "maxChannelDelta": 0

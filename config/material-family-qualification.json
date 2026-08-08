@@ -2340,16 +2340,12 @@
     "material-family-800d9e98f4da21de": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "free_slash_vfx_prefabs_multiple_slashes"
-      ]
+      "effects": []
     },
     "material-family-efaa5a2715f7f313": {
       "status": "KEEP",
       "evidence": "capture-stamp",
-      "effects": [
-        "free_slash_vfx_prefabs_multiple_slashes"
-      ]
+      "effects": []
     },
     "material-family-a49fe104358954b5": {
       "status": "KEEP",
