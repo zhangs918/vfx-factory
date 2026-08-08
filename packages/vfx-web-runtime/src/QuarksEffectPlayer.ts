@@ -791,11 +791,9 @@ export class QuarksEffectPlayer {
 
   /**
    * Interactive stage transform only. Exported particle state stays in authored coordinates;
-   * the player root may tilt Z-up prefabs onto the Y-up floor and lift the visual centre.
-   * This deliberately does not mutate authored particle coordinates or IR.
-   *
-   * `auto` tilts only when effect-root local +Z is still ±Z; already-Y-up roots (e.g.
-   * CFX2_Big_Splash) keep identity rotation and only lift.
+   * the player root may lift the visual centre above the floor. Default `auto` does not
+   * invent -90° X — Unity/authored space is already Y-up. Use `force-z-up` only to debug
+   * rare true Z-up content. This deliberately does not mutate authored IR.
    */
   setStagePresentation(options: StagePresentationOptions = {}) {
     this.stagePresentationMode = resolveStagePresentationMode(options);

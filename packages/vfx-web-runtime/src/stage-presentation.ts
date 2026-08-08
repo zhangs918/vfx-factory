@@ -1,9 +1,12 @@
 /**
- * Host-only stage presentation: lift an effect above the preview floor and,
- * when authored content is still Z-up, tilt it onto the Y-up stage.
+ * Host-only stage presentation for the interactive Y-up preview floor.
+ *
+ * Exported Unity content is already Y-up in authored space (Unity +Y → authored +Y).
+ * Default `auto` therefore only lifts the effect above the floor — it must not invent
+ * a -90° X tilt from root local +Z (that axis is particle forward, not display up).
  *
  * Authored particle IR stays untouched. World-space simulation must use
- * {@link findAuthoredEffectRoot} so host tilt never redefines Unity "world".
+ * {@link findAuthoredEffectRoot} so an explicit host tilt never redefines Unity "world".
  */
 import type { Object3D } from 'three';
 
@@ -49,9 +52,8 @@ export function findAuthoredEffectRoot(from: Object3D): Object3D {
 }
 
 /**
- * Unity particle systems emit along local +Z. After export, that axis in the
- * effect-root local matrix tells whether the prefab is already Y-up (e.g. CFX
- * +90° X roots) or still Z-up (identity-ish roots that need host -90° X).
+ * Diagnostic: where effect-root local +Z points in authored space.
+ * Not used to decide default stage tilt — Unity display up is authored +Y.
  */
 export function detectAuthoredParticleUpAxis(effectRoot: Object3D): AuthoredParticleUpAxis {
   effectRoot.updateMatrix();
@@ -78,23 +80,19 @@ export function resolveStagePresentationMode(
 
 /**
  * Whether to apply host -90° X (authored +Z → scene +Y).
- * - authored: never
- * - force-z-up: always
- * - auto: only when root particle axis is still ±Z; already-±Y and diagonals skip tilt
+ * - auto / authored: never (Unity/authored Y-up)
+ * - force-z-up: always (explicit debug / rare true Z-up content)
  */
 export function shouldTiltZUpToYUp(
   mode: StagePresentationMode,
-  effectRoot: Object3D | null,
+  _effectRoot: Object3D | null = null,
 ): boolean {
-  if (mode === 'authored') return false;
-  if (mode === 'force-z-up') return true;
-  if (!effectRoot) return false;
-  return detectAuthoredParticleUpAxis(effectRoot) === 'z';
+  return mode === 'force-z-up';
 }
 
 export function resolveStagePresentationPose(
   mode: StagePresentationMode,
-  effectRoot: Object3D | null,
+  effectRoot: Object3D | null = null,
   lift = DEFAULT_STAGE_PRESENTATION_LIFT,
 ): { rotationX: number; positionY: number } {
   const tilt = shouldTiltZUpToYUp(mode, effectRoot);

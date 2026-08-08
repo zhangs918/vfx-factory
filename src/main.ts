@@ -444,9 +444,9 @@ async function main() {
   //   ?post=0        disable bloom for raw silhouette comparison
   //   ?cameraPosition=x,y,z&cameraTarget=x,y,z  interactive custom opening view
   //   ?presentation=auto|authored|force-z-up
-  //        auto (default): tilt only Z-up prefabs onto the Y-up stage; already-Y-up keep upright
-  //        authored: raw Unity orientation (no host -90° X)
-  //        force-z-up: always apply host -90° X (legacy debug)
+  //        auto (default): lift only — keep Unity/authored Y-up (no host -90° X)
+  //        authored: raw Unity orientation, no lift
+  //        force-z-up: always apply host -90° X (debug / rare true Z-up)
   //   ?effectHeight=1.15      override the upright preview centre height above the floor
   const effectParam = urlParams.get('effect');
   const soloParam = urlParams.get('solo');
@@ -541,8 +541,8 @@ async function main() {
         if (runtimeV2Mode) compiledPlayer?.restart();
         else player.restart();
       }
-      // Interactive presentation is host-only. `auto` tilts Z-up prefabs onto the Y-up
-      // stage; already-Y-up roots (e.g. Big Splash) only lift. Regression stays authored.
+      // Interactive presentation is host-only. `auto` lifts without tilting so authored
+      // Unity Y-up stays upright (Magic fire / Big Splash). Regression stays authored.
       const requestedHeight = Number(urlParams.get('effectHeight') ?? 2.0);
       if (!runtimeV2Mode) {
         player.setStagePresentation({
