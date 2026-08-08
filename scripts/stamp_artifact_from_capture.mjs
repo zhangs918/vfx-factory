@@ -41,6 +41,7 @@ function computeThinPlayerCapability(artifact) {
   return pipelines.length > 0
     && closures.length > 0
     && artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1'
     && pipelines.every((pipeline) => {
       const shader = artifact.shaders?.[pipeline.shader]
         ?? artifact.files?.shaders?.[pipeline.shader];
@@ -52,7 +53,8 @@ function computeThinPlayerCapability(artifact) {
         && shader?.execution === 'quarks-fragment-v1'
         && shader.vertexExecution === 'quarks-vertex-v1';
     })
-    && closures.every((closure) => closure.qualification?.status === 'pixel-qualified');
+    && closures.every((closure) => ['pixel-qualified', 'manual-qualified']
+      .includes(closure.qualification?.status));
 }
 
 async function atomicWriteJson(file, value) {
@@ -134,7 +136,10 @@ function stampEmitterSimBags(quarksConfig, runtimeState) {
       }
       // Mirror map-only tables onto ps for thin collectArtifactEmitterSim.
       const bakePs = (mapKey, psKey) => {
-        if (node.ps[psKey] != null) return;
+        // Resource extraction runs before capture replay during a transactional
+        // release. Never re-inline a table that already has an integrity-bound
+        // emitter-local resource reference.
+        if (node.ps[psKey] != null || node.ps[`${psKey}ResourceId`] != null) return;
         const entries = Array.isArray(cfxrState[mapKey]) ? cfxrState[mapKey] : [];
         const value = entries.find((entry) => entry?.[0] === emitterId)?.[1];
         if (value != null) node.ps[psKey] = value;
@@ -166,7 +171,8 @@ function stampEmitterSimBags(quarksConfig, runtimeState) {
       addBagMount(node.ps.unityLimitVelocity, 'limit-velocity@1');
       addBagMount(node.ps.unityVelocityOverLifetime, 'velocity-over-lifetime@1');
       addBagMount(node.ps.unityRotationOverLifetime3D, 'rotation-3d@1');
-      addBagMount(node.ps.unityTrajectoryCache, 'trajectory-cache@1');
+      addBagMount(node.ps.unityTrajectoryCache || node.ps.unityTrajectoryCacheResourceId,
+        'trajectory-cache@1');
       addBagMount(node.ps.unityTrailSemantics, 'trail-semantics@1');
       node.ps.artifactBehaviorMount = {
         schema: 'cfxr-behavior-mount@1',
@@ -298,7 +304,7 @@ for (const capturePath of capturePaths) {
   }
   const storedProof = capture.qualification;
   const payloadSha256 = capturePayloadSha256(capture);
-  const storedProofValid = storedProof?.schema === 'vfx-capture-qualification@1'
+  const pixelProofValid = storedProof?.schema === 'vfx-capture-qualification@1'
     && storedProof.status === 'pixel-qualified'
     && storedProof.runtimeFingerprint === qualificationContext.runtimeFingerprint
     && storedProof.corpusSha256 === qualificationContext.corpusSha256
@@ -308,6 +314,17 @@ for (const capturePath of capturePaths) {
     && new Set(storedProof.captureTimes).size >= 2
     && storedProof.changedPixels === 0
     && storedProof.maxChannelDelta === 0;
+  const manualProofValid = storedProof?.schema === 'vfx-capture-qualification@1'
+    && storedProof.status === 'manual-qualified'
+    && storedProof.runtimeFingerprint === qualificationContext.runtimeFingerprint
+    && storedProof.corpusSha256 === qualificationContext.corpusSha256
+    && storedProof.oracleSha256 === qualificationContext.oracleSha256
+    && storedProof.capturePayloadSha256 === payloadSha256
+    && storedProof.manualApproval?.schema === 'vfx-manual-visual-approval@1'
+    && typeof storedProof.manualApproval.approvedAt === 'string'
+    && typeof storedProof.manualApproval.approvedBy === 'string'
+    && storedProof.manualApproval.approvedBy.length > 0;
+  const storedProofValid = pixelProofValid || manualProofValid;
   const provisional = process.env.VFX_PROVISIONAL_CAPTURE_QUALIFICATION === '1';
   const proof = storedProofValid ? storedProof : (provisional ? {
     schema: 'vfx-capture-qualification-provisional@1',
@@ -316,7 +333,8 @@ for (const capturePath of capturePaths) {
     captureTimes: (process.env.VFX_CAPTURE_TIMES ?? '0.25,0.5')
       .split(',').map(Number).filter(Number.isFinite),
   } : null);
-  const capturePixelQualified = storedProofValid || provisional;
+  const captureQualified = storedProofValid || provisional;
+  const finalQualificationStatus = manualProofValid ? 'manual-qualified' : 'pixel-qualified';
   const effectId = capture.effectId;
   let artPath;
   let artifact;
@@ -1024,7 +1042,7 @@ for (const capturePath of capturePaths) {
   // A capture becomes a thin capability only after an exact, two-time pixel
   // report has been bound to this exact payload + compiler/oracle context.
   // Never inherit an older compiler-family qualification through a new capture.
-  if (!capturePixelQualified) {
+  if (!captureQualified) {
     for (const pipeline of Object.values(artifact.pipelines ?? {})) {
       const liveCapture = artifact.shaders?.[pipeline.shader]?.provenance?.kind
         === 'live-bridge-capture@1';
@@ -1048,46 +1066,54 @@ for (const capturePath of capturePaths) {
   } else {
     for (const pipeline of Object.values(artifact.pipelines ?? {})) {
       if (pipeline.executor !== 'artifact-shader@1') continue;
-      if (!['capture-stamped', 'pixel-qualified'].includes(pipeline.qualification?.status)) continue;
+      if (!['capture-stamped', 'pixel-qualified', 'manual-qualified'].includes(
+        pipeline.qualification?.status,
+      )) continue;
       pipeline.qualification = {
         ...(pipeline.qualification ?? {}),
-        status: 'pixel-qualified',
+        status: finalQualificationStatus,
         evidence: {
           ...(pipeline.qualification?.evidence ?? {}),
           captureQualification: proof.schema,
           compilerVersion: 'live-bridge-capture@1',
           capturePayloadSha256: proof.capturePayloadSha256,
-          captureTimes: proof.captureTimes,
+          ...(Array.isArray(proof.captureTimes) ? { captureTimes: proof.captureTimes } : {}),
           runtimeFingerprint: proof.runtimeFingerprint,
-          changedPixels: 0,
-          maxChannelDelta: 0,
+          ...(manualProofValid
+            ? { manualApproval: proof.manualApproval }
+            : { changedPixels: 0, maxChannelDelta: 0 }),
         },
       };
     }
     for (const closure of Object.values(closures)) {
       const pipelineIds = closure.pipelines ?? closure.pipelineIds ?? [];
-      const allPixel = pipelineIds.length > 0 && pipelineIds.every((pipelineId) => (
+      const allQualified = pipelineIds.length > 0 && pipelineIds.every((pipelineId) => (
         artifact.pipelines?.[pipelineId]?.executor === 'artifact-shader@1'
-        && artifact.pipelines?.[pipelineId]?.qualification?.status === 'pixel-qualified'
+        && ['pixel-qualified', 'manual-qualified'].includes(
+          artifact.pipelines?.[pipelineId]?.qualification?.status,
+        )
       ));
-      if (!allPixel) continue;
+      if (!allQualified) continue;
       closure.qualification = {
         ...(closure.qualification ?? {}),
-        status: 'pixel-qualified',
+        status: finalQualificationStatus,
         evidence: {
           ...(closure.qualification?.evidence ?? {}),
           captureQualification: proof.schema,
           compilerVersion: 'live-bridge-capture@1',
           capturePayloadSha256: proof.capturePayloadSha256,
-          captureTimes: proof.captureTimes,
+          ...(Array.isArray(proof.captureTimes) ? { captureTimes: proof.captureTimes } : {}),
           runtimeFingerprint: proof.runtimeFingerprint,
-          changedPixels: 0,
-          maxChannelDelta: 0,
+          ...(manualProofValid
+            ? { manualApproval: proof.manualApproval }
+            : { changedPixels: 0, maxChannelDelta: 0 }),
         },
       };
     }
     artifact.batchClosures = closures;
-    console.log(`STAMP_PIXEL_QUALIFIED ${effectId} times=${proof.captureTimes.join(',')}`);
+    console.log(manualProofValid
+      ? `STAMP_MANUAL_QUALIFIED ${effectId} approvedBy=${proof.manualApproval.approvedBy}`
+      : `STAMP_PIXEL_QUALIFIED ${effectId} times=${proof.captureTimes.join(',')}`);
   }
 
   // Keep files split complete: assertVfxRuntimeArtifactV3 requires files.config
@@ -1148,9 +1174,14 @@ for (const capturePath of capturePaths) {
     artifact.runtimeState.runtimeConfig.startDelays = [...delays.entries()];
     console.log(`STAMP_START_DELAYS ${effectId} emitters=${delays.size}`);
   }
+  const thinOwned = artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1';
   const configBytes = Buffer.from(JSON.stringify({
+    schema: thinOwned ? 'vfx-thin-config@1' : 'vfx-runtime-config@3',
     quarksConfig,
-    runtimeState,
+    runtimeState: thinOwned
+      ? { runtimeConfig: runtimeState.runtimeConfig }
+      : runtimeState,
     metadata: artifact.metadata ?? priorConfig?.metadata,
   }));
   await writeFile(join(codeDir, 'config.json'), configBytes);

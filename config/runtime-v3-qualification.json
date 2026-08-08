@@ -260,13 +260,13 @@
     "cfx3_hit_misc_d": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:28:10.125Z",
-        "artifactSha256": "73182e93ce60ab62992749512561ea15932cb531e3a77da0a0843e78b18350ed",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:59:33.119Z",
+        "artifactSha256": "3133abc77528a7cc8a8d6ecbbbe98b1d99e623b64f3c3e2567d3f44081e42ae1",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:28:09.982Z",
+        "reportCreatedAt": "2026-08-08T13:59:33.045Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -374,13 +374,13 @@
     "cfx3_hit_misc_b_gravity": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:07:36.260Z",
-        "artifactSha256": "ed4af0306d168d963b9ebd446b8a5962132d61cb2c1da0a1c8da48195c8b0f16",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:54:32.627Z",
+        "artifactSha256": "8aac5aa7ff8bbb7af9e4afe7f09cff1c6cef2ed24155e7943b3a995f8572161c",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:07:36.131Z",
+        "reportCreatedAt": "2026-08-08T13:54:32.551Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -655,13 +655,13 @@
     "cfx_firework_trails_gravity": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:16:58.610Z",
-        "artifactSha256": "0d59790ed20d93eb75bf638a4941f2e3279d8a392ccf03a9215ac2f96477fdfe",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:00:35.203Z",
+        "artifactSha256": "df34a377d8bab3440e775189830b020b6d84f11db90c008b5108509125f7427c",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:16:58.480Z",
+        "reportCreatedAt": "2026-08-08T14:00:35.114Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -993,13 +993,13 @@
     "free_slash_vfx_prefabs_impact": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:03:10.581Z",
-        "artifactSha256": "fdbb8215e147ccdaf88d03215b12d20a9c3a4343eba37cba2bb92a296ce99105",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:57:39.807Z",
+        "artifactSha256": "4498243fc6001dc1e7e0c14120214a71f03650c63a6cddee49f410e5612d99da",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:03:10.415Z",
+        "reportCreatedAt": "2026-08-08T13:57:39.727Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1031,13 +1031,13 @@
     "free_slash_vfx_prefabs_slash_eletric_vfx": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:38:35.768Z",
-        "artifactSha256": "7130f2115cae6bc908d1289b87ae4e24f58bda17c1a33ace05aef78a5a87ad29",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:04:49.978Z",
+        "artifactSha256": "58bc03a69462a154bd3b821b3121715ff4b04961b2f88d268e8a6ba673119228",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:38:35.682Z",
+        "reportCreatedAt": "2026-08-08T14:04:49.896Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1120,13 +1120,13 @@
     "hovl_studio_magic_effects_pack_prefabs_aoe_effects_aoe_slash_blue": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:25:56.461Z",
-        "artifactSha256": "1852edf8d7b95211f27df9b2925711a923f9e10093d651a4f7fffd1c031254bf",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:58:41.477Z",
+        "artifactSha256": "0fe7ee1fb34442e0f673cfd4344f833d11507729dcb4a302d160c7bacc16a954",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:25:56.320Z",
+        "reportCreatedAt": "2026-08-08T13:58:41.403Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1391,13 +1391,13 @@
     "hovl_studio_magic_effects_pack_prefabs_aoe_effects_ground_aoe_explosion": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:58:07.714Z",
-        "artifactSha256": "d7f48a3df2b59ce978569359579dffe0de9631a7c6a237221e3f18b5b81bddba",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:55:36.992Z",
+        "artifactSha256": "9f025b7d2c1254b770f7cbe08c5557706db3483f5a0b8efd95e976a8175cf87e",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:58:07.628Z",
+        "reportCreatedAt": "2026-08-08T13:55:36.908Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1522,13 +1522,13 @@
     "hovl_studio_magic_effects_pack_prefabs_magic_circles_magic_circle_2": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:21:04.796Z",
-        "artifactSha256": "b5531a55a2d17a9afd5f504b451df3aa387f570a7bd23ec9f61be6682f2ade93",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:07:36.196Z",
+        "artifactSha256": "317cc2301f353269416208c8ca9dbd00b430cd4113e01f4f2a22660d107f3523",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:21:04.690Z",
+        "reportCreatedAt": "2026-08-08T14:07:36.119Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1541,13 +1541,13 @@
     "hovl_studio_procedural_fire_prefabs_magic_fire_0": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:50:26.635Z",
-        "artifactSha256": "f4e552838bdb90f5a7b3d8dd9fa0585eb2913a82ddae2c5934df4e9ae016d72f",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:51:35.085Z",
+        "artifactSha256": "db5824a253c365b48ea576651add07413d73da5642f2d6bee91b8e1bc5b7cb02",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:50:26.492Z",
+        "reportCreatedAt": "2026-08-08T13:51:35.015Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1560,13 +1560,13 @@
     "hovl_studio_procedural_fire_prefabs_magic_fire_1": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:05:30.227Z",
-        "artifactSha256": "47e420049a79f8700d723f0fcae8a59679e0ec10931bfdced7906ca26617f2c0",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:53:36.102Z",
+        "artifactSha256": "c10e63fe4097099ce21d20d7b89a0a34ac1f9fe2c260baa9def1ef3f9e09443e",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:05:30.058Z",
+        "reportCreatedAt": "2026-08-08T13:53:36.021Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1613,13 +1613,13 @@
     "hovl_studio_procedural_fire_prefabs_magic_fire_pro_blue": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:40:41.814Z",
-        "artifactSha256": "00bcceced7e6e3ad3923b11c0e623d96e4b2275d9965dedc0387ea8a2c958721",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:06:37.218Z",
+        "artifactSha256": "5b92a4dfa9392f1e527404119fa9a660540e1b5c65a4b210c739240cd7ed8e20",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:40:41.736Z",
+        "reportCreatedAt": "2026-08-08T14:06:37.143Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1772,13 +1772,13 @@
     "hovl_studio_magic_effects_pack_prefabs_slash_effects_snow_slash": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:42:40.698Z",
-        "artifactSha256": "01d033cfdb934854face7b0e8b5f4a8b7abdc5d8a21bc4604c254a7afb5e5608",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:08:35.352Z",
+        "artifactSha256": "2dc7b58a7f3c0663526c5ad2ade19dc3bf31a825734b3b924bf0eab437d9defa",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:42:40.619Z",
+        "reportCreatedAt": "2026-08-08T14:08:35.275Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1791,13 +1791,13 @@
     "hovl_studio_magic_effects_pack_prefabs_sparks_sparks_blue": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T03:33:29.843Z",
-        "artifactSha256": "af38ecb619cc743a124f0d8f02cad5e66bd1713ce6cb68de850acfe44d951822",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:49:37.150Z",
+        "artifactSha256": "2c9ecd536107df3f5ca3249c029983f4551f47a67c6a43732eb9579ad972e118",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T03:33:29.749Z",
+        "reportCreatedAt": "2026-08-08T13:49:37.069Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -1810,15 +1810,17 @@
     "hovl_studio_magic_effects_pack_prefabs_sparks_sparks_explode_blue": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "29766b41843cd321192aafc516cd0cafa2c77dd0dba9051cfde8200f55001a58",
-        "runtimeFingerprint": "0b6e03f6e59a23709e85186a7422bff6a4ba123fa39a42b6bf10090428b55e4d",
-        "updatedAt": "2026-08-08T02:16:26.043Z",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:49:37.151Z",
+        "artifactSha256": "91b73784b2a9bd246814b0409c91e0772599b9a06ac37e8d1c9b80c03dc621e2",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T02:16:25.894Z",
-        "thinPlayer": false,
+        "reportCreatedAt": "2026-08-08T13:49:37.069Z",
+        "thinPlayer": true,
         "captureTimes": [
-          0.25
+          0.25,
+          0.5
         ],
         "changedPixels": 0,
         "maxChannelDelta": 0
@@ -2289,13 +2291,13 @@
     "particlecollection_free_samples_prefab_hit_hit_01": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:37:18.563Z",
-        "artifactSha256": "3dcf480792df7482f495c20628e93e20902a0838a25fc91faa7479e69db49a3f",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:02:36.748Z",
+        "artifactSha256": "0c4a675f3a7996ff78845679014576a09ce64eccb7a8ae59a272441c429e6bc3",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:37:18.485Z",
+        "reportCreatedAt": "2026-08-08T14:02:36.666Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -2399,13 +2401,13 @@
     "particlecollection_free_samples_prefab_sprays_sprays_01": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:25:56.462Z",
-        "artifactSha256": "9d88381adc25d8a5801a7acb0ef3e8abed33bc3e21fa46fdbc55215c9ac2a64a",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:50:34.789Z",
+        "artifactSha256": "b1e9a2b9ac4aa862034faf0efb7849895b20b67a36da1a5f23722d3fa4c9baba",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:25:56.320Z",
+        "reportCreatedAt": "2026-08-08T13:50:34.714Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -2418,13 +2420,13 @@
     "particlecollection_free_samples_prefab_sprays_sprays_02": {
       "disposition": "qualified",
       "evidence": {
-        "corpusSha256": "3dd84daf9ed68b7258ea670d7d92f8d80e2d4a16137771868b8794065da6cda1",
-        "oracleSha256": "67ee75af44597afe70e6e5289df438e56a1a9c53b066bb557b397123a6144e35",
-        "runtimeFingerprint": "51db7a26bd1cd00fe2b9a08ebd2d4b92c96ab339d07938a5dede50ca2ab60da8",
-        "updatedAt": "2026-08-08T04:41:41.220Z",
-        "artifactSha256": "a4bdd57c1af6f6759d7065c00cb5544ed49cff7598c0268557e62f61952af83f",
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T14:05:35.902Z",
+        "artifactSha256": "faebeb4bd8b63328c3fa2371a0f94c1f16a7b16aa353c7fc5711473e5edef42d",
         "reportSchema": "vfx-runtime-regression-report@1",
-        "reportCreatedAt": "2026-08-08T04:41:41.136Z",
+        "reportCreatedAt": "2026-08-08T14:05:35.818Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,
@@ -2643,6 +2645,44 @@
         "artifactSha256": "c1704f6e79c8560d954d2ad4812f31098bb22b0ca694bcce77fcf5db6cba34d9",
         "reportSchema": "vfx-runtime-regression-report@1",
         "reportCreatedAt": "2026-08-08T08:00:13.954Z",
+        "thinPlayer": true,
+        "captureTimes": [
+          0.25,
+          0.5
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "vefects_free_fire_vfx_urp_particles_vfx_fire_01_big_simple": {
+      "disposition": "qualified",
+      "evidence": {
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:52:37.630Z",
+        "artifactSha256": "1b5dc2a6a5c7b9cee0e1a98f9fe1b5616d64a891a743455e66e293c1396bf090",
+        "reportSchema": "vfx-runtime-regression-report@1",
+        "reportCreatedAt": "2026-08-08T13:52:37.556Z",
+        "thinPlayer": true,
+        "captureTimes": [
+          0.25,
+          0.5
+        ],
+        "changedPixels": 0,
+        "maxChannelDelta": 0
+      }
+    },
+    "vefects_free_fire_vfx_urp_particles_vfx_fire_01_medium_simple": {
+      "disposition": "qualified",
+      "evidence": {
+        "corpusSha256": "6c6e3fc8bc1d1f20a250009c46e70af6b4c6296fa043d0f766b08efdb1cab627",
+        "oracleSha256": "10c35d02781be2086a34f63c3b0824e34e666802bf1fc2d9bbaea1239d4d47a2",
+        "runtimeFingerprint": "7dd9864b22bab40a7be256128aca06e7be6ffaa73566971dd2da4b6e4eaf2b28",
+        "updatedAt": "2026-08-08T13:56:37.534Z",
+        "artifactSha256": "18112184500aec9e02ec3df6381fcb2748e2aee77f0fe0c53b1b2e2f988484ed",
+        "reportSchema": "vfx-runtime-regression-report@1",
+        "reportCreatedAt": "2026-08-08T13:56:37.457Z",
         "thinPlayer": true,
         "captureTimes": [
           0.25,

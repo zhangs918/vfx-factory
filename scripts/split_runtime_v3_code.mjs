@@ -22,6 +22,11 @@ const writeHashed = async (file, bytes) => {
   return digest(bytes);
 };
 
+const hasArtifactOwnedExecution = (artifact) => (
+  artifact.execution?.simulation === 'artifact-emitter-sim@1'
+  && artifact.execution?.trajectory === 'artifact-trajectory@1'
+);
+
 const effects = manifest.effects.filter((entry) => (
   !requested.size || requested.has(String(entry.id).toLowerCase())
 ));
@@ -29,9 +34,13 @@ for (const entry of effects) {
   const artifactFile = path.join(artifactDir, entry.file);
   const artifact = JSON.parse(await readFile(artifactFile, 'utf8'));
   const base = path.join(codeDir, entry.id);
+  const thinOwned = hasArtifactOwnedExecution(artifact);
   const configBytes = Buffer.from(JSON.stringify({
+    schema: thinOwned ? 'vfx-thin-config@1' : 'vfx-runtime-config@3',
     quarksConfig: artifact.simulation,
-    runtimeState: artifact.runtimeState,
+    runtimeState: thinOwned
+      ? { runtimeConfig: artifact.runtimeState?.runtimeConfig }
+      : artifact.runtimeState,
     metadata: artifact.metadata,
   }));
   const configName = 'config.json';

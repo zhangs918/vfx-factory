@@ -14,7 +14,7 @@ export const VFX_VERTEX_PATCH_IDS = Object.freeze([
 const SHA256 = /^[a-f0-9]{64}$/;
 const RESOURCE_KINDS = new Set(['texture', 'geometry', 'lut', 'binary']);
 const BLENDS = new Set(['opaque', 'alpha-test', 'alpha', 'premultiplied-alpha', 'additive', 'multiply']);
-const QUALIFICATION = new Set(['bridge', 'capture-stamped', 'pixel-qualified']);
+const QUALIFICATION = new Set(['bridge', 'capture-stamped', 'pixel-qualified', 'manual-qualified']);
 
 export function deriveConstantUniforms(input) {
   const values = {
@@ -93,6 +93,20 @@ function assertQualification(value, label, executor) {
       throw new Error(`${label} pixel proof is incomplete`);
     }
   }
+  if (value.status === 'manual-qualified') {
+    const evidence = value.evidence;
+    if (!evidence?.manualApproval
+      || evidence.manualApproval.schema !== 'vfx-manual-visual-approval@1'
+      || typeof evidence.manualApproval.approvedAt !== 'string'
+      || typeof evidence.manualApproval.approvedBy !== 'string'
+      || !evidence.manualApproval.approvedBy
+      || typeof evidence.runtimeFingerprint !== 'string'
+      || !evidence.runtimeFingerprint
+      || typeof evidence.capturePayloadSha256 !== 'string'
+      || !SHA256.test(evidence.capturePayloadSha256)) {
+      throw new Error(`${label} manual approval is incomplete`);
+    }
+  }
 }
 
 export function assertVfxRuntimeArtifactV3(value) {
@@ -147,7 +161,18 @@ export function assertVfxRuntimeArtifactV3(value) {
       || !Array.isArray(closure.pipelineIds) || !closure.pipelineIds.length || typeof closure.renderSignature !== 'string') throw new Error(`Batch closure '${id}' is invalid`);
     assertQualification(closure.qualification, `Batch closure '${id}'`);
     if (closure.vertexPatches?.some((patch) => !VFX_VERTEX_PATCH_IDS.includes(patch))) throw new Error(`Batch closure '${id}' has unknown vertex patch`);
-    for (const pipelineId of closure.pipelineIds) if (!artifact.pipelines[pipelineId]) throw new Error(`Batch closure '${id}' references missing pipeline`);
+    for (const pipelineId of closure.pipelineIds) {
+      const pipeline = artifact.pipelines[pipelineId];
+      if (!pipeline) throw new Error(`Batch closure '${id}' references missing pipeline`);
+      if (closure.qualification.status === 'pixel-qualified'
+        && pipeline.qualification.status !== 'pixel-qualified') {
+        throw new Error(`Batch closure '${id}' pixel proof does not cover every pipeline`);
+      }
+      if (closure.qualification.status === 'manual-qualified'
+        && !['manual-qualified', 'pixel-qualified'].includes(pipeline.qualification.status)) {
+        throw new Error(`Batch closure '${id}' manual proof does not cover every pipeline`);
+      }
+    }
   }
   if (artifact.files) {
     if (!isSafeAssetUri(artifact.files.config?.uri, '/assets/v3-code/') || !artifact.files.shaders) throw new Error('Artifact files split is incomplete');

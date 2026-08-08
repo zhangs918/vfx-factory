@@ -192,7 +192,7 @@ export interface VfxPipelineState {
   /** Explicit execution ownership. Runtime code must never infer this from shader names. */
   executor: 'semantic-bridge@1' | 'artifact-shader@1';
   qualification: {
-    status: 'bridge' | 'capture-stamped' | 'pixel-qualified';
+    status: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
     familyId: string;
     baseline: 'frozen-semantic@1';
     evidence?: {
@@ -204,6 +204,14 @@ export interface VfxPipelineState {
       captureProvenance?: 'live-bridge-capture@1';
       capturedAt?: string;
       injectMode?: string;
+      runtimeFingerprint?: string;
+      capturePayloadSha256?: string;
+      manualApproval?: {
+        schema: 'vfx-manual-visual-approval@1';
+        approvedAt: string;
+        approvedBy: string;
+        note?: string;
+      };
     };
   };
 }
@@ -230,7 +238,7 @@ export interface VfxBatchClosure {
   /** Declared inject vertex patches for this closure (audit / future dual-path). */
   vertexPatches?: VfxVertexPatchId[];
   qualification: {
-    status: 'bridge' | 'capture-stamped' | 'pixel-qualified';
+    status: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
     baseline: 'frozen-semantic@1';
     evidence?: {
       compilerVersion?: string;
@@ -240,6 +248,14 @@ export interface VfxBatchClosure {
       captureProvenance?: 'live-bridge-capture@1';
       capturedAt?: string;
       injectMode?: string;
+      runtimeFingerprint?: string;
+      capturePayloadSha256?: string;
+      manualApproval?: {
+        schema: 'vfx-manual-visual-approval@1';
+        approvedAt: string;
+        approvedBy: string;
+        note?: string;
+      };
     };
   };
 }
@@ -346,7 +362,7 @@ export function assertVfxRuntimeArtifactV3(value: unknown): asserts value is Vfx
     if (!['semantic-bridge@1', 'artifact-shader@1'].includes(pipeline.executor)
       || !pipeline.qualification
       || pipeline.qualification.baseline !== 'frozen-semantic@1'
-      || !['bridge', 'capture-stamped', 'pixel-qualified'].includes(pipeline.qualification.status)
+      || !['bridge', 'capture-stamped', 'pixel-qualified', 'manual-qualified'].includes(pipeline.qualification.status)
       || (pipeline.executor === 'artifact-shader@1'
         && pipeline.qualification.status === 'bridge')
       || (pipeline.executor === 'semantic-bridge@1'
@@ -417,6 +433,18 @@ export function assertVfxRuntimeArtifactV3(value: unknown): asserts value is Vfx
         || evidence.changedPixels !== 0 || evidence.maxChannelDelta !== 0)) {
       throw new Error(`Pipeline '${id}' is pixel-qualified without zero-delta multi-time evidence`);
     }
+    if (pipeline.qualification.status === 'manual-qualified'
+      && (!evidence?.manualApproval
+        || evidence.manualApproval.schema !== 'vfx-manual-visual-approval@1'
+        || typeof evidence.manualApproval.approvedAt !== 'string'
+        || typeof evidence.manualApproval.approvedBy !== 'string'
+        || !evidence.manualApproval.approvedBy
+        || typeof evidence.runtimeFingerprint !== 'string'
+        || !evidence.runtimeFingerprint
+        || typeof evidence.capturePayloadSha256 !== 'string'
+        || !sha256Pattern.test(evidence.capturePayloadSha256))) {
+      throw new Error(`Pipeline '${id}' is manual-qualified without bound approval evidence`);
+    }
     if (!artifact.shaders?.[pipeline.shader] && !artifact.files?.shaders?.[pipeline.shader]) throw new Error(`Pipeline '${id}' references missing shader '${pipeline.shader}'`);
     for (const [slot, resource] of Object.entries(pipeline.textures ?? {})) {
       if (!artifact.resources[resource]) throw new Error(`Pipeline '${id}' texture '${slot}' references missing resource '${resource}'`);
@@ -428,7 +456,7 @@ export function assertVfxRuntimeArtifactV3(value: unknown): asserts value is Vfx
       || !closure.emitterIds.length || !Array.isArray(closure.pipelineIds)
       || !closure.pipelineIds.length || typeof closure.renderSignature !== 'string'
       || closure.qualification?.baseline !== 'frozen-semantic@1'
-      || !['bridge', 'capture-stamped', 'pixel-qualified'].includes(closure.qualification?.status ?? '')) {
+      || !['bridge', 'capture-stamped', 'pixel-qualified', 'manual-qualified'].includes(closure.qualification?.status ?? '')) {
       throw new Error(`Batch closure '${id}' is invalid`);
     }
     if (closure.vertexPatches !== undefined) {
@@ -445,8 +473,14 @@ export function assertVfxRuntimeArtifactV3(value: unknown): asserts value is Vfx
         && artifact.pipelines[pipelineId].qualification.status !== 'pixel-qualified') {
         throw new Error(`Batch closure '${id}' is pixel-qualified while pipeline '${pipelineId}' remains unproven`);
       }
+      if (closure.qualification.status === 'manual-qualified'
+        && !['manual-qualified', 'pixel-qualified'].includes(
+          artifact.pipelines[pipelineId].qualification.status,
+        )) {
+        throw new Error(`Batch closure '${id}' is manual-qualified while pipeline '${pipelineId}' remains unproven`);
+      }
       if (closure.qualification.status === 'capture-stamped'
-        && !['capture-stamped', 'pixel-qualified'].includes(
+        && !['capture-stamped', 'pixel-qualified', 'manual-qualified'].includes(
           artifact.pipelines[pipelineId].qualification.status,
         )) {
         throw new Error(`Batch closure '${id}' is capture-stamped while pipeline '${pipelineId}' remains bridge`);
@@ -459,6 +493,17 @@ export function assertVfxRuntimeArtifactV3(value: unknown): asserts value is Vfx
         || evidence.captureTimes.some((time) => !Number.isFinite(time))
         || evidence.changedPixels !== 0 || evidence.maxChannelDelta !== 0)) {
       throw new Error(`Batch closure '${id}' is pixel-qualified without zero-delta multi-time evidence`);
+    }
+    if (closure.qualification.status === 'manual-qualified'
+      && (!evidence?.manualApproval
+        || evidence.manualApproval.schema !== 'vfx-manual-visual-approval@1'
+        || typeof evidence.manualApproval.approvedBy !== 'string'
+        || !evidence.manualApproval.approvedBy
+        || typeof evidence.runtimeFingerprint !== 'string'
+        || !evidence.runtimeFingerprint
+        || typeof evidence.capturePayloadSha256 !== 'string'
+        || !sha256Pattern.test(evidence.capturePayloadSha256))) {
+      throw new Error(`Batch closure '${id}' is manual-qualified without bound approval evidence`);
     }
   }
   for (const [id, shader] of Object.entries(artifact.shaders ?? {})) {

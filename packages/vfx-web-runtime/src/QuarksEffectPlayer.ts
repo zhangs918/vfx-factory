@@ -493,7 +493,10 @@ export class QuarksEffectPlayer {
       materialId: string;
       shader: string;
       executor?: 'semantic-bridge@1' | 'artifact-shader@1';
-      qualification?: { familyId?: string; status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' };
+      qualification?: {
+        familyId?: string;
+        status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
+      };
       uniformValues?: ArtifactUniformValues;
       blendState?: ArtifactBlendState;
       tileCounts?: [number, number];
@@ -502,7 +505,9 @@ export class QuarksEffectPlayer {
     }> = {},
     shaders: Record<string, CompiledShaderModule> = {},
     batchClosures: Record<string, {
-      qualification?: { status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' };
+      qualification?: {
+        status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
+      };
     }> = {},
   ): Promise<void> {
     const quarksConfig = structuredClone(simulation) as any;

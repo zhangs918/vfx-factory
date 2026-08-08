@@ -127,20 +127,33 @@ export class V3ArtifactPlayer {
     const geometryData: PreparedV3Effect['geometryData'] = {};
     if (artifact.files) {
       const config = await this.resources.loadJsonVerified<{
+        schema?: 'vfx-thin-config@1' | 'vfx-runtime-config@3';
         quarksConfig?: any;
         simulation?: any;
-        runtimeState: VfxRuntimeArtifactV3['runtimeState'];
+        runtimeState: {
+          cfxrState?: Record<string, unknown>;
+          runtimeConfig: Record<string, unknown>;
+        };
       }>(artifact.files.config.uri, artifact.files.config.sha256);
       if (!config || typeof config !== 'object'
         || (!config.quarksConfig && !config.simulation)
         || !config.runtimeState || typeof config.runtimeState !== 'object'
-        || !config.runtimeState.cfxrState || typeof config.runtimeState.cfxrState !== 'object'
         || !config.runtimeState.runtimeConfig || typeof config.runtimeState.runtimeConfig !== 'object') {
         throw new Error(`v3 artifact '${artifact.effectId}' external config is incomplete`);
       }
+      if (this.runtimeSink.skipCfxrRuntimeHydrate) {
+        if (config.schema !== 'vfx-thin-config@1' || config.runtimeState.cfxrState != null) {
+          throw new Error(
+            `v3 artifact '${artifact.effectId}' thin config must omit cfxrState`,
+          );
+        }
+      } else if (!config.runtimeState.cfxrState
+        || typeof config.runtimeState.cfxrState !== 'object') {
+        throw new Error(`v3 artifact '${artifact.effectId}' bridge config is missing cfxrState`);
+      }
       externalQuarksConfig = !!config.quarksConfig;
       quarksConfig = config.quarksConfig ?? config.simulation ?? null;
-      runtimeState = config.runtimeState;
+      runtimeState = config.runtimeState as NonNullable<VfxRuntimeArtifactV3['runtimeState']>;
       if (this.runtimeSink.needsShaders) {
         await Promise.all(Object.values(artifact.files.shaders).map(async (shader) => {
           const [vertex, fragment] = await Promise.all([

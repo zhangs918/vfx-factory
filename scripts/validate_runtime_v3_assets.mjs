@@ -85,6 +85,54 @@ function scanBindings(value, artifact, referenced, location = '$') {
   }
 }
 
+function computeThinPlayerCapability(artifact) {
+  const pipelines = Object.values(artifact.pipelines ?? {});
+  const closures = Object.values(artifact.batchClosures ?? {});
+  return pipelines.length > 0
+    && closures.length > 0
+    && artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1'
+    && pipelines.every((pipeline) => {
+      const shader = artifact.shaders?.[pipeline.shader]
+        ?? artifact.files?.shaders?.[pipeline.shader];
+      return pipeline.executor === 'artifact-shader@1'
+        && !!pipeline.blendState
+        && !!pipeline.uniformValues
+        && Array.isArray(pipeline.tileCounts)
+        && pipeline.tileCounts.length === 2
+        && shader?.execution === 'quarks-fragment-v1'
+        && shader.vertexExecution === 'quarks-vertex-v1';
+    })
+    && closures.every((closure) => ['pixel-qualified', 'manual-qualified']
+      .includes(closure.qualification?.status));
+}
+
+function auditTrajectoryClosure(effectId, config, artifact) {
+  const failures = [];
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'ParticleEmitter') {
+      const ps = node.ps ?? {};
+      const ref = ps.unityTrajectoryCacheResourceId;
+      const inline = ps.unityTrajectoryCache;
+      const mounts = ps.artifactBehaviorMount?.mounts;
+      if (inline != null) failures.push(`${effectId}: embedded trajectory cache remains on ${node.uuid}`);
+      if (ref != null) {
+        if (!artifact.resources?.[ref]) failures.push(`${effectId}: missing trajectory resource ${ref}`);
+        if (!Array.isArray(mounts) || !mounts.includes('trajectory-cache@1')) {
+          failures.push(`${effectId}: trajectory emitter ${node.uuid} lacks trajectory-cache@1 mount`);
+        }
+      }
+      if (Array.isArray(mounts) && mounts.includes('trajectory-cache@1') && ref == null) {
+        failures.push(`${effectId}: trajectory mount ${node.uuid} lacks a resource binding`);
+      }
+    }
+    for (const child of node.children ?? []) walk(child);
+  };
+  walk(config?.quarksConfig?.object);
+  return failures;
+}
+
 const manifest = await readJson(path.join(artifactDir, 'manifest.json'), 'artifact manifest');
 const resourceManifest = await readJson(path.join(artifactDir, 'resources.manifest.json'), 'resource manifest');
 if (!manifest || !resourceManifest) process.exit(1);
@@ -137,6 +185,10 @@ for (const entry of manifest.effects ?? []) {
   } catch (error) {
     errors.push(`${entry.id}: schema contract failed (${error.message})`);
   }
+  const computedThin = computeThinPlayerCapability(artifact);
+  if (entry.capabilities?.thinPlayer !== computedThin) {
+    errors.push(`${entry.id}: thin capability stamp disagrees with artifact closure`);
+  }
   if (!artifact.files?.config || !artifact.files?.shaders) errors.push(`${entry.id}: physical code split missing`);
   if (artifact.simulation || artifact.runtimeState || artifact.shaders) {
     errors.push(`${entry.id}: split artifact still contains embedded runtime fields`);
@@ -165,7 +217,21 @@ for (const entry of manifest.effects ?? []) {
     if (config) {
       if (!config.quarksConfig || typeof config.quarksConfig !== 'object') errors.push(`${entry.id}: config missing quarksConfig`);
       if (!config.runtimeState || typeof config.runtimeState !== 'object') errors.push(`${entry.id}: config missing runtimeState`);
+      const artifactOwnedExecution = artifact.execution?.simulation === 'artifact-emitter-sim@1'
+        && artifact.execution?.trajectory === 'artifact-trajectory@1';
+      if (artifactOwnedExecution) {
+        if (config.schema !== 'vfx-thin-config@1') errors.push(`${entry.id}: thin config schema is missing`);
+        if (config.runtimeState?.cfxrState != null) errors.push(`${entry.id}: thin config retains cfxrState`);
+      } else if (config.schema !== 'vfx-runtime-config@3') {
+        errors.push(`${entry.id}: bridge config schema is missing`);
+      }
+      if (!config.runtimeState?.runtimeConfig || typeof config.runtimeState.runtimeConfig !== 'object') {
+        errors.push(`${entry.id}: config missing runtimeConfig`);
+      }
       if ('simulation' in config || 'runtimePlan' in config) errors.push(`${entry.id}: deprecated config field remains`);
+      if (artifact.execution?.trajectory === 'artifact-trajectory@1') {
+        errors.push(...auditTrajectoryClosure(entry.id, config, artifact));
+      }
       scanBindings(config, artifact, referenced, '$config');
     }
   }

@@ -97,12 +97,17 @@ export interface ArtifactPlayerPipeline {
   defines?: Record<string, string | number | boolean>;
   capturedUniforms?: Record<string, number | number[] | number[][]>;
   executor?: 'semantic-bridge@1' | 'artifact-shader@1';
-  qualification?: { familyId?: string; status?: string };
+  qualification?: {
+    familyId?: string;
+    status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
+  };
 }
 
 export interface ArtifactPlayerClosure {
   vertexPatches?: string[];
-  qualification?: { status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' };
+  qualification?: {
+    status?: 'bridge' | 'capture-stamped' | 'pixel-qualified' | 'manual-qualified';
+  };
 }
 
 export interface ArtifactPlayerEffect {

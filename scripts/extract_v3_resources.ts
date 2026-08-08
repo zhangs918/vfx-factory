@@ -64,6 +64,8 @@ async function externalizeCompiledTables(artifact: any, node: any) {
 }
 
 async function externalizeRuntimeTables(artifact: any) {
+  if (artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1') return;
   const cfxr = artifact.runtimeState?.cfxrState;
   if (!cfxr || typeof cfxr !== 'object') return;
   for (const key of Object.keys(cfxr)) {
@@ -163,7 +165,18 @@ for (const entry of manifest.effects) {
   const resources = artifact.resources ?? {};
   const uriToId = new Map(Object.values(resources).map((resource: any) => [resource.uri, resource.id]));
   const referenced = new Set<string>();
-  collectResourceBindings(artifact, referenced, uriToId);
+  const artifactOwnedExecution = artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1';
+  // Artifact-owned playback consumes emitter-local bags plus runtimeConfig.
+  // Global cfxrState is a compiler/legacy input and must not keep resources
+  // alive in the production closure.
+  const bindingView = artifactOwnedExecution
+    ? {
+        ...artifact,
+        runtimeState: { runtimeConfig: artifact.runtimeState?.runtimeConfig },
+      }
+    : artifact;
+  collectResourceBindings(bindingView, referenced, uriToId);
   collectResourceBindings(await loadExternalConfig(artifact), referenced, uriToId);
   for (const id of referenced) {
     const resource = resources[id];

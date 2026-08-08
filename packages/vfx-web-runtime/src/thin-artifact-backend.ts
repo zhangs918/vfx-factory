@@ -24,7 +24,10 @@ export function assertEffectMaterialThinReady(artifact: VfxRuntimeArtifactV3) {
   if (!closures.length) {
     throw new Error(`thinPlayer: artifact '${artifact.effectId}' has no batchClosures`);
   }
-  const unproven = closures.filter(([, closure]) => closure.qualification?.status !== 'pixel-qualified');
+  const unproven = closures.filter(([, closure]) => (
+    closure.qualification?.status !== 'pixel-qualified'
+    && closure.qualification?.status !== 'manual-qualified'
+  ));
   if (unproven.length) {
     throw new Error(
       `thinPlayer: artifact '${artifact.effectId}' has unproven closures: `
@@ -62,6 +65,13 @@ export function assertEffectMaterialThinReady(artifact: VfxRuntimeArtifactV3) {
     throw new Error(
       `thinPlayer: artifact '${artifact.effectId}' requires execution.simulation=artifact-emitter-sim@1 `
       + `(got '${simExec}')`,
+    );
+  }
+  const trajectoryExec = artifact.execution?.trajectory;
+  if (trajectoryExec !== 'artifact-trajectory@1') {
+    throw new Error(
+      `thinPlayer: artifact '${artifact.effectId}' requires execution.trajectory=artifact-trajectory@1 `
+      + `(got '${trajectoryExec}')`,
     );
   }
 }

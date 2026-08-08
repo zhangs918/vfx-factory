@@ -26,6 +26,7 @@ function computeThinPlayerCapability(artifact) {
   return pipelines.length > 0
     && closures.length > 0
     && artifact.execution?.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution?.trajectory === 'artifact-trajectory@1'
     && pipelines.every((pipeline) => {
       const shader = artifact.shaders?.[pipeline.shader]
         ?? artifact.files?.shaders?.[pipeline.shader];
@@ -37,7 +38,8 @@ function computeThinPlayerCapability(artifact) {
         && shader?.execution === 'quarks-fragment-v1'
         && shader.vertexExecution === 'quarks-vertex-v1';
     })
-    && closures.every((closure) => closure.qualification?.status === 'pixel-qualified');
+    && closures.every((closure) => ['pixel-qualified', 'manual-qualified']
+      .includes(closure.qualification?.status));
 }
 
 async function atomicWriteJson(file, value) {

@@ -49,6 +49,7 @@ function computeThinPlayerCapability(artifact: VfxRuntimeArtifactV3): boolean {
   return pipelines.length > 0
     && closures.length > 0
     && artifact.execution.simulation === 'artifact-emitter-sim@1'
+    && artifact.execution.trajectory === 'artifact-trajectory@1'
     && pipelines.every((pipeline) => {
       const shader = artifact.shaders?.[pipeline.shader];
       return pipeline.executor === 'artifact-shader@1'
@@ -59,7 +60,10 @@ function computeThinPlayerCapability(artifact: VfxRuntimeArtifactV3): boolean {
         && shader?.execution === 'quarks-fragment-v1'
         && shader.vertexExecution === 'quarks-vertex-v1';
     })
-    && closures.every((closure) => closure.qualification.status === 'pixel-qualified');
+    && closures.every((closure) => (
+      closure.qualification.status === 'pixel-qualified'
+      || closure.qualification.status === 'manual-qualified'
+    ));
 }
 
 const semanticProfileFingerprint = (value: any): any => {
@@ -678,6 +682,57 @@ for (const entry of manifest.effects.filter((item: any) => item.status === 'comp
   const simulationExecutor = materialEmitters > 0 && mountedEmitters === materialEmitters
     ? 'artifact-emitter-sim@1' as const
     : 'semantic-bridge@1' as const;
+  // Trajectory ownership is independent from whether an effect happens to use a
+  // sampled trajectory. `artifact-trajectory@1` means every authored trajectory
+  // input is closed over by the effect-local emitter bag; an empty set is a valid
+  // closed set. Never infer this merely from simulationExecutor.
+  const trajectoryEntries = Array.isArray(cfxrState.trajectoryCacheByEmitter)
+    ? cfxrState.trajectoryCacheByEmitter
+    : [];
+  const emittersById = new Map<string, any>();
+  const collectEmitters = (node: any) => {
+    if (node?.type === 'ParticleEmitter' && typeof node.uuid === 'string') {
+      emittersById.set(String(node.uuid), node);
+    }
+    for (const child of node?.children ?? []) collectEmitters(child);
+  };
+  collectEmitters(payload.object);
+  const validTrajectorySchemas = new Set([
+    'particle-trajectory-cache@4',
+    'particle-trajectory-cache@5',
+    'particle-trajectory-cache@6',
+  ]);
+  let trajectoryClosed = true;
+  const trajectoryByEmitter = new Map<string, any>();
+  for (const entry of trajectoryEntries) {
+    const emitterId = typeof entry?.[0] === 'string' ? entry[0] : '';
+    const cache = entry?.[1];
+    if (!emitterId || !cache || !validTrajectorySchemas.has(cache.schema)
+      || trajectoryByEmitter.has(emitterId)) {
+      trajectoryClosed = false;
+      continue;
+    }
+    trajectoryByEmitter.set(emitterId, cache);
+  }
+  for (const [emitterId, emitter] of emittersById) {
+    const cache = emitter.ps?.unityTrajectoryCache;
+    const declared = emitter.ps?.artifactBehaviorMount?.mounts;
+    const sourceCache = trajectoryByEmitter.get(emitterId);
+    if (cache != null) {
+      if (!validTrajectorySchemas.has(cache.schema)
+        || !Array.isArray(declared)
+        || !declared.includes('trajectory-cache@1')) trajectoryClosed = false;
+    }
+    if (sourceCache != null && JSON.stringify(cache) !== JSON.stringify(sourceCache)) {
+      trajectoryClosed = false;
+    }
+  }
+  for (const emitterId of trajectoryByEmitter.keys()) {
+    if (!emittersById.has(emitterId)) trajectoryClosed = false;
+  }
+  const trajectoryExecutor = trajectoryClosed
+    ? 'artifact-trajectory@1' as const
+    : 'semantic-bridge@1' as const;
   const seed = source.vfxIR?.seed;
   const fixedDelta = source.vfxIR?.fixedDelta;
   if (typeof seed !== 'number') {
@@ -701,7 +756,7 @@ for (const entry of manifest.effects.filter((item: any) => item.status === 'comp
     execution: {
       material: 'per-pipeline@1',
       simulation: simulationExecutor,
-      trajectory: 'semantic-bridge@1',
+      trajectory: trajectoryExecutor,
     },
     runtimeState: {
       cfxrState: {
