@@ -930,6 +930,32 @@ namespace BabylonQuarks.UnityExporter
                 cfxr.Set("hdrMultiply", Mathf.Clamp(peak, 1f, 16f));
                 tint = new Color(tint.r / peak, tint.g / peak, tint.b / peak, tint.a);
             }
+            // hdrMultiply stamps the pending ABI as complete; bake/propsToProfile refuse soft
+            // invent for siblings. Defaults match historical soft-invents / existing bakes.
+            // Explicit values written earlier in this exporter win.
+            if (cfxr.Has("hdrMultiply"))
+            {
+                if (!cfxr.Has("legacyVertexColorGain"))
+                    cfxr.Set("legacyVertexColorGain", 1f);
+                if (!cfxr.Has("legacyAlphaTintFactor"))
+                    cfxr.Set("legacyAlphaTintFactor", 2f);
+                if (!cfxr.Has("doubleSided"))
+                    cfxr.Set("doubleSided", true);
+                if (!cfxr.Has("legacyMultiply"))
+                    cfxr.Set("legacyMultiply", false);
+                if (!cfxr.Has("legacyDoubleTint"))
+                    cfxr.Set("legacyDoubleTint", false);
+                if (!cfxr.Has("legacyVertexColorRaw"))
+                    cfxr.Set("legacyVertexColorRaw", false);
+                if (!cfxr.Has("useMask"))
+                    cfxr.Set("useMask", false);
+                if (!cfxr.Has("useDistortion"))
+                    cfxr.Set("useDistortion", false);
+                if (!cfxr.Has("invertDissolve"))
+                    cfxr.Set("invertDissolve", false);
+                if (!cfxr.Has("alphaClipThreshold"))
+                    cfxr.Set("alphaClipThreshold", 0f);
+            }
 
             // Shader Graph wiring analysis: does the albedo sheet drive Alpha (coverage) or RGB?
             // This replaces pixel-guessing with the graph's actual edges (works for any SG pack).
@@ -1242,10 +1268,10 @@ namespace BabylonQuarks.UnityExporter
             else if (softParticle && TryGetMaterialFloat(mat, "_Soft_Particle", out float softAmt))
             {
                 cfxr.Set("softParticle", softAmt);
-                // This reviewed graph's Raw ScreenPosition/SceneDepth(Eye) branch was qualified
-                // against the Unity render buffer. Make the backend unit conversion explicit in
-                // IR rather than hiding it as a runtime/effect-specific multiplier.
-                if (manualLowering == "slash-screen@2")
+                // Reviewed SG Raw ScreenPosition/SceneDepth(Eye) branch was qualified against
+                // the Unity render buffer — same eye-depth unit conversion as slash-screen@2.
+                // Trail-front-face uses a different authored _SoftParticles path above.
+                if (!cfxr.Has("softParticleDepthScale"))
                     cfxr.Set("softParticleDepthScale", 0.1f);
             }
 
@@ -1255,6 +1281,21 @@ namespace BabylonQuarks.UnityExporter
             cfxr.Set("additive", additive);
             cfxr.Set("proceduralRing",
                 shaderName.IndexOf("Procedural Ring", System.StringComparison.OrdinalIgnoreCase) >= 0);
+
+            // After fading/softParticle are known: finish hdrMultiply sibling ABI.
+            if (cfxr.Has("hdrMultiply"))
+            {
+                if (!cfxr.Has("softFade"))
+                    cfxr.Set("softFade", softParticle);
+                if (softParticle)
+                {
+                    if (!cfxr.Has("softParticle"))
+                        cfxr.Set("softParticle", 0f);
+                    if (!cfxr.Has("softParticleDepthScale"))
+                        // softParticle already holds authored strength; unit scale preserves it.
+                        cfxr.Set("softParticleDepthScale", 1f);
+                }
+            }
 
             return cfxr;
         }
